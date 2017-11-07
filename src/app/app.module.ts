@@ -1,6 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { AppRoutingModule } from '@angular/core';
+import { AppRoutingModule } from './app-routing/app-routing.module';
+import { FormsModule } from '@angular/forms';
 
 import { AppComponent } from './app.component';
 import { AllGalleriesComponent } from './components/all-galleries/all-galleries.component';
@@ -21,7 +22,8 @@ import { LayoutComponent } from './components/layout/layout.component';
     LayoutComponent
   ],
   imports: [
-    BrowserModule
+    BrowserModule,
+    AppRoutingModule 
   ],
   providers: [],
   bootstrap: [AppComponent]
