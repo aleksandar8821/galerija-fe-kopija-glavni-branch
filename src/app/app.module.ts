@@ -15,6 +15,8 @@ import { MyGalleriesComponent } from './components/my-galleries/my-galleries.com
 import { CreateNewGalleryComponent } from './components/create-new-gallery/create-new-gallery.component';
 import { LayoutComponent } from './components/layout/layout.component';
 import { AuthService } from './shared/services/auth.service';
+import { AuthGuard } from './shared/guards/auth.guard';
+import { GuestGuard } from './shared/guards/guest.guard';
 
 
 @NgModule({
@@ -32,9 +34,9 @@ import { AuthService } from './shared/services/auth.service';
     AppRoutingModule,
     FormsModule,
     HttpModule,
-    HttpClientModule
+    HttpClientModule    
   ],
-  providers: [AuthService],
+  providers: [AuthService, AuthGuard, GuestGuard],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

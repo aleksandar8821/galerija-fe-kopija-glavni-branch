@@ -28,13 +28,13 @@
       </li>
     </ul>
         
-            <a class="nav-link" routerLink="/login" routerLinkActive="active" *ngIf="!auth.isAuthenticated">Login</a>
+            <a class="nav-link" routerLink="/login" routerLinkActive="active" *ngIf="!authService.isAuthenticated">Login</a>
        
         
-            <a class="nav-link" *ngIf="auth.isAuthenticated" (click)="auth.logout()">Logout</a>
+            <a href="" class="nav-link" *ngIf="authService.isAuthenticated" (click)="authService.logout()">Logout</a>
         
        
-            <a class="nav-link" routerLink="/register" routerLinkActive="active" *ngIf="!auth.isAuthenticated">Register</a>
+            <a class="nav-link" routerLink="/register" routerLinkActive="active" *ngIf="!authService.isAuthenticated">Register</a>
         
   </div>
 </nav><br>

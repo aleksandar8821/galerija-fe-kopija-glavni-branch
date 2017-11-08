@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, Observer } from 'rxjs/Rx';
 import { HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { User } from '../models/user';
 
 @Injectable()
 export class AuthService {
@@ -12,7 +13,9 @@ export class AuthService {
   constructor(
         private http: HttpClient,
         private router: Router,
-    ) {}
+    ) {
+    this.isAuthenticated = Boolean(window.localStorage.getItem('loginToken'));
+  }
 
   public login(email: string, password: string) {
   	return new Observable((o: Observer<any>) => {
@@ -53,5 +56,24 @@ export class AuthService {
   // 		});
   // 	});
   // }
+
+  public register(user: User) {
+    return new Observable((o: Observer<any>) => {
+      this.http.post('http://localhost:8000/api/register', {
+        'firstName': user.firstName,
+        'lastName': user.lastName,
+        'email': user.email,
+        'password': user.password,
+        'password_confirmation': user.confirmPassword,
+        'accepted_terms': user.acceptedTerms
+      }).subscribe(() => {
+        this.router.navigateByUrl('/login');
+      }, (err) => {
+        // samo proslediti
+        return o.error(err);
+      });
+    });
+  }
+
 
 }

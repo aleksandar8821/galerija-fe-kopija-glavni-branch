@@ -32,7 +32,7 @@ const appRoutes: Routes = [
     },
     {
         path: 'login',
-        // canActivate: [GuestGuard],
+        canActivate: [GuestGuard],
         component: LoginComponent
     },
     {
