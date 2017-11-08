@@ -69,7 +69,6 @@ export class AuthService {
       }).subscribe(() => {
         this.router.navigateByUrl('/login');
       }, (err) => {
-        // samo proslediti
         return o.error(err);
       });
     });

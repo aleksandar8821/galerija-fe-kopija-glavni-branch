@@ -5,10 +5,7 @@
 <form #registerForm="ngForm" (ngSubmit)="register()">
     
 
-    <div *ngIf="errors.length > 0" class="alert alert-danger" role="alert">
-        <div *ngFor="let error of errors">{{error}}</div>
-    </div>
-
+    
 
     <div class="form-group">
         <label for="firstName">
@@ -89,7 +86,7 @@
 
     <div class="form-check">
 	    <label class="form-check-label">
-	      <input type="checkbox" class="form-check-input" required #acceptedTerms="ngModel" [(ngModel)]="user.acceptedTerms">
+	      <input type="checkbox" class="form-check-input" name="acceptedTerms" required #acceptedTerms="ngModel" [(ngModel)]="user.acceptedTerms">
 	      I accept terms and conditions
 	    </label>
   	</div>
