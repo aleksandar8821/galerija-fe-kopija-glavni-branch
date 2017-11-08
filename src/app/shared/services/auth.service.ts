@@ -58,6 +58,7 @@ export class AuthService {
   // }
 
   public register(user: User) {
+    console.log('nnnnnnn');
     return new Observable((o: Observer<any>) => {
       this.http.post('http://localhost:8000/api/register', {
         'firstName': user.firstName,
