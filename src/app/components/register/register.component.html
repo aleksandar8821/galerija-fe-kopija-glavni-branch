@@ -1,12 +1,5 @@
-<p>
-  register works!
-</p>
-
 <form #registerForm="ngForm" (ngSubmit)="register()">
     
-
-    
-
     <div class="form-group">
         <label for="firstName">
            First name
@@ -51,37 +44,40 @@
     <div class="form-group">
         <label for="password">
            Password
-           <span *ngIf="password.invalid && password.dirty">
-               <span *ngIf=" password.errors.required ">
-                   is required
-               </span>
-               <span *ngIf=" password.errors.minlength ">
-                   must be at least 8 chars
-               </span>
-               <span *ngIf=" password.errors.pattern ">
-                   must contain at least one number
-               </span>
-           </span>
+           
        </label>
-        <input #password="ngModel" [(ngModel)]="user.password" required minlength="8" pattern="\w*[0-9]{1,}\w*" [class.alert-danger]=" password.invalid && password.dirty "
+        <input #password="ngModel" [(ngModel)]="user.password" required minlength="8" pattern="\w*[0-9]{1,}\w*" 
             type="password" class="form-control" id="password" name="password">
+
+        <div *ngIf="password.invalid && password.dirty" class="alert alert-danger">
+	           <div *ngIf=" password.errors.required ">
+	              Password is required
+	           </div>
+	           <div *ngIf=" password.errors.minlength ">
+	              Password must be at least 8 chars
+	           </div>
+	           <div *ngIf=" password.errors.pattern ">
+	              Password must contain at least one number
+	           </div>
+	      </div>
     </div>
 
 
     <div class="form-group">
         <label for="password_confirmation">
            Confirm Password
-           <span *ngIf="confirmPassword.invalid && confirmPassword.dirty">
-               <span *ngIf=" confirmPassword.errors.required ">
-                   Is required
-               </span>
-           </span>
-           <span *ngIf="confirmPassword.touched && confirmPassword.value !== password.value">
-               Is not the same as password
-           </span>
+           
        </label>
-        <input #confirmPassword="ngModel" [(ngModel)]="user.confirmPassword" required [class.alert-danger]=" confirmPassword.invalid && confirmPassword.dirty"
+        <input #confirmPassword="ngModel" [(ngModel)]="user.confirmPassword" required 
             type="password" class="form-control" id="password_confirmation" name="password_confirmation">
+        <div *ngIf="confirmPassword.invalid && confirmPassword.dirty" class="alert alert-danger">
+        	<div *ngIf=" confirmPassword.errors.required ">
+        		Confirmed password is required
+        	</div>
+        </div>
+        <div *ngIf="confirmPassword.touched && confirmPassword.value !== password.value" class="alert alert-danger">
+        	<div>Confirmed password is not the same password</div>
+        </div>
     </div>
 
     <div class="form-check">

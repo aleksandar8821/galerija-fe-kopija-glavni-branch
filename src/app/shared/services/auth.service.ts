@@ -39,24 +39,7 @@ export class AuthService {
       this.isAuthenticated = false;
       this.router.navigateByUrl('/login');
   }
-
-  // public login(email: string, password: string) {
-  // 	return new Observable((o: Observer<any>) => {
-  // 		this.http.post('http://localhost:8000/api/login', {
-  // 			'email': email,
-  // 			'password': password
-  // 		}).subscribe((data) => {
-  // 			console.log(data);
-  // 			// this.isAuthenticated = true;
-
-  // 			o.next(data);
-  // 			return o.complete();
-  // 		}, (err) => {
-  // 			return o.error(err);
-  // 		});
-  // 	});
-  // }
-
+  
   public register(user: User) {
     console.log('nnnnnnn');
     return new Observable((o: Observer<any>) => {
@@ -67,8 +50,10 @@ export class AuthService {
         'password': user.password,
         'password_confirmation': user.confirmPassword,
         'accepted_terms': user.acceptedTerms
-      }).subscribe(() => {
-        this.router.navigateByUrl('/login');
+      }).subscribe((data: { token: string }) => {
+        window.localStorage.setItem('loginToken', data.token);
+        this.isAuthenticated = true;
+        this.router.navigateByUrl('/');
       }, (err) => {
         return o.error(err);
       });

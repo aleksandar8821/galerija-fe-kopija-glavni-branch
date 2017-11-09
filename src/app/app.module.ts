@@ -6,7 +6,6 @@ import { HttpModule } from '@angular/http';
 import { HttpClientModule } from '@angular/common/http';
 
 
-
 import { AppComponent } from './app.component';
 import { AllGalleriesComponent } from './components/all-galleries/all-galleries.component';
 import { LoginComponent } from './components/login/login.component';
