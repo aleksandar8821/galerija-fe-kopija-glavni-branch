@@ -25,7 +25,7 @@ export class AuthService {
   		}).subscribe((data: { token: string }) => {
   			window.localStorage.setItem('loginToken', data.token);
   			this.isAuthenticated = true;
-
+        // ovaj data.token se kolko sam skontao zapravo nigde ne koristi u funkciji koja se subscribeovala na ovaj observable, ali da bi se sucess handler u toj funkciji okinuo, ovaj mora nesto da mu posalje u sa o.next, inace se nista ne desava... malo glupavo, al sta ces
   			o.next(data.token);
   			return o.complete();
   		}, (err) => {
@@ -44,14 +44,15 @@ export class AuthService {
     console.log('nnnnnnn');
     return new Observable((o: Observer<any>) => {
       this.http.post('http://localhost:8000/api/register', {
-        'firstName': user.firstName,
-        'lastName': user.lastName,
+        'first_name': user.firstName,
+        'last_name': user.lastName,
         'email': user.email,
         'password': user.password,
         'password_confirmation': user.confirmPassword,
         'accepted_terms': user.acceptedTerms
-      }).subscribe((data: { token: string }) => {
+      }).subscribe((data: { token: string, logedUser: any }) => {
         window.localStorage.setItem('loginToken', data.token);
+        alert(data.logedUser.first_name)
         this.isAuthenticated = true;
         this.router.navigateByUrl('/');
       }, (err) => {
