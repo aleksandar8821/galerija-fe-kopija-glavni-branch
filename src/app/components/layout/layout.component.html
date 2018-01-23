@@ -7,33 +7,35 @@
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav mr-auto">
       <li class="nav-item">
-        <a class="nav-link" href="#">all galleries</a>
+        <a class="nav-link" href="#">View all galleries</a>
       </li>
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Dropdown
-        </a>
-        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-          <a class="dropdown-item" href="#">Action</a>
-          <a class="dropdown-item" href="#">Another action</a>
-          <div class="dropdown-divider"></div>
-          <a class="dropdown-item" href="#">Something else here</a>
-        </div>
+      <li class="nav-item" *ngIf="authService.isAuthenticated">
+        <a class="nav-link" href="#" routerLink="/create">Create new gallery</a>
       </li>
-      <li class="nav-item">
-        <a class="nav-link disabled" href="#">Disabled</a>
-      </li>
+      
     </ul>
-        
-            <a class="nav-link" routerLink="/login" routerLinkActive="active" *ngIf="!authService.isAuthenticated">Login</a>
-       
-        
-            <a href="" class="nav-link" *ngIf="authService.isAuthenticated" (click)="authService.logout()">Logout</a>
-        
-       
-            <a class="nav-link" routerLink="/register" routerLinkActive="active" *ngIf="!authService.isAuthenticated">Register</a>
 
+            <a class="nav-link" routerLink="/login" *ngIf="!authService.isAuthenticated">Login</a>
+       
+            <a class="nav-link" routerLink="/register" *ngIf="!authService.isAuthenticated">Register</a>
 
+            
+            <!-- Kopiran obican dropdown iz navbar-a i skinuta klasa mr-auto iz ul taga, a dodata klasa dropdown-menu-right dole u dropdown div-->
+
+            <ul  class="navbar-nav" *ngIf="authService.isAuthenticated">
+              
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle myclass-account-thumbnail" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <span>{{authService.loggedUserNameFirstLetter}}</span>
+                </a>
+                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                  <a class="dropdown-item" href="#" routerLink="/my-galleries">My galleries</a>
+                  <div class="dropdown-divider"></div>
+                  <a class="dropdown-item" href="#" (click)="authService.logout()">Logout</a>
+                </div>
+              </li>
+              
+            </ul>
         
   </div>
 </nav>

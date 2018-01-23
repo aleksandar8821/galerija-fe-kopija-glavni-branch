@@ -8,9 +8,13 @@ import { AuthService } from '../../shared/services/auth.service';
 })
 export class LayoutComponent implements OnInit {
 
-  constructor(private authService: AuthService) { }
+	// ovo sto si injektirao authService u ovu komponentu ti omogucuje da pristupis metodama i propertijima authService-a
+  constructor(private authService: AuthService) {
+  	
+  }
 
   ngOnInit() {
+  	
   }
 
 }
