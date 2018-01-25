@@ -60,6 +60,7 @@ export class AuthService {
         'accepted_terms': user.acceptedTerms
       }).subscribe((data: { token: string, logedUser: any }) => {
         window.localStorage.setItem('loginToken', data.token);
+        console.log(data)
         alert('You are now successfully registered')
         this.isAuthenticated = true;
         this.loggedUser = new User(data.logedUser.id, data.logedUser.first_name, data.logedUser.last_name, data.logedUser.email)
@@ -67,6 +68,7 @@ export class AuthService {
         window.localStorage.setItem('loggedUserNameFirstLetter', this.loggedUserNameFirstLetter)
         this.router.navigateByUrl('/');
       }, (err) => {
+        console.log(err)
         return o.error(err);
       });
     });
