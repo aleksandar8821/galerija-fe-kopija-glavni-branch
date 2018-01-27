@@ -1,4 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { GalleryService } from '../../shared/services/gallery.service';
+import { Gallery } from '../../shared/models/gallery'; 
+import { HttpErrorResponse } from '@angular/common/http';
+
 
 @Component({
   selector: 'app-all-galleries',
@@ -7,9 +11,21 @@ import { Component, OnInit } from '@angular/core';
 })
 export class AllGalleriesComponent implements OnInit {
 
-  constructor() { }
+	public galleries: Array<Gallery>
+
+  constructor(private galleryService: GalleryService) { }
 
   ngOnInit() {
+  	this.galleryService.getGalleries().subscribe(
+  	      data => {
+  	        this.galleries = data;
+  	        console.log(this.galleries)
+  	      },
+  	      (err: HttpErrorResponse) => {
+  	        alert(`Backend returned code ${err.status} with message: ${err.error.message}`);
+  	        console.log(err)
+  	      }
+  	);
   }
 
 }

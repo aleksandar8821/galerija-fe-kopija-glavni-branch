@@ -1,1 +1,15 @@
 /* You can add global styles to this file, and also import other style files */
+
+body{
+	background-image: url(assets/images/hqdefault.jpg);
+}
+
+.myclass-galleries-container{
+	background-color: rgba(230, 219, 25, 0.5);
+	padding: 20px;
+	border-radius: 10px;
+}
+
+.myclass-galleries-container > * + * {
+	margin-top: 20px;
+}
