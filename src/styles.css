@@ -4,12 +4,25 @@ body{
 	background-image: url(assets/images/hqdefault.jpg);
 }
 
+.myclass-router-outlet-wrapper{
+	background-color: white;
+	padding: 50px 80px;
+	min-height: 100vh;
+}
+
 .myclass-galleries-container{
-	background-color: rgba(230, 219, 25, 0.5);
+	margin-top: 25px;
+	text-align: center;
+	/*background-color: rgba(230, 219, 25, 0.5);
 	padding: 20px;
-	border-radius: 10px;
+	border-radius: 10px;*/
 }
 
 .myclass-galleries-container > * + * {
-	margin-top: 20px;
+	margin-top: 45px;
+}
+
+.myclass-galleries-index-images{
+	width: 33%;
+	
 }

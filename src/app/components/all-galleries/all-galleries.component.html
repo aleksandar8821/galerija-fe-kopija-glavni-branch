@@ -1,6 +1,6 @@
-<p>
-  all-galleries works!
-</p>
+
+<input id="filter-galleries-input" class="form-control col-lg-6" type="search" placeholder="Filter galleries" aria-label="Filter galleries by name, description or author">
+<small class="form-text text-muted">Filter galleries by name, description or author</small>
 
 <!-- <ul *ngFor="let gallery of galleries">
       <li class="list-group-item"><strong>Name:</strong> <a routerLink = "/galleries/{{gallery.id}}">{{ gallery.name }}</a></li>
@@ -11,19 +11,22 @@
 </ul> -->
 
 <div class="myclass-galleries-container">
-	<div *ngFor="let gallery of galleries" class="card text-center">
+	<div *ngFor="let gallery of showedGalleries" class="card text-left">
 	  <div class="card-header">
 	  	<h5 class="card-title"><a routerLink = "/galleries/{{gallery.id}}">{{ gallery.name }}</a></h5>
 	    {{ gallery.description }}
 	  </div>
-	  <div class="card-body">
-	    <strong>Images:</strong> <a href="{{ gallery.images[0].url }}">{{ gallery.images[0].url }}</a>, ...
-	    <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-	    <a href="#" class="btn btn-primary">Go somewhere</a>
+	  <div class="card-body text-center">
+	  	<img *ngFor="let image of gallery.images.slice(0, 6)" src="{{image.url}}" class="myclass-galleries-index-images">
 	  </div>
 	  <div class="card-footer text-muted">
 	    <strong>Created by:</strong> <a routerLink = "/authors/{{gallery.user_id}}">{{ gallery.user.firstName }}  {{ gallery.user.lastName}}</a>
-	    <strong>Created at:</strong> {{ gallery.created_at | date: "yyyy-mm-dd" }}
+	    <strong>Created at:</strong> {{ gallery.created_at | date: "yyyy-MM-dd" }}
+	    <span *ngIf="gallery.created_at !== gallery.updated_at"><strong>Last updated at:</strong> {{ gallery.updated_at | date: "yyyy-MM-dd" }}</span>
 	  </div>
 	</div>
+	<button class="btn btn-primary" title="bla" [disabled]="btnDisabled" (click)="loadGalleries()">Load more</button>
+	<span class="d-inline-block" tabindex="0" data-toggle="tooltip" title="Disabled tooltip">
+  <button class="btn btn-primary" style="pointer-events: none;" type="button" disabled>Disabled button</button>
+</span>
 </div>

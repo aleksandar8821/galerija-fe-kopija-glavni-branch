@@ -28,7 +28,7 @@ import { GuestGuard } from './shared/guards/guest.guard';
     RegisterComponent,
     MyGalleriesComponent,
     CreateNewGalleryComponent,
-    LayoutComponent
+    LayoutComponent,
   ],
   imports: [
     BrowserModule,
