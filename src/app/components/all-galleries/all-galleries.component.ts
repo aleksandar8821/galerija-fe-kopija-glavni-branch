@@ -16,13 +16,15 @@ export class AllGalleriesComponent implements OnInit {
 
 
   // Galerije koje se prikazuju preko load more button-a
-  public showedGalleries: Array<Gallery>
+  public showedGalleries: Array<Gallery> = []
   readonly galleriesLoadNumber: number = 2
   readonly initiallyShowedGalleriesNumber: number = 2
   public showedGalleriesNumber: number = this.initiallyShowedGalleriesNumber
   public filterInput: any //document.getElementById ne mozes pozvati ovde, jer ovog jos nece biti u domu tad
 
   public btnDisabled: boolean = true
+  public noGalleriesAtAll: boolean = false
+  public noGalleriesWithFilterTerm : boolean = false
 
   constructor(private galleryService: GalleryService) { }
 
@@ -41,37 +43,125 @@ export class AllGalleriesComponent implements OnInit {
               this.btnDisabled =  false
             }
 
-            // Filtriranje galerija
-            this.filterInput = document.getElementById('filter-galleries-input')
-            this.filterInput.addEventListener('keyup', (e) => { let filterTerm = e.target.value.toLowerCase()
-
-               this.filteredGalleries = this.retrievedGalleries.filter((g: Gallery) => {
-                 return (g.name.toLocaleLowerCase().includes(filterTerm.toLocaleLowerCase()) || g.description.toLocaleLowerCase().includes(filterTerm.toLocaleLowerCase()) || (g.user.firstName + " " + g.user.lastName).toLocaleLowerCase().includes(filterTerm.toLocaleLowerCase()))
-               })
-
-               this.showedGalleries = this.filteredGalleries.slice(0, this.initiallyShowedGalleriesNumber)
-
-               if(this.showedGalleries.length === this.filteredGalleries.length){
-                 this.btnDisabled = true
-               }
-               else{
-                 this.btnDisabled =  false
-               }
-
-
-               // Resetovanje showedGalleriesNumber
-               this.showedGalleriesNumber = this.initiallyShowedGalleriesNumber
-            })
-
-
+            if(this.showedGalleries.length === 0){
+              this.noGalleriesAtAll = true
+            }
 
   	      },
   	      (err: HttpErrorResponse) => {
   	        alert(`Backend returned code ${err.status} with message: ${err.error.message}`);
+            this.noGalleriesAtAll = true
   	        console.log(err)
   	      }
   	);
 
+
+
+    // Filtriranje galerija
+    this.filterInput = document.getElementById('filter-galleries-input')
+    this.filterInput.addEventListener('keyup', (e) => { let filterTerm = e.target.value.toLowerCase()
+
+       this.filteredGalleries = this.retrievedGalleries.filter((g: Gallery) => {
+         return (g.name.toLocaleLowerCase().includes(filterTerm.toLocaleLowerCase()) || g.description.toLocaleLowerCase().includes(filterTerm.toLocaleLowerCase()) || (g.user.firstName + " " + g.user.lastName).toLocaleLowerCase().includes(filterTerm.toLocaleLowerCase()))
+       })
+
+       this.showedGalleries = this.filteredGalleries.slice(0, this.initiallyShowedGalleriesNumber)
+
+       if(this.showedGalleries.length === this.filteredGalleries.length){
+         this.btnDisabled = true
+       }
+       else{
+         this.btnDisabled =  false
+       }
+
+       if(this.showedGalleries.length === 0){
+         this.noGalleriesWithFilterTerm = true
+       }else{
+         this.noGalleriesWithFilterTerm = false
+       }
+
+       // Resetovanje showedGalleriesNumber
+       this.showedGalleriesNumber = this.initiallyShowedGalleriesNumber
+    })
+
+
+
+    //Popover, odnosno tooltip
+    let popoverTarget = document.querySelector('.myclass-popover-div-wrapper');
+
+    
+    popoverTarget.addEventListener('mouseenter', (e) => {
+
+      // setTimeout(function(){
+      //   let popoverDiv = document.querySelector('.popover-content')
+      //   console.dir(popoverDiv)
+      // }, 1000)
+      
+      // console.log(popoverTarget)
+
+      //kreiraj text node
+
+      let btnLoadMore = document.querySelector("#myid-btnLoadMore") as any
+
+      if(btnLoadMore.disabled === true){
+        let popoverArrow = document.querySelector('#myid-load-more-popover-arrow') as any
+        // console.dir(popoverArrow)
+        popoverArrow.style.visibility = 'visible'
+      }
+
+      // console.log('asdifasndij')
+      
+    })
+
+    popoverTarget.addEventListener('mouseleave', (e) => {
+
+      // setTimeout(function(){
+      //   let popoverDiv = document.querySelector('.popover-content')
+      //   console.dir(popoverDiv)
+      // }, 1000)
+      
+      // console.log(popoverTarget)
+
+      //kreiraj text node
+
+      let btnLoadMore = document.querySelector("#myid-btnLoadMore") as any
+
+      if(btnLoadMore.disabled === true){
+        let popoverArrow = document.querySelector('#myid-load-more-popover-arrow') as any
+        // console.dir(popoverArrow)
+        popoverArrow.style.visibility = 'hidden'
+      }
+
+      // console.log('asdifasndij')
+      
+    })
+
+
+    //Ispravljanje greske kod popovera, gde se desava da kada nakon hoverovanja preko buttona kad brzo hoverujes na sam popover, trouglic ostane visible. Ovim dole je reseno da kad god predjes misem preko necega sto nije button da trouglicev visibility postane hidden
+    let body = document.querySelector('body')
+
+    body.addEventListener('mouseenter', (e) => {
+
+      // setTimeout(function(){
+      //   let popoverDiv = document.querySelector('.popover-content')
+      //   console.dir(popoverDiv)
+      // }, 1000)
+      
+      // console.log(popoverTarget)
+
+      //kreiraj text node
+
+      let btnLoadMore = document.querySelector("#myid-btnLoadMore") as any
+
+      if(btnLoadMore.disabled === true){
+        let popoverArrow = document.querySelector('#myid-load-more-popover-arrow') as any
+        // console.dir(popoverArrow)
+        popoverArrow.style.visibility = 'hidden'
+      }
+
+      // console.log('asdifasndij')
+      
+    })
 
   }
 

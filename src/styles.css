@@ -26,3 +26,41 @@ body{
 	width: 33%;
 	
 }
+
+.myclass-popover-div-wrapper{
+	display: inline-block;
+	margin-top: 0;
+}
+
+.myclass-popover-div{
+	
+}
+
+.myclass-triangle{
+	font-size: 80px;
+	color: red;
+}
+
+.popover.top.in{
+	background-color: black;
+	border: none;
+	margin-top: -10px;
+
+}
+
+
+.arrow{
+/*	border: 5px solid blue;
+	width: 80px;*/
+}
+
+
+.popover-content{
+	padding: 5px 8px;
+	color: red;
+
+}
+
+#myid-load-more-popover-arrow{
+	visibility: hidden;
+}

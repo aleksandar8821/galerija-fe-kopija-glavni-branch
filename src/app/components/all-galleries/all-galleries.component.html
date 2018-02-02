@@ -25,6 +25,29 @@
 	    <span *ngIf="gallery.created_at !== gallery.updated_at"><strong>Last updated at:</strong> {{ gallery.updated_at | date: "yyyy-MM-dd" }}</span>
 	  </div>
 	</div>
-	<button class="btn btn-primary" title="bla" [disabled]="btnDisabled" (click)="loadGalleries()">Load more</button>
 	
+
+	
+	<div [ngStyle]="{'display': showedGalleries.length > 0 ? 'inline-block' : 'none' }">
+		<div id="myid-load-more-popover-arrow">▼</div>
+		<div class="myclass-popover-div-wrapper">
+			
+			<div class="myclass-popover-div" popover="There are no more galleries to show" [popoverOnHover]="true" popoverPlacement="top" [popoverDisabled]="!btnDisabled">
+				
+				<button id="myid-btnLoadMore" class="btn btn-primary" [disabled]="btnDisabled" (click)="loadGalleries()">Load more</button>
+		
+			</div>
+		
+		</div>
+	</div>
+	
+
+	<p *ngIf="noGalleriesAtAll">
+		There are no galleries to show
+	</p>
+
+	<p *ngIf="noGalleriesWithFilterTerm">
+		There are no galleries with provided term
+	</p>
+
 </div>
