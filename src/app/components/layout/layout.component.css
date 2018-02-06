@@ -1,3 +1,16 @@
+/*Treba koristiti ovu max-width vrednost, kad isprobas u browseru, to je tacno to... Inace ove vrednosti imas na https://getbootstrap.com/docs/4.0/layout/overview/#responsive-breakpoints*/
+@media (max-width: 991.98px) { 
+	#myid-logged-user-dropdown-links{
+		display: none;
+	}
+}
+
+@media (min-width: 992px) { 
+	#myid-logged-user-regular-links{
+		display: none;
+	}
+}
+
 a.dropdown-toggle.myclass-account-thumbnail{
 	background-color: indianred;
 	border-radius: 50%;

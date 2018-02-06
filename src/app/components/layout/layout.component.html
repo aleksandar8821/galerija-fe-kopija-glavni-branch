@@ -14,7 +14,7 @@
       </li>
       
     </ul>
-
+            
             <a class="nav-link" routerLink="/login" *ngIf="!authService.isAuthenticated">Login</a>
        
             <a class="nav-link" routerLink="/register" *ngIf="!authService.isAuthenticated">Register</a>
@@ -22,7 +22,7 @@
             
             <!-- Kopiran obican dropdown iz navbar-a i skinuta klasa mr-auto iz ul taga, a dodata klasa dropdown-menu-right dole u dropdown div-->
 
-            <ul  class="navbar-nav" *ngIf="authService.isAuthenticated">
+            <ul id="myid-logged-user-dropdown-links" class="navbar-nav" *ngIf="authService.isAuthenticated">
               
               <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle myclass-account-thumbnail" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -36,7 +36,15 @@
               </li>
               
             </ul>
-        
+            <!-- ****************************************** -->
+
+            <span id="myid-logged-user-regular-links">
+              <a class="nav-link" routerLink="/my-galleries" *ngIf="authService.isAuthenticated">My galleries</a>
+              
+              <!-- Ukoliko nemas u donjem primeru href="#" neces imati lepo dizajniran link  -->
+              
+              <a class="nav-link" href="#" (click)="authService.logout()" *ngIf="authService.isAuthenticated">Logout</a>
+            </span>
   </div>
 </nav>
 
