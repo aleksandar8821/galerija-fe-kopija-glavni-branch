@@ -92,6 +92,7 @@ export class AllGalleriesComponent implements OnInit {
 
       this.subject.next(filterTerm)
 
+      // kod kopiran gore u subject, zbog debounce-a
       // this.filteredGalleries = this.retrievedGalleries.filter((g: Gallery) => {
       //   return (g.name.toLocaleLowerCase().includes(filterTerm.toLocaleLowerCase()) || g.description.toLocaleLowerCase().includes(filterTerm.toLocaleLowerCase()) || (g.user.firstName + " " + g.user.lastName).toLocaleLowerCase().includes(filterTerm.toLocaleLowerCase()))
       // })
@@ -123,14 +124,20 @@ export class AllGalleriesComponent implements OnInit {
     
     popoverTarget.addEventListener('mouseenter', (e) => {
 
-      // setTimeout(function(){
-      //   let popoverDiv = document.querySelector('.popover-content')
-      //   console.dir(popoverDiv)
-      // }, 1000)
-      
-      // console.log(popoverTarget)
+      let btnLoadMore = document.querySelector("#myid-btnLoadMore") as any
 
-      //kreiraj text node
+      if(btnLoadMore.disabled === true){
+        let popoverMsg = document.querySelector('.myclass-new-popover-wrapper') as any
+        // console.dir(popoverMsg)
+        popoverMsg.style.visibility = 'visible'
+      }
+
+      // console.log('1')
+      
+    })
+
+    //kod za smartphone, ipad-e i ostale touch screen uredjaje:
+    popoverTarget.addEventListener('touchstart', (e) => {
 
       let btnLoadMore = document.querySelector("#myid-btnLoadMore") as any
 
@@ -140,20 +147,11 @@ export class AllGalleriesComponent implements OnInit {
         popoverMsg.style.visibility = 'visible'
       }
 
-      // console.log('asdifasndij')
+      // console.log('2')
       
     })
 
     popoverTarget.addEventListener('mouseleave', (e) => {
-
-      // setTimeout(function(){
-      //   let popoverDiv = document.querySelector('.popover-content')
-      //   console.dir(popoverDiv)
-      // }, 1000)
-      
-      // console.log(popoverTarget)
-
-      //kreiraj text node
 
       let btnLoadMore = document.querySelector("#myid-btnLoadMore") as any
 
@@ -163,9 +161,11 @@ export class AllGalleriesComponent implements OnInit {
         popoverMsg.style.visibility = 'hidden'
       }
 
-      // console.log('asdifasndij')
+      // console.log('3')
       
     })
+
+    // kod za touch screenove za evente touchend i touchleave nije radio kako treba (prvi je ucinio da popover blinka, a drugi uopste nije reagovao!), pa je sklonjen, inace radi i na mobilnim uredjajima (unutar google dev tools simulatora) sa mouseleave
 
 
     //Ispravljanje greske kod popovera (ne mog nego instaliranog https://www.npmjs.com/package/ngx-popover), gde se desava da kada nakon hoverovanja preko buttona kad brzo hoverujes na sam popover, trouglic ostane visible. Ovim dole je reseno da kad god predjes misem preko necega sto nije button da trouglicev visibility postane hidden
