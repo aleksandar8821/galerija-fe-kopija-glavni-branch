@@ -2,7 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { GalleryService } from '../../shared/services/gallery.service';
 import { Gallery } from '../../shared/models/gallery'; 
 import { HttpErrorResponse } from '@angular/common/http';
-
+import { Subject } from 'rxjs/Subject';
+import {
+   debounceTime, distinctUntilChanged, switchMap
+ } from 'rxjs/operators'
 
 @Component({
   selector: 'app-all-galleries',
@@ -26,7 +29,7 @@ export class AllGalleriesComponent implements OnInit {
   public noGalleriesAtAll: boolean = false
   public noGalleriesWithFilterTerm : boolean = false
 
-  constructor(private galleryService: GalleryService) { }
+  constructor(private galleryService: GalleryService, private subject: Subject<string>) { }
 
   ngOnInit() {
   	this.galleryService.getGalleries().subscribe(
@@ -55,33 +58,61 @@ export class AllGalleriesComponent implements OnInit {
   	      }
   	);
 
+    //odradjen debounce sa ovog linka (https://stackoverflow.com/questions/42761163/angular-2-debouncing-a-keyup-event), pogledati ovo jos malo, cini mi se da su druga resenja opsirnija malo, mada ovo radi zasad posao
+    this.subject.debounceTime(500).subscribe(filterTerm => {
+      // kopiran kompletan zakomentarisan deo iz filterInput event hendlera dole:
+        this.filteredGalleries = this.retrievedGalleries.filter((g: Gallery) => {
+          return (g.name.toLocaleLowerCase().includes(filterTerm.toLocaleLowerCase()) || g.description.toLocaleLowerCase().includes(filterTerm.toLocaleLowerCase()) || (g.user.firstName + " " + g.user.lastName).toLocaleLowerCase().includes(filterTerm.toLocaleLowerCase()))
+        })
 
+        this.showedGalleries = this.filteredGalleries.slice(0, this.initiallyShowedGalleriesNumber)
+
+        if(this.showedGalleries.length === this.filteredGalleries.length){
+          this.btnDisabled = true
+        }
+        else{
+          this.btnDisabled =  false
+        }
+
+        if(this.showedGalleries.length === 0){
+          this.noGalleriesWithFilterTerm = true
+        }else{
+          this.noGalleriesWithFilterTerm = false
+        }
+
+         // Resetovanje showedGalleriesNumber
+         this.showedGalleriesNumber = this.initiallyShowedGalleriesNumber
+      });
 
     // Filtriranje galerija
     this.filterInput = document.getElementById('filter-galleries-input')
-    this.filterInput.addEventListener('keyup', (e) => { let filterTerm = e.target.value.toLowerCase()
+    this.filterInput.addEventListener('keyup', (e) => { 
 
-       this.filteredGalleries = this.retrievedGalleries.filter((g: Gallery) => {
-         return (g.name.toLocaleLowerCase().includes(filterTerm.toLocaleLowerCase()) || g.description.toLocaleLowerCase().includes(filterTerm.toLocaleLowerCase()) || (g.user.firstName + " " + g.user.lastName).toLocaleLowerCase().includes(filterTerm.toLocaleLowerCase()))
-       })
+      let filterTerm = e.target.value.toLowerCase()
 
-       this.showedGalleries = this.filteredGalleries.slice(0, this.initiallyShowedGalleriesNumber)
+      this.subject.next(filterTerm)
 
-       if(this.showedGalleries.length === this.filteredGalleries.length){
-         this.btnDisabled = true
-       }
-       else{
-         this.btnDisabled =  false
-       }
+      // this.filteredGalleries = this.retrievedGalleries.filter((g: Gallery) => {
+      //   return (g.name.toLocaleLowerCase().includes(filterTerm.toLocaleLowerCase()) || g.description.toLocaleLowerCase().includes(filterTerm.toLocaleLowerCase()) || (g.user.firstName + " " + g.user.lastName).toLocaleLowerCase().includes(filterTerm.toLocaleLowerCase()))
+      // })
 
-       if(this.showedGalleries.length === 0){
-         this.noGalleriesWithFilterTerm = true
-       }else{
-         this.noGalleriesWithFilterTerm = false
-       }
+      // this.showedGalleries = this.filteredGalleries.slice(0, this.initiallyShowedGalleriesNumber)
 
-       // Resetovanje showedGalleriesNumber
-       this.showedGalleriesNumber = this.initiallyShowedGalleriesNumber
+      // if(this.showedGalleries.length === this.filteredGalleries.length){
+      //   this.btnDisabled = true
+      // }
+      // else{
+      //   this.btnDisabled =  false
+      // }
+
+      // if(this.showedGalleries.length === 0){
+      //   this.noGalleriesWithFilterTerm = true
+      // }else{
+      //   this.noGalleriesWithFilterTerm = false
+      // }
+
+      //  // Resetovanje showedGalleriesNumber
+      //  this.showedGalleriesNumber = this.initiallyShowedGalleriesNumber
     })
 
 
