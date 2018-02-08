@@ -29,7 +29,7 @@ body{
 
 .myclass-popover-div-wrapper{
 	display: inline-block;
-	margin-top: 0;
+	margin-top: 2px;
 }
 
 .myclass-popover-div{
@@ -61,6 +61,22 @@ body{
 
 }
 
+#myid-load-more-popover-message{
+	background-color: black;
+	color: red;
+	font-size: 14px;
+	padding: 5px 8px;
+	border-radius: 10px;
+	margin-bottom: -7px;
+}
+
+
 #myid-load-more-popover-arrow{
+	color: black;
+	font-size: 15px;
+	line-height: 1;
+}
+
+.myclass-new-popover-wrapper{
 	visibility: hidden;
 }

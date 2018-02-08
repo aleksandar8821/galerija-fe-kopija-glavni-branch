@@ -27,8 +27,8 @@
 	</div>
 	
 
-	
-	<div [ngStyle]="{'display': showedGalleries.length > 0 ? 'inline-block' : 'none' }">
+	<!-- stari kod za popover koji je instaliran preko npm-a, ali je imao taj bug da se raspada u toku loadovanja stranice - sam popover bezi na gore! -->
+	<!-- <div [ngStyle]="{'display': showedGalleries.length > 0 ? 'inline-block' : 'none' }">
 		<div id="myid-load-more-popover-arrow">▼</div>
 		<div class="myclass-popover-div-wrapper">
 			
@@ -39,8 +39,30 @@
 			</div>
 		
 		</div>
-	</div>
+	</div> -->
 	
+
+
+	<!-- novi kod za moj samostalno napravljeni popover - mana mu je ta sto mora uvek biti prazan prostor iznad dugmeta, i sto ne moze da se preklapa sa elementima nego zahteva svoj prazan prostor, sto ovde ne predstavlja nikakav problem -->
+	<div [ngStyle]="{'display': showedGalleries.length > 0 ? 'inline-block' : 'none', 'margin-top': '25px' }">
+		
+
+		<div class="myclass-new-popover-wrapper">
+			<div id="myid-load-more-popover-message">There are no more galleries to show</div>
+			<div id="myid-load-more-popover-arrow">▼</div>
+		</div>
+		
+
+		<div class="myclass-popover-div-wrapper">
+			
+							
+				<button id="myid-btnLoadMore" class="btn btn-primary" [disabled]="btnDisabled" (click)="loadGalleries()">Load more</button>
+		
+			
+		
+		</div>
+	</div>
+
 
 	<p *ngIf="noGalleriesAtAll">
 		There are no galleries to show

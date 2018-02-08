@@ -135,9 +135,9 @@ export class AllGalleriesComponent implements OnInit {
       let btnLoadMore = document.querySelector("#myid-btnLoadMore") as any
 
       if(btnLoadMore.disabled === true){
-        let popoverArrow = document.querySelector('#myid-load-more-popover-arrow') as any
-        // console.dir(popoverArrow)
-        popoverArrow.style.visibility = 'visible'
+        let popoverMsg = document.querySelector('.myclass-new-popover-wrapper') as any
+        // console.dir(popoverMsg)
+        popoverMsg.style.visibility = 'visible'
       }
 
       // console.log('asdifasndij')
@@ -158,9 +158,9 @@ export class AllGalleriesComponent implements OnInit {
       let btnLoadMore = document.querySelector("#myid-btnLoadMore") as any
 
       if(btnLoadMore.disabled === true){
-        let popoverArrow = document.querySelector('#myid-load-more-popover-arrow') as any
-        // console.dir(popoverArrow)
-        popoverArrow.style.visibility = 'hidden'
+        let popoverMsg = document.querySelector('.myclass-new-popover-wrapper') as any
+        // console.dir(popoverMsg)
+        popoverMsg.style.visibility = 'hidden'
       }
 
       // console.log('asdifasndij')
@@ -168,8 +168,8 @@ export class AllGalleriesComponent implements OnInit {
     })
 
 
-    //Ispravljanje greske kod popovera, gde se desava da kada nakon hoverovanja preko buttona kad brzo hoverujes na sam popover, trouglic ostane visible. Ovim dole je reseno da kad god predjes misem preko necega sto nije button da trouglicev visibility postane hidden
-    let body = document.querySelector('body')
+    //Ispravljanje greske kod popovera (ne mog nego instaliranog https://www.npmjs.com/package/ngx-popover), gde se desava da kada nakon hoverovanja preko buttona kad brzo hoverujes na sam popover, trouglic ostane visible. Ovim dole je reseno da kad god predjes misem preko necega sto nije button da trouglicev visibility postane hidden
+/*    let body = document.querySelector('body')
 
     body.addEventListener('mouseenter', (e) => {
 
@@ -192,7 +192,7 @@ export class AllGalleriesComponent implements OnInit {
 
       // console.log('asdifasndij')
       
-    })
+    })*/
 
   }
 
