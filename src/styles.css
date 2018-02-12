@@ -56,7 +56,7 @@ body{
 
 
 .popover-content{
-	padding: 5px 8px;
+	padding: 4px 8px;
 	color: red;
 
 }
@@ -65,9 +65,11 @@ body{
 	background-color: black;
 	color: red;
 	font-size: 14px;
-	padding: 5px 8px;
+	padding: 5px 9px;
 	border-radius: 10px;
 	margin-bottom: -7px;
+	position: relative;
+	z-index: 2;
 }
 
 
@@ -75,6 +77,8 @@ body{
 	color: black;
 	font-size: 15px;
 	line-height: 1;
+	position: relative;
+	z-index: 1;
 }
 
 .myclass-new-popover-wrapper{

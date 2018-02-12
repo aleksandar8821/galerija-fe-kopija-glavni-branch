@@ -58,8 +58,12 @@ export class AllGalleriesComponent implements OnInit {
   	      }
   	);
 
-    //odradjen debounce sa ovog linka (https://stackoverflow.com/questions/42761163/angular-2-debouncing-a-keyup-event), pogledati ovo jos malo, cini mi se da su druga resenja opsirnija malo, mada ovo radi zasad posao
-    this.subject.debounceTime(500).subscribe(filterTerm => {
+
+    //odradjen debounce sa ovog linka (https://stackoverflow.com/questions/42761163/angular-2-debouncing-a-keyup-event), pogledati ovo jos malo, cini mi se da su druga resenja opsirnija malo, mada ovo radi zasad posao. Dodato: ovaj link je jos pribliznji mom resenju(odgovor nakon prihvacenog): https://stackoverflow.com/questions/32051273/angular-and-debounce . A i ovde je slicno https://www.reddit.com/r/Angular2/comments/52xzi0/why_in_the_heck_is_debounce_so_complicated_in/ 
+    this.subject.debounceTime(500).distinctUntilChanged().subscribe(filterTerm => {
+
+      console.log('eve me!')
+
       // kopiran kompletan zakomentarisan deo iz filterInput event hendlera dole:
         this.filteredGalleries = this.retrievedGalleries.filter((g: Gallery) => {
           return (g.name.toLocaleLowerCase().includes(filterTerm.toLocaleLowerCase()) || g.description.toLocaleLowerCase().includes(filterTerm.toLocaleLowerCase()) || (g.user.firstName + " " + g.user.lastName).toLocaleLowerCase().includes(filterTerm.toLocaleLowerCase()))
@@ -83,6 +87,9 @@ export class AllGalleriesComponent implements OnInit {
          // Resetovanje showedGalleriesNumber
          this.showedGalleriesNumber = this.initiallyShowedGalleriesNumber
       });
+
+   
+
 
     // Filtriranje galerija
     this.filterInput = document.getElementById('filter-galleries-input')
