@@ -13,6 +13,7 @@ import { User } from '../../shared/models/user';
 export class RegisterComponent implements OnInit {
 
 	public user: User = new User();
+  public submitBtn: any
 
 	constructor(
 		private router: Router,
@@ -21,8 +22,11 @@ export class RegisterComponent implements OnInit {
 
 
   ngOnInit() {
+    this.submitBtn = document.getElementById('myid-register-submit-button')
+ 
   }
 
+   
   public register() {
   	this.authService.register(this.user).subscribe(() => {
   		this.router.navigateByUrl('/login'); //ovo ti i ne biva okinuto (doduse i ne treba) jer funkcija na koju si se subscribeovao ne vraca nista preko o.next
@@ -34,7 +38,12 @@ export class RegisterComponent implements OnInit {
         errorString += message + '\n'
       });
   		alert(errorString);
+      // Vracam disabled na false, ukoliko registracija nije uspela, prethodno sam ga podesio na true dole, ispod ove funkcije
+      this.submitBtn.disabled = false
   	});
+
+    // Cim pokrene ovu gore funkciju authService.register(), dugme se disableuje zato da user ne bi kliktao ponovo na dugme misleci da mu podaci nisu odmah poslati
+    this.submitBtn.disabled = true;
   }
 
 

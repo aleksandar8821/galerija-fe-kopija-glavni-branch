@@ -19,6 +19,8 @@ import { AuthService } from './shared/services/auth.service';
 import { GalleryService } from './shared/services/gallery.service';
 import { AuthGuard } from './shared/guards/auth.guard';
 import { GuestGuard } from './shared/guards/guest.guard';
+import { UrlGuard } from './shared/guards/url.guard';
+import { RegisterVerificationComponent } from './components/register-verification/register-verification.component';
 
 
 @NgModule({
@@ -30,6 +32,7 @@ import { GuestGuard } from './shared/guards/guest.guard';
     MyGalleriesComponent,
     CreateNewGalleryComponent,
     LayoutComponent,
+    RegisterVerificationComponent,
   ],
   imports: [
     BrowserModule,
@@ -39,7 +42,7 @@ import { GuestGuard } from './shared/guards/guest.guard';
     HttpClientModule,
     PopoverModule    
   ],
-  providers: [AuthService, GalleryService, AuthGuard, GuestGuard, Subject],
+  providers: [AuthService, GalleryService, AuthGuard, GuestGuard, UrlGuard, Subject],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

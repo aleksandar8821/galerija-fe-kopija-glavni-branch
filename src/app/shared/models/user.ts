@@ -7,7 +7,9 @@ export class User {
 	    public email?: string,
 	    public password?: string,
 	    public confirmPassword?: string,
-	    public acceptedTerms?: boolean
+	    public acceptedTerms?: boolean,
+	    public verified?: boolean,
+	    public verifyToken?: string
  		 ) { }
 
 }
