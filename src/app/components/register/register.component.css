@@ -1,3 +1,19 @@
+.progress{
+	visibility: hidden;
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	height: 10px;
+	border-radius: 0;
+}
+
+.progress .progress-bar{
+	width: 100%;
+	webkit-animation: progress-bar-stripes 0.5 linear infinite;
+    animation: progress-bar-stripes 0.5s linear infinite;
+}
+
 .alert.alert-danger{
 	margin-top: 5px;
 }

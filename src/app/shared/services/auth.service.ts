@@ -23,6 +23,10 @@ export class AuthService {
     this.loggedUserNameFirstLetter = window.localStorage.getItem('loggedUserNameFirstLetter')
   }
 
+  public getRequestHeaders(){
+    return new HttpHeaders().set('Authorization', 'Bearer ' + window.localStorage.getItem('loginToken'))
+  }
+
   public login(email: string, password: string) {
   	return new Observable((o: Observer<any>) => {
   		this.http.post('http://localhost:8000/api/login', {
@@ -99,6 +103,7 @@ export class AuthService {
       });
     });
   }
+
 
 
 }

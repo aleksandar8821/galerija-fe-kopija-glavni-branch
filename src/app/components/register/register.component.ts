@@ -14,6 +14,7 @@ export class RegisterComponent implements OnInit {
 
 	public user: User = new User();
   public submitBtn: any
+  public progressBar: any
 
 	constructor(
 		private router: Router,
@@ -23,7 +24,8 @@ export class RegisterComponent implements OnInit {
 
   ngOnInit() {
     this.submitBtn = document.getElementById('myid-register-submit-button')
- 
+    this.progressBar = document.querySelector('.progress')
+
   }
 
    
@@ -38,12 +40,22 @@ export class RegisterComponent implements OnInit {
         errorString += message + '\n'
       });
   		alert(errorString);
-      // Vracam disabled na false, ukoliko registracija nije uspela, prethodno sam ga podesio na true dole, ispod ove funkcije
+      // Vracam disabled na false, ukoliko registracija nije uspela, prethodno sam ga podesio na true dole, ispod ove funkcije, isto tako iskljucujem progress bar
       this.submitBtn.disabled = false
-  	});
+      this.progressBar.style.visibility = 'hidden'
+  	}, () => {
+      // Ovde radim isto sto i u error handleru, s tim sto ga za svaki slucaj odlazem, jer je mozda moguce da mi pre redirekcije koja se desava ako zahtev uspe odradi ova podesavanja, a to nije pozeljno da se desi
+      setTimeout( () => {
+        this.submitBtn.disabled = false
+        this.progressBar.style.visibility = 'hidden'
+        
+      }, 2000)
+      
+    });
 
-    // Cim pokrene ovu gore funkciju authService.register(), dugme se disableuje zato da user ne bi kliktao ponovo na dugme misleci da mu podaci nisu odmah poslati
+    // Cim pokrene ovu gore funkciju authService.register(), dugme se disableuje zato da user ne bi kliktao ponovo na dugme misleci da mu podaci nisu odmah poslati i ukljucujem progress bar da user zna da aplikacija nesto radi da nije zapucala
     this.submitBtn.disabled = true;
+    this.progressBar.style.visibility = 'visible'
   }
 
 

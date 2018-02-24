@@ -52,7 +52,7 @@ export class AllGalleriesComponent implements OnInit {
 
   	      },
   	      (err: HttpErrorResponse) => {
-  	        alert(`Backend returned code ${err.status} with message: ${err.error.message}`);
+  	        alert(`Server returned code ${err.status} with message: ${err.error.message}`);
             this.noGalleriesAtAll = true
   	        console.log(err)
   	      }
