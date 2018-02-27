@@ -84,3 +84,7 @@ body{
 .myclass-new-popover-wrapper{
 	visibility: hidden;
 }
+
+button:disabled{
+	cursor: not-allowed;
+}

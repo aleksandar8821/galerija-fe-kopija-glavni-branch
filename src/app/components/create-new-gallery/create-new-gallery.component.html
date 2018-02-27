@@ -44,19 +44,23 @@
         <div class="form-group myclass-choose-image">
           <label for="exampleFormControlFile1">Choose an image from your system</label>
           
-          <input type="file"  name="imageUrl" class="form-control-file myclass-image-url" ngModel (change)="getFiles($event)">
+          <input type="file" accept="image/*" name="imageUrl" class="form-control-file myclass-image-url" ngModel (change)="getFiles($event)">
 
           <div class="myclass-image-thumbnail">
             <img  *ngIf='url' [src]="url">
+          </div>
+
+          <div *ngIf="uploadImageError" class="alert alert-danger">
+            {{uploadImageError}}
           </div> 
           
         </div>
 
         <div class="form-group myclass-image-description">
-				    <label for="image description">
+				    <label for="imageDescription">
 				       Image description (optional)
 				   	</label>
-				    <textarea #description="ngModel" [(ngModel)]="image.description" maxlength="1000" class="form-control" id="description" name="description"></textarea>
+				    <textarea #description="ngModel" [(ngModel)]="image.description" maxlength="1000" class="form-control" id="imageDescription" name="description"></textarea>
 		
 				    <div *ngIf="description.invalid && (description.dirty || description.touched)" class="alert alert-danger">
 				        <div *ngIf=" description.errors.maxlength ">
