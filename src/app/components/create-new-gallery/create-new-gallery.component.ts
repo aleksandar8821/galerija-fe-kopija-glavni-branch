@@ -4,6 +4,7 @@ import { Image } from '../../shared/models/image';
 import { AuthService } from '../../shared/services/auth.service';
 import { HttpClient } from '@angular/common/http';
 import { HttpErrorResponse } from '@angular/common/http';
+import { SanitizeHtmlPipe } from '../../shared/pipes/sanitize-html.pipe';
 
 @Component({
   selector: 'app-create-new-gallery',
@@ -18,6 +19,8 @@ export class CreateNewGalleryComponent implements OnInit {
   public files : FileList; 
   public url: any
   public uploadImageError: string
+  public newImagesDiv: any
+  public addImageDiv: any
   
   getFiles(event){ 
       this.files = event.target.files;
@@ -53,6 +56,8 @@ export class CreateNewGalleryComponent implements OnInit {
   constructor(private http: HttpClient, private authService: AuthService) { }
 
   ngOnInit() {
+    this.newImagesDiv = document.getElementById('newImagesDiv')
+
   }
 
   public createGallery(gallery, image){
@@ -75,6 +80,17 @@ export class CreateNewGalleryComponent implements OnInit {
     }, (error) => {
       console.log(error)
     });
+  }
+
+  public addAnotherImage(){
+    // let addImageDiv = document.createElement('div')
+    // this.newImagesDiv.appendChild(addImageDiv)
+    // addImageDiv.innerHTML = '<div class="card form-group"><div class="card-header"> Add image</div><div class="card-body"><div class="form-group myclass-choose-image"> <label for="exampleFormControlFile1">Choose an image from your system</label> <input type="file" accept="image/*" name="imageUrl" class="form-control-file myclass-image-url" ngModel (change)="getFiles($event)"><div class="myclass-image-thumbnail"> <img *ngIf="url" [src]="url"></div><div *ngIf="uploadImageError" class="alert alert-danger"> {{uploadImageError}}</div></div><div class="form-group myclass-image-description"> <label for="imageDescription"> Image description (optional) </label><textarea #description="ngModel" [(ngModel)]="image.description" maxlength="1000" class="form-control" id="imageDescription" name="description"></textarea><div *ngIf="description.invalid && (description.dirty || description.touched)" class="alert alert-danger"><div *ngIf=" description.errors.maxlength "> Descritpion can be max 1000 chars</div></div></div></div><div class="card-footer text-muted"> <a href="#" class="myclass-arrow-link"><i class="fas fa-arrow-alt-circle-up myclass-image-arrow "></i></a> <a href="#" class="myclass-arrow-link"><i class="fas fa-arrow-alt-circle-down myclass-image-arrow "></i></a></div></div>'
+
+    let addImageDiv = '<div class="card form-group"><div class="card-header"> Add image</div><div class="card-body"><div class="form-group myclass-choose-image"> <label for="exampleFormControlFile1">Choose an image from your system</label> <input type="file" accept="image/*" name="imageUrl" class="form-control-file myclass-image-url" ngModel (change)="getFiles($event)"><div class="myclass-image-thumbnail"> <img *ngIf="url" [src]="url"></div><div *ngIf="uploadImageError" class="alert alert-danger"> {{uploadImageError}}</div></div><div class="form-group myclass-image-description"> <label for="imageDescription"> Image description (optional) </label><textarea #description="ngModel" [(ngModel)]="image.description" maxlength="1000" class="form-control" id="imageDescription" name="description"></textarea><div *ngIf="description.invalid && (description.dirty || description.touched)" class="alert alert-danger"><div *ngIf=" description.errors.maxlength "> Descritpion can be max 1000 chars</div></div></div></div><div class="card-footer text-muted"> <a href="#" class="myclass-arrow-link"><i class="fas fa-arrow-alt-circle-up myclass-image-arrow "></i></a> <a href="#" class="myclass-arrow-link"><i class="fas fa-arrow-alt-circle-down myclass-image-arrow "></i></a></div></div>'
+
+      this.addImageDiv = addImageDiv
+
   }
 
 }

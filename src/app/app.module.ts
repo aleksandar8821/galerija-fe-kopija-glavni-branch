@@ -21,6 +21,7 @@ import { AuthGuard } from './shared/guards/auth.guard';
 import { GuestGuard } from './shared/guards/guest.guard';
 import { UrlGuard } from './shared/guards/url.guard';
 import { RegisterVerificationComponent } from './components/register-verification/register-verification.component';
+import { SanitizeHtmlPipe } from './shared/pipes/sanitize-html.pipe';
 
 
 @NgModule({
@@ -33,6 +34,7 @@ import { RegisterVerificationComponent } from './components/register-verificatio
     CreateNewGalleryComponent,
     LayoutComponent,
     RegisterVerificationComponent,
+    SanitizeHtmlPipe,
   ],
   imports: [
     BrowserModule,
