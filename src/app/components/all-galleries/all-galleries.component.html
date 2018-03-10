@@ -16,8 +16,8 @@
 	  	<h5 class="card-title"><a routerLink = "/galleries/{{gallery.id}}">{{ gallery.name }}</a></h5>
 	    {{ gallery.description }}
 	  </div>
-	  <div class="card-body text-center">
-	  	<img *ngFor="let image of gallery.images.slice(0, 6)" src="{{image.url}}" class="myclass-galleries-index-images">
+	  <div class="card-body myclass-galleries-images-container">
+	  	<img *ngFor="let image of gallery.images.slice(0, 6)" src="{{image.url}}" class="myclass-galleries-index-images" (load)="resizeImageIfVertical($event)">
 	  </div>
 	  <div class="card-footer text-muted">
 	    <strong>Created by:</strong> <a routerLink = "/authors/{{gallery.user_id}}">{{ gallery.user.firstName }}  {{ gallery.user.lastName}}</a>

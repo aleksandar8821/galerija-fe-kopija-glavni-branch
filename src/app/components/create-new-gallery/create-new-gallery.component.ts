@@ -1,10 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, QueryList, ViewChildren, ViewChild, ViewContainerRef } from '@angular/core';
+import { AddImageComponent } from '../add-image/add-image.component';
 import { Gallery } from '../../shared/models/gallery';
 import { Image } from '../../shared/models/image';
 import { AuthService } from '../../shared/services/auth.service';
+import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { HttpErrorResponse } from '@angular/common/http';
 import { SanitizeHtmlPipe } from '../../shared/pipes/sanitize-html.pipe';
+import { DomService } from '../../shared/services/dom.service'
 
 @Component({
   selector: 'app-create-new-gallery',
@@ -13,10 +16,14 @@ import { SanitizeHtmlPipe } from '../../shared/pipes/sanitize-html.pipe';
 })
 export class CreateNewGalleryComponent implements OnInit {
 
+  @ViewChildren(AddImageComponent) addImageComponents: QueryList<AddImageComponent>
+  @ViewChild("addImageViewContainerRef", {read: ViewContainerRef}) addImageViewContainerRef: ViewContainerRef;
+  public addImageComponentCounter: Array<any> = []
 	public gallery: Gallery = new Gallery();
 	public image: Image = new Image()
   public selectedImage: any
-  public files : FileList; 
+  public files : FileList;
+  public componentImages: Array<any> = [] 
   public url: any
   public uploadImageError: string
   public newImagesDiv: any
@@ -53,12 +60,14 @@ export class CreateNewGalleryComponent implements OnInit {
        console.log(this.files); 
   } 
   
-  constructor(private http: HttpClient, private authService: AuthService) { }
+  constructor(private http: HttpClient, private authService: AuthService, private domService: DomService, private router: Router) { }
 
   ngOnInit() {
     this.newImagesDiv = document.getElementById('newImagesDiv')
-
+    this.domService.setViewContainerRef(this.addImageViewContainerRef)
+    this.addAnotherImage()
   }
+
 
   public createGallery(gallery, image){
   	console.log(gallery)
@@ -71,8 +80,6 @@ export class CreateNewGalleryComponent implements OnInit {
     // FormData je neki blesavi tip podataka koji ne moze da se console.log-uje!!! (https://github.com/meteor/meteor/issues/8125)
     // console.log(formData)
 
-    
-
     this.http.post('http://127.0.0.1:8000/api/galleries', formData, {
         headers: this.authService.getRequestHeaders()
       }).subscribe((data) => {
@@ -82,15 +89,86 @@ export class CreateNewGalleryComponent implements OnInit {
     });
   }
 
+  public createGallery2(gallery){
+
+    let formData = new FormData();
+    // FormData je neki blesavi tip podataka koji ne moze da se console.log-uje!!! (https://github.com/meteor/meteor/issues/8125)
+    // console.log(formData)
+
+    this.domService.getData().subscribe((addedImagesArray) => {console.log(addedImagesArray);
+      console.log(gallery.description);
+      if(gallery.description === ''){
+        console.log('des bre');
+      }
+      // Nazalost, ovi dole uslovi se moraju postaviti, jer ovo undefined ce biti poslato na backend kao string 'undefined' i kao takvo ce biti upisano u bazu. Tako FormData() funkcionise. Objasnjenje(https://developer.mozilla.org/en-US/docs/Web/API/FormData/Using_FormData_Objects): the field's value can be a Blob, File, or a string: if the value is neither a Blob nor a File, the value is converted to a string. Interesantno je medjutim da je vrednost inputa undefined jedino ako ga prethodno nisi cackao. Ako dakle nesto uneses u polje pa izbrises sve, onda mu vrednost nece biti undefined nego ce biti prazan string! A prazan string nije prolazio laravel validaciju za required, a baza je bar u mom slucaju upisivala NULL, tako da znas!
+      if (gallery.name === undefined) {
+        formData.append('name', '')
+      }else{
+        formData.append('name', gallery.name)
+      }
+      if (gallery.description === undefined) {
+        formData.append('descriptionGallery', '')
+      }else{
+        formData.append('descriptionGallery', gallery.description)
+      }
+      
+      // s ovim ifom dole sam zapravo resio validaciju na backendu da galerija mora imati minimum jednu sliku. Na backendu cu staviti da je selectedImagesFiles required, MADA sada vidim da ovo nije zapravo bilo ni potrebno, skontace laravel da je selectedImagesFiles prazan i uspece validacija i tako
+      if(addedImagesArray.length > 0){
+        addedImagesArray.forEach(addedImage => {
+          formData.append("selectedImagesFiles[]", addedImage.image, addedImage.image.name)
+          if (addedImage.description === undefined) {
+            formData.append("selectedImagesDescriptions[]", '')
+          }else{
+            formData.append("selectedImagesDescriptions[]", addedImage.description)
+          }
+        })
+      }
+
+      this.http.post('http://127.0.0.1:8000/api/galleries_multiple_images', formData, {
+              headers: this.authService.getRequestHeaders()
+            }).subscribe((data) => {
+            console.log(data)
+            alert('You have successfully created a gallery!')
+            this.router.navigateByUrl('/login');
+          }, (err) => {
+            console.log(err)
+            //sa for in iteracijom, nisam uspeo da dobavim ove greske, ova funkcija Object.values() je pravo cudo!
+            let errors = Object.values(err.error.errors) 
+            let errorString: string = ''
+            errors.forEach(function(message: string){
+              if (message.includes("The selected images files field is required.") ) { 
+                errorString += "You must add at least one image!" + '\n'
+              } else {
+                errorString += message + '\n'
+              }
+              
+            });
+            alert(errorString);
+          });
+
+    })
+
+    // msm da bi ovo ipak trebalo da ti stoji gore u success handleru od subscribe-a
+    // this.http.post('http://127.0.0.1:8000/api/galleries_multiple_images', formData, {
+    //     headers: this.authService.getRequestHeaders()
+    //   }).subscribe((data) => {
+    //   console.log(data)
+    // }, (error) => {
+    //   console.log(error)
+    // });
+  }
+
   public addAnotherImage(){
-    // let addImageDiv = document.createElement('div')
-    // this.newImagesDiv.appendChild(addImageDiv)
-    // addImageDiv.innerHTML = '<div class="card form-group"><div class="card-header"> Add image</div><div class="card-body"><div class="form-group myclass-choose-image"> <label for="exampleFormControlFile1">Choose an image from your system</label> <input type="file" accept="image/*" name="imageUrl" class="form-control-file myclass-image-url" ngModel (change)="getFiles($event)"><div class="myclass-image-thumbnail"> <img *ngIf="url" [src]="url"></div><div *ngIf="uploadImageError" class="alert alert-danger"> {{uploadImageError}}</div></div><div class="form-group myclass-image-description"> <label for="imageDescription"> Image description (optional) </label><textarea #description="ngModel" [(ngModel)]="image.description" maxlength="1000" class="form-control" id="imageDescription" name="description"></textarea><div *ngIf="description.invalid && (description.dirty || description.touched)" class="alert alert-danger"><div *ngIf=" description.errors.maxlength "> Descritpion can be max 1000 chars</div></div></div></div><div class="card-footer text-muted"> <a href="#" class="myclass-arrow-link"><i class="fas fa-arrow-alt-circle-up myclass-image-arrow "></i></a> <a href="#" class="myclass-arrow-link"><i class="fas fa-arrow-alt-circle-down myclass-image-arrow "></i></a></div></div>'
+    this.domService.appendComponentToAppendingElement(AddImageComponent, "#newImagesDiv")
+    // console.log(this.addImageViewContainerRef);
+  }
 
-    let addImageDiv = '<div class="card form-group"><div class="card-header"> Add image</div><div class="card-body"><div class="form-group myclass-choose-image"> <label for="exampleFormControlFile1">Choose an image from your system</label> <input type="file" accept="image/*" name="imageUrl" class="form-control-file myclass-image-url" ngModel (change)="getFiles($event)"><div class="myclass-image-thumbnail"> <img *ngIf="url" [src]="url"></div><div *ngIf="uploadImageError" class="alert alert-danger"> {{uploadImageError}}</div></div><div class="form-group myclass-image-description"> <label for="imageDescription"> Image description (optional) </label><textarea #description="ngModel" [(ngModel)]="image.description" maxlength="1000" class="form-control" id="imageDescription" name="description"></textarea><div *ngIf="description.invalid && (description.dirty || description.touched)" class="alert alert-danger"><div *ngIf=" description.errors.maxlength "> Descritpion can be max 1000 chars</div></div></div></div><div class="card-footer text-muted"> <a href="#" class="myclass-arrow-link"><i class="fas fa-arrow-alt-circle-up myclass-image-arrow "></i></a> <a href="#" class="myclass-arrow-link"><i class="fas fa-arrow-alt-circle-down myclass-image-arrow "></i></a></div></div>'
 
-      this.addImageDiv = addImageDiv
-
+  public addComponentImageToArray($event){
+    // this.componentImages.push($event)
+    // console.log(this.componentImages);
+    
+    console.log(this.addImageComponents);
   }
 
 }

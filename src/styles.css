@@ -22,9 +22,18 @@ body{
 	margin-top: 45px;
 }
 
+.myclass-galleries-images-container{
+	display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-around;
+  
+  
+}
+
 .myclass-galleries-index-images{
-	width: 33%;
-	
+	width: 30%;
+	margin-bottom: 25px;
 }
 
 .myclass-popover-div-wrapper{

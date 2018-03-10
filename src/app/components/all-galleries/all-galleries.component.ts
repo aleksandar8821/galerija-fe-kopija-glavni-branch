@@ -64,10 +64,25 @@ export class AllGalleriesComponent implements OnInit {
 
       console.log('eve me!')
 
-      // kopiran kompletan zakomentarisan deo iz filterInput event hendlera dole:
+      // kopiran kompletan zakomentarisan deo iz filterInput event hendlera dole uz neke dodatke:
         this.filteredGalleries = this.retrievedGalleries.filter((g: Gallery) => {
-          return (g.name.toLocaleLowerCase().includes(filterTerm.toLocaleLowerCase()) || g.description.toLocaleLowerCase().includes(filterTerm.toLocaleLowerCase()) || (g.user.firstName + " " + g.user.lastName).toLocaleLowerCase().includes(filterTerm.toLocaleLowerCase()))
+
+          // ovaj dodatni uslov sam morao da dodam, jer je description za galeriju opcioni unos pri kreiranju, pa kad ga ne unesem, on mi dole kenja kako ne moze da uradi toLocaleLowerCase na nepostojecem stringu...
+          if (g.description) {
+            return (g.name.toLocaleLowerCase().includes(filterTerm.toLocaleLowerCase()) || g.description.toLocaleLowerCase().includes(filterTerm.toLocaleLowerCase()) || (g.user.firstName + " " + g.user.lastName).toLocaleLowerCase().includes(filterTerm.toLocaleLowerCase()))
+          }else{
+            return (g.name.toLocaleLowerCase().includes(filterTerm.toLocaleLowerCase()) || (g.user.firstName + " " + g.user.lastName).toLocaleLowerCase().includes(filterTerm.toLocaleLowerCase()))
+          }
+
+          
         })
+
+        // nisam siguran dal mi je potreban uopste ovaj uslov al ajd da ga stavim tu za svaki slucaj(proverio kasnije radi isto i sa ovim uslovom i bez, al mozda nije lose za svaki slucaj ga ostaviti tu):
+        if(filterTerm === ''){
+          this.filteredGalleries = this.retrievedGalleries
+        }
+
+        console.log(this.filteredGalleries.length);
 
         this.showedGalleries = this.filteredGalleries.slice(0, this.initiallyShowedGalleriesNumber)
 
@@ -122,6 +137,9 @@ export class AllGalleriesComponent implements OnInit {
       //  // Resetovanje showedGalleriesNumber
       //  this.showedGalleriesNumber = this.initiallyShowedGalleriesNumber
     })
+
+    
+
 
 
 
@@ -203,6 +221,8 @@ export class AllGalleriesComponent implements OnInit {
 
   }
 
+  
+
   public loadGalleries(){
     // this.showedGalleriesNumber += this.galleriesLoadNumber
     // if(this.filteredGalleries){
@@ -225,6 +245,15 @@ export class AllGalleriesComponent implements OnInit {
       if(this.showedGalleries.length === this.retrievedGalleries.length){
         this.btnDisabled = true
       }
+    }
+  }
+
+
+  public resizeImageIfVertical($event){
+    // console.log($event);
+    // kako dobaviti dimenzije slike https://davidwalsh.name/get-image-dimensions
+    if ($event.path[0].naturalHeight > $event.path[0].naturalWidth) {
+      $event.path[0].style.width = '15%'
     }
   }
 

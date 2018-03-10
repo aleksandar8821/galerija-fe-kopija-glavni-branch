@@ -1,0 +1,83 @@
+.alert.alert-danger{
+	margin-top: 5px;
+}
+
+/*
+.myclass-choose-image-wrapper{
+	display: flex;
+}
+
+.myclass-choose-image-wrapper form-group{
+	flex: 1;
+}*/
+
+.card-body{
+	display: flex;
+	flex-wrap: wrap;
+}
+
+.card-header{
+	display: flex;
+	justify-content: space-between;
+}
+
+.card-footer{
+	display: flex;
+	justify-content: center;
+}
+
+.myclass-choose-image{
+	background-color: #FFF399FF;
+	flex: 1;
+}
+
+.myclass-image-description{
+	background-color: beige;
+	flex: 2;
+
+}
+
+.myclass-image-thumbnail img{
+	margin-top: 8px;
+	width: 80%;
+}
+
+.myclass-arrow-link{
+	
+	display: inline-block;
+	border-radius: 50%;
+	overflow: hidden;
+	margin: 0 5px;
+}
+
+.myclass-image-arrow{
+	line-height: 1;
+	font-size: 35px;
+	color: #007bff;
+	border-radius: 50%;
+	display: inline-block;
+}
+
+.myclass-image-arrow:hover{
+	color: #51A5FF;
+}
+
+.myclass-delete-link{
+	display: inline-block;
+	border-radius: 50%;
+	overflow: hidden;
+	margin: 0 5px;
+}
+
+.myclass-image-delete{
+	line-height: 1;
+	font-size: 35px;
+	color: #BC0000;
+	border-radius: 50%;
+	display: inline-block;
+}
+
+.myclass-image-delete:hover{
+	color: #EA0000;
+	cursor: pointer;
+}

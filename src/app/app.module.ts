@@ -22,6 +22,9 @@ import { GuestGuard } from './shared/guards/guest.guard';
 import { UrlGuard } from './shared/guards/url.guard';
 import { RegisterVerificationComponent } from './components/register-verification/register-verification.component';
 import { SanitizeHtmlPipe } from './shared/pipes/sanitize-html.pipe';
+import { AddImageComponent } from './components/add-image/add-image.component';
+import { DomService } from './shared/services/dom.service';
+import { AddImageRefDirective } from './shared/directives/add-image-ref.directive'
 
 
 @NgModule({
@@ -35,6 +38,8 @@ import { SanitizeHtmlPipe } from './shared/pipes/sanitize-html.pipe';
     LayoutComponent,
     RegisterVerificationComponent,
     SanitizeHtmlPipe,
+    AddImageComponent,
+    AddImageRefDirective,
   ],
   imports: [
     BrowserModule,
@@ -44,7 +49,8 @@ import { SanitizeHtmlPipe } from './shared/pipes/sanitize-html.pipe';
     HttpClientModule,
     PopoverModule    
   ],
-  providers: [AuthService, GalleryService, AuthGuard, GuestGuard, UrlGuard, Subject],
-  bootstrap: [AppComponent]
+  providers: [AuthService, GalleryService, AuthGuard, GuestGuard, UrlGuard, Subject, DomService],
+  bootstrap: [AppComponent],
+  entryComponents: [ AddImageComponent ]
 })
 export class AppModule { }
