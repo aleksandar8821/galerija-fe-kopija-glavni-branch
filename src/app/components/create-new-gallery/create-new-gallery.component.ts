@@ -1,4 +1,4 @@
-import { Component, OnInit, QueryList, ViewChildren, ViewChild, ViewContainerRef } from '@angular/core';
+import { Component, OnInit, QueryList, ViewChildren, ViewChild, ViewContainerRef, ComponentRef } from '@angular/core';
 import { AddImageComponent } from '../add-image/add-image.component';
 import { Gallery } from '../../shared/models/gallery';
 import { Image } from '../../shared/models/image';
@@ -65,6 +65,13 @@ export class CreateNewGalleryComponent implements OnInit {
   ngOnInit() {
     this.newImagesDiv = document.getElementById('newImagesDiv')
     this.domService.setViewContainerRef(this.addImageViewContainerRef)
+    // Nakon uspesnog kreiranja i redirekcije na pocetnu stranicu, kad bi se vratio na create new gallery stranicu, ostajale bi mi upamcene prethodno kreirane komponente, pa ih pri inicijalizaciji stranice odmah brisem ovako
+    if(this.domService.createdComponentsArray.length >= 1){
+      this.domService.createdComponentsArray.forEach((componentRef: ComponentRef<any>) => {
+        componentRef.destroy()
+      })
+    }
+    this.domService.createdComponentsArray = []
     this.addAnotherImage()
   }
 
@@ -121,6 +128,7 @@ export class CreateNewGalleryComponent implements OnInit {
           }else{
             formData.append("selectedImagesDescriptions[]", addedImage.description)
           }
+          formData.append("selectedImagesVerticalInfo[]", addedImage.vertical)
         })
       }
 
@@ -159,7 +167,7 @@ export class CreateNewGalleryComponent implements OnInit {
   }
 
   public addAnotherImage(){
-    this.domService.appendComponentToAppendingElement(AddImageComponent, "#newImagesDiv")
+    this.domService.addDynamicComponent(AddImageComponent)
     // console.log(this.addImageViewContainerRef);
   }
 

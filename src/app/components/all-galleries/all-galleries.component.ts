@@ -34,6 +34,7 @@ export class AllGalleriesComponent implements OnInit {
   ngOnInit() {
   	this.galleryService.getGalleries().subscribe(
   	      data => {
+            console.log(data);
   	        this.retrievedGalleries = data;
             // this.loadGalleries()
 
@@ -252,7 +253,7 @@ export class AllGalleriesComponent implements OnInit {
   public resizeImageIfVertical($event){
     // console.log($event);
     // kako dobaviti dimenzije slike https://davidwalsh.name/get-image-dimensions
-    if ($event.path[0].naturalHeight > $event.path[0].naturalWidth) {
+    if (($event.path[0].naturalHeight / $event.path[0].naturalWidth) >= 1.5) {
       $event.path[0].style.width = '15%'
     }
   }

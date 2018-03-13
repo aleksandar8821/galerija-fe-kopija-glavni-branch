@@ -26,10 +26,8 @@ export class DomService {
   setViewContainerRef(vcRef: ViewContainerRef){
   	this.vcRef = vcRef
   }
-
-  appendComponentToAppendingElement(component: any, domQuerySelector: string) {
-
-  	
+  
+  addDynamicComponent(component: any) {
 
     // 1. Create a component reference from the component 
     const componentRef = this.componentFactoryResolver
@@ -40,26 +38,16 @@ export class DomService {
     // Na ovaj nacin se stavlja output na komponentu koja je dinamicki kreirana:
     (<any>componentRef.instance).imageData.subscribe(dataPackage => {
     	dataPackage.positionIndex = this.vcRef.indexOf(dataPackage.componentRef.hostView);
+
     	this.addedImagesArray.push(dataPackage)
     })
 
     this.createdComponentsArray.push(componentRef)
 
-    // 2. Attach component to the appRef so that it's inside the ng component tree
-    // this.appRef.attachView(componentRef.hostView);
-    
-    // 3. Get DOM element from component
-    // const domElem = (componentRef.hostView as EmbeddedViewRef<any>)
-    //   .rootNodes[0] as HTMLElement;
-    
-    // 4. Append DOM element to the appendingElement (ja sam ovde promenio u appendingElement, originalni kod ga je lepio za body)
-    // const appendingElement: any = document.querySelector(domQuerySelector)
-    // appendingElement.appendChild(domElem);
-    
     this.vcRef.insert(componentRef.hostView)
 
-    const currentIndex = this.vcRef.indexOf(componentRef.hostView);
-    const len = this.vcRef.length;
+    // const currentIndex = this.vcRef.indexOf(componentRef.hostView);
+    // const len = this.vcRef.length;
 
     // console.log(this.vcRef);
     // console.log(currentIndex);
@@ -67,11 +55,6 @@ export class DomService {
 
     console.log(this.createdComponentsArray);
 
-    // 5. Wait some time and remove it from the component tree and from the DOM
-    // setTimeout(() => {
-    //     this.appRef.detachView(componentRef.hostView);
-    //     componentRef.destroy();
-    // }, 3000);
   }
 
   move(shift: number, componentRef: ComponentRef<any>) {
@@ -98,6 +81,7 @@ export class DomService {
       // Preko ove komande saljem svim kreiranim addImage komponentama, da posalju svoje podatke preko outputa, a podaci ce biti uhvaceni gore gde sam definisao imageData output:
   		component.instance.sendImageData()
   	})
+
 
   	// Nasao funkciju za sortiranje niza objekata na https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort , (samo ukucaj u find Objects can be sorted given the value of one of their properties.):
   	this.addedImagesArray.sort(function (a, b) {

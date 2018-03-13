@@ -10,13 +10,13 @@
     <div class="form-group myclass-choose-image">
       <label for="exampleFormControlFile1">Choose an image from your system</label>
       
-      <input type="file" accept="image/*" name="imageUrl" class="form-control-file myclass-image-url" ngModel (change)="getFiles($event)">
+      <input type="file" accept="image/*" #fileInput name="imageUrl" class="form-control-file myclass-image-url" ngModel (change)="getFiles($event)">
 
       <div class="myclass-image-thumbnail">
         <img  *ngIf="url" [src]="url" (load)="resizeImageIfVertical($event)">
       </div>
 
-      <div *ngIf="uploadImageError" class="alert alert-danger">
+      <div *ngIf="uploadImageError" class="alert alert-danger myclass-upload-image-error myclass-flash-message-animate">
         {{uploadImageError}}
       </div> 
       

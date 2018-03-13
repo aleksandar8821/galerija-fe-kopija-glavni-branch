@@ -13,7 +13,8 @@ export class Gallery {
  		public created_at?: string,
  		public updated_at?: string,
  		public user?: User,
-		public images: Array<Image> = []
+		public images: Array<Image> = [],
+		public showedImagesNumber?: number
 
 	){
 

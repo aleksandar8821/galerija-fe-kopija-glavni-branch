@@ -20,18 +20,28 @@ export class AddImageComponent implements OnInit{
 	  public url: any
 	  public uploadImageError: string
 	  public newImagesDiv: any
+    // public isVertical: boolean = false
+    // kasnije cu i tako morati da pretvaram isVertical u broj 0 ili 1 da bi ih uneo u bazu, tako da cu ga odmah tako definisati
+    public isVertical: number = 0
 	  
-	  getFiles(event){ 
+	  getFiles(event){
+    console.log('juhuuuuuuuuuuuu'); 
 	      this.files = event.target.files;
-	      // console.log(event.target.files[0]);
+        // console.log(event.target);
 	      this.selectedImage = event.target.files[0]
 	      this.uploadImageError = null
 	      // Na ovaj nacin prikazujem thumbnail nakon uploada fajla (prekopirano odavde: https://stackoverflow.com/questions/39074806/how-to-preview-picture-stored-in-the-fake-path-in-angular-2-typescript   isto imas i ovde: https://stackoverflow.com/questions/4459379/preview-an-image-before-it-is-uploaded?rq=1)
 	      if (event.target.files && event.target.files[0]) {
 	        if(!event.target.files[0].type.startsWith('image/')){
+            this.selectedImage = null
 	          event.target.value = null //ovo je inace nacin da se iz input type file izbrise fajl koji je odabran. evo jos par nacina (slicnih, gotovo istih): https://stackoverflow.com/questions/41759704/how-to-clear-files-from-input-type-file-using-jquery-or-javascript , https://www.sitepoint.com/community/t/clear-input-type-file/257508/2 , https://nehalist.io/uploading-files-in-angular2/ <<< gledaj metodu clearFile() , https://stackoverflow.com/questions/40165271/how-to-reset-selected-file-with-input-tag-file-type-in-angular-2
 	          this.url = null
+
+
+            // errorDiv.style.animation = "flash-message 4s forwards"
 	          this.uploadImageError = "File must be an image!"
+            let errorDiv = document.querySelector('.myclass-upload-image-error') as any
+            console.log(errorDiv);
 	          return false //ovde moram izaci iz cele funkcije, da ne bi isao dalje, jer onda naravno izbacuje neke greske, jer sam prethodno izbrisao fajl iz input type file
 	        }
 
@@ -44,11 +54,11 @@ export class AddImageComponent implements OnInit{
 
 	        reader.readAsDataURL(event.target.files[0]);
 
-	        let dataPackage = {
-	        	componentRef: this.componentReference,
-	        	image: this.selectedImage,
-	        	description: this.imageDescription
-	        }
+	        // let dataPackage = {
+	        // 	componentRef: this.componentReference,
+	        // 	image: this.selectedImage,
+	        // 	description: this.imageDescription
+	        // }
 
 	        // this.imageData.emit(dataPackage)
 	      }else{
@@ -66,23 +76,28 @@ export class AddImageComponent implements OnInit{
   public resizeImageIfVertical($event){
     // console.log($event);
     // kako dobaviti dimenzije slike https://davidwalsh.name/get-image-dimensions
-    if ($event.path[0].naturalHeight > $event.path[0].naturalWidth) {
+    if (($event.path[0].naturalHeight / $event.path[0].naturalWidth) >= 1.5) {
       $event.path[0].style.width = '40%'
+      // this.isVertical = true
+      this.isVertical = 1
     }
   }
 
+ 
+
   // ngOnChanges se nazalost ne poziva kad se inputi menjaju u dinamciki kreiranoj komponenti, pa pravim proizvoljnu funkciju koju cu zvati manualno preko servisa (https://stackoverflow.com/questions/43112685/change-detection-not-working-when-creating-a-component-via-componentfactoryresol -> vidi komentar od Günter Zöchbauer)
   public sendImageData(){
-  	// Saljem jedino ako je selektovana slika
+  	// Saljem jedino ako je selektovana slika da se ne moze desiti da se unese description, a bez slike i da se to unese u bazu
   	if(this.selectedImage){
   		let dataPackage = {
   			componentRef: this.componentReference,
   			image: this.selectedImage,
-  			description: this.imageDescription
+  			description: this.imageDescription,
+        vertical: this.isVertical
   		}
   		this.imageData.emit(dataPackage)
   	}
-  	
+ 	
   }
 
 

@@ -81,3 +81,17 @@
 	color: #EA0000;
 	cursor: pointer;
 }
+
+.myclass-flash-message-animate{
+	animation: flash-message 4s forwards;
+}
+
+.myclass-flash-message-show{
+	opacity: 1;
+	display: block;
+}
+
+@keyframes flash-message {
+    0%   {opacity: 1;}
+    100% {opacity: 0; display:none;}
+}
