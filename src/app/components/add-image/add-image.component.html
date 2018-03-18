@@ -16,7 +16,7 @@
         <img  *ngIf="url" [src]="url" (load)="resizeImageIfVertical($event)">
       </div>
 
-      <div *ngIf="uploadImageError" class="alert alert-danger myclass-upload-image-error myclass-flash-message-animate">
+      <div #uploadImageErrorDiv [hidden]="!uploadImageError" class="alert alert-danger myclass-upload-image-error">
         {{uploadImageError}}
       </div> 
       

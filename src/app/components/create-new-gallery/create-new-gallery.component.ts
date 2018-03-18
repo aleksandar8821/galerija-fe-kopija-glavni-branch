@@ -1,4 +1,4 @@
-import { Component, OnInit, QueryList, ViewChildren, ViewChild, ViewContainerRef, ComponentRef } from '@angular/core';
+import { Component, OnInit, QueryList, ViewChildren, ViewChild, ViewContainerRef, ComponentRef, ElementRef, Renderer2 } from '@angular/core';
 import { AddImageComponent } from '../add-image/add-image.component';
 import { Gallery } from '../../shared/models/gallery';
 import { Image } from '../../shared/models/image';
@@ -16,8 +16,12 @@ import { DomService } from '../../shared/services/dom.service'
 })
 export class CreateNewGalleryComponent implements OnInit {
 
-  @ViewChildren(AddImageComponent) addImageComponents: QueryList<AddImageComponent>
+  @ViewChildren(AddImageComponent) addImageComponents: QueryList<AddImageComponent> //msm da se na ovaj nacin ne mogu videti dinamicki kreirane komponente. Ovo sad pisem kasnije i kolko se secam komponente mi nisu bile dostupne na ovaj nacin. Vidi https://stackoverflow.com/questions/43102427/viewchildren-not-finding-dynamic-components 
   @ViewChild("addImageViewContainerRef", {read: ViewContainerRef}) addImageViewContainerRef: ViewContainerRef;
+  @ViewChild("progressBar") progressBar: ElementRef
+  @ViewChild("btnAddImage") btnAddImage: ElementRef
+  @ViewChild("btnCreateGallery") btnCreateGallery: ElementRef
+
   public addImageComponentCounter: Array<any> = []
 	public gallery: Gallery = new Gallery();
 	public image: Image = new Image()
@@ -26,44 +30,12 @@ export class CreateNewGalleryComponent implements OnInit {
   public componentImages: Array<any> = [] 
   public url: any
   public uploadImageError: string
-  public newImagesDiv: any
   public addImageDiv: any
   
-  getFiles(event){ 
-      this.files = event.target.files;
-      // console.log(event.target.files[0]);
-      this.selectedImage = event.target.files[0]
-      this.uploadImageError = null
-      // Na ovaj nacin prikazujem thumbnail nakon uploada fajla (prekopirano odavde: https://stackoverflow.com/questions/39074806/how-to-preview-picture-stored-in-the-fake-path-in-angular-2-typescript   isto imas i ovde: https://stackoverflow.com/questions/4459379/preview-an-image-before-it-is-uploaded?rq=1)
-      if (event.target.files && event.target.files[0]) {
-        if(!event.target.files[0].type.startsWith('image/')){
-          event.target.value = null //ovo je inace nacin da se iz input type file izbrise fajl koji je odabran. evo jos par nacina (slicnih, gotovo istih): https://stackoverflow.com/questions/41759704/how-to-clear-files-from-input-type-file-using-jquery-or-javascript , https://www.sitepoint.com/community/t/clear-input-type-file/257508/2 , https://nehalist.io/uploading-files-in-angular2/ <<< gledaj metodu clearFile() , https://stackoverflow.com/questions/40165271/how-to-reset-selected-file-with-input-tag-file-type-in-angular-2
-          this.url = null
-          this.uploadImageError = "File must be an image!"
-          return false //ovde moram izaci iz cele funkcije, da ne bi isao dalje, jer onda naravno izbacuje neke greske, jer sam prethodno izbrisao fajl iz input type file
-        }
-
-        var reader = new FileReader();
-
-        reader.onload = (event:any) => {
-          this.url = event.target.result;
-          // console.log(event.target)
-        }
-
-        reader.readAsDataURL(event.target.files[0]);
-      }else{
-        this.url = null
-      }     
-  } 
-
-  logForm(event) { 
-       console.log(this.files); 
-  } 
-  
-  constructor(private http: HttpClient, private authService: AuthService, private domService: DomService, private router: Router) { }
+    
+  constructor(private http: HttpClient, private authService: AuthService, private domService: DomService, private router: Router, private renderer: Renderer2) { }
 
   ngOnInit() {
-    this.newImagesDiv = document.getElementById('newImagesDiv')
     this.domService.setViewContainerRef(this.addImageViewContainerRef)
     // Nakon uspesnog kreiranja i redirekcije na pocetnu stranicu, kad bi se vratio na create new gallery stranicu, ostajale bi mi upamcene prethodno kreirane komponente, pa ih pri inicijalizaciji stranice odmah brisem ovako
     if(this.domService.createdComponentsArray.length >= 1){
@@ -72,10 +44,10 @@ export class CreateNewGalleryComponent implements OnInit {
       })
     }
     this.domService.createdComponentsArray = []
-    this.addAnotherImage()
+    this.addAnotherImage() //odmah u startu dodajem jedan element za dodavanje slika
   }
 
-
+  //ovo je metoda za verziju gde je mogla da se doda samo jedna slika u galeriju, pa reko ajd da ostane ovde iako ne sluzi sada nicemu. createGallery2() dole dodaje vise slika u galeriju iz vise dinamicki kreiranih komponenti
   public createGallery(gallery, image){
   	console.log(gallery)
   	let formData = new FormData();
@@ -96,6 +68,7 @@ export class CreateNewGalleryComponent implements OnInit {
     });
   }
 
+  // Ova metoda dodaje vise slika u galeriju iz vise dinamicki kreiranih komponenti:
   public createGallery2(gallery){
 
     let formData = new FormData();
@@ -151,9 +124,16 @@ export class CreateNewGalleryComponent implements OnInit {
               }
               
             });
+            this.renderer.setStyle(this.progressBar.nativeElement, 'visibility', 'hidden')
+            this.renderer.setProperty(this.btnAddImage.nativeElement, 'disabled', false)
+            this.renderer.setProperty(this.btnCreateGallery.nativeElement, 'disabled', false)
             alert(errorString);
           });
 
+    }, () => {
+      this.renderer.setStyle(this.progressBar.nativeElement, 'visibility', 'hidden')
+      this.renderer.setProperty(this.btnAddImage.nativeElement, 'disabled', false)
+      this.renderer.setProperty(this.btnCreateGallery.nativeElement, 'disabled', false)
     })
 
     // msm da bi ovo ipak trebalo da ti stoji gore u success handleru od subscribe-a
@@ -164,19 +144,15 @@ export class CreateNewGalleryComponent implements OnInit {
     // }, (error) => {
     //   console.log(error)
     // });
+
+    this.renderer.setStyle(this.progressBar.nativeElement, 'visibility', 'visible')
+    this.renderer.setProperty(this.btnAddImage.nativeElement, 'disabled', true)
+    this.renderer.setProperty(this.btnCreateGallery.nativeElement, 'disabled', true)
   }
 
   public addAnotherImage(){
     this.domService.addDynamicComponent(AddImageComponent)
     // console.log(this.addImageViewContainerRef);
-  }
-
-
-  public addComponentImageToArray($event){
-    // this.componentImages.push($event)
-    // console.log(this.componentImages);
-    
-    console.log(this.addImageComponents);
   }
 
 }

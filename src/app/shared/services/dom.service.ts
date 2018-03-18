@@ -57,6 +57,7 @@ export class DomService {
 
   }
 
+  // ideju za ovo nasao na ovom odlicnom linku https://stackoverflow.com/questions/47915236/angular-5-rearrange-dynamically-created-components <<< demo https://stackblitz.com/edit/angular-wxnsjh (downloadovano - file: angular-wxnsjh)
   move(shift: number, componentRef: ComponentRef<any>) {
       const currentIndex = this.vcRef.indexOf(componentRef.hostView);
       const len = this.vcRef.length;
@@ -79,7 +80,7 @@ export class DomService {
 
   	this.createdComponentsArray.forEach((component: ComponentRef<any>) => {
       // Preko ove komande saljem svim kreiranim addImage komponentama, da posalju svoje podatke preko outputa, a podaci ce biti uhvaceni gore gde sam definisao imageData output:
-  		component.instance.sendImageData()
+  		component.instance.sendImageData() //Da, ovde mi je bilo malko zajebano da shvatim da li je ovo pravilan pristup, u smislu da li ce moj kod cekati da se svi podaci iz svih komponenti smeste u addedImagesArray i da tek onda vraca Observable od njega. Pre svega da kazem da sam testirao ovo tako sto sam ubacio funkciju koja traje duzi vremenski period - recimo neki pandam funkciji sleep u javi (imas objasnjenje za ovo u fajlu javascript, trazi samo funkciju sleep). Test je prosao i funkcija je odradila uspesno ono sto je trebala.I tu sam zapravo na kraju skontao prostu stvar (za koju sam valjda skroz u pravu, nisam skroz siguran) a to je sledece: ovaj kod poziva funkciju sendImageData() - dok se ta funkcija ne izvrsi, odnosno dok se njen execution context ne zatvori, ovaj kod nece ici dalje; zatim ta funkcija radi emit() koja je opet funkcija i koja i dalje drzi ovaj prvobitni execution context otvorenim. Ona ocigledno po onom sto sam ja testirao ceka da se kod definisan u output-u zavrsi i tek kad se to zavrsi ovaj prvobitni execution context se zavrsava i kod moze nastaviti dalje. Eto, tako ja to vidim i msm da sam u pravu. 
   	})
 
 
@@ -94,15 +95,15 @@ export class DomService {
 
   destroyComponent(componentRef: ComponentRef<any>){
     let indexVcRef = this.vcRef.indexOf(componentRef.hostView)
-    this.vcRef.remove(indexVcRef)
+    this.vcRef.remove(indexVcRef) //msm da sam ovo skontao iz dokumentacije zvanicne kako se radi, nznm, msm da to nisam nasao u onim tutorijalima, nisam siguran
     let indexCreatedComponentsArray = this.createdComponentsArray.indexOf(componentRef)
     // Ovaj splice metod ima neke 'kontroverze' doduse, mada mislim da meni ovde nece praviti problem (vidi https://stackoverflow.com/questions/3954438/how-to-remove-item-from-array-by-value , https://stackoverflow.com/questions/5767325/how-do-i-remove-a-particular-element-from-an-array-in-javascript i sl.)
     if(indexCreatedComponentsArray !== -1){
       this.createdComponentsArray.splice(indexCreatedComponentsArray, 1)
     }
     
-    componentRef.destroy()
-    componentRef = null;
+    componentRef.destroy() // ovo svaki tutorijal kaze da treba da se destroyuje ovako...
+    componentRef = null; // ovo da stavlja na null sam nasao ovde https://medium.com/@DenysVuika/dynamic-content-in-angular-2-3c85023d9c36 <<< gledaj u ngOnDestroy
   }
 
 }

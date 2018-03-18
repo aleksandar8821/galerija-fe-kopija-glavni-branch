@@ -1,3 +1,7 @@
+<div #progressBar class="progress">
+    <div class="progress-bar progress-bar-striped progress-bar-animated"></div>
+</div>
+
 <form #createForm="ngForm" (ngSubmit)="createGallery2(gallery)">
     
     <div class="form-group">
@@ -47,10 +51,10 @@
     
 
     <div class="form-group">
-      <button type="button" class="btn btn-primary" (click)="addAnotherImage()">Add another image</button>
+      <button #btnAddImage type="button" class="btn btn-primary" (click)="addAnotherImage()">Add another image</button>
     </div>
 
 		
 
-    <button type="submit" class="btn btn-primary btn-block">Create new gallery</button>
+    <button #btnCreateGallery type="submit" class="btn btn-primary btn-block">Create new gallery</button>
 </form>
