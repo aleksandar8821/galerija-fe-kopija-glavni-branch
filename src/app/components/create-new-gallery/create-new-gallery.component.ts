@@ -19,6 +19,7 @@ export class CreateNewGalleryComponent implements OnInit {
   @ViewChildren(AddImageComponent) addImageComponents: QueryList<AddImageComponent> //msm da se na ovaj nacin ne mogu videti dinamicki kreirane komponente. Ovo sad pisem kasnije i kolko se secam komponente mi nisu bile dostupne na ovaj nacin. Vidi https://stackoverflow.com/questions/43102427/viewchildren-not-finding-dynamic-components 
   @ViewChild("addImageViewContainerRef", {read: ViewContainerRef}) addImageViewContainerRef: ViewContainerRef;
   @ViewChild("progressBar") progressBar: ElementRef
+  @ViewChild("disabledOverlay") disabledOverlay: ElementRef
   @ViewChild("btnAddImage") btnAddImage: ElementRef
   @ViewChild("btnCreateGallery") btnCreateGallery: ElementRef
 
@@ -124,16 +125,14 @@ export class CreateNewGalleryComponent implements OnInit {
               }
               
             });
-            this.renderer.setStyle(this.progressBar.nativeElement, 'visibility', 'hidden')
-            this.renderer.setProperty(this.btnAddImage.nativeElement, 'disabled', false)
-            this.renderer.setProperty(this.btnCreateGallery.nativeElement, 'disabled', false)
+            this.showLoaderDisablePageElements(false)
             alert(errorString);
+          }, () => {
+            this.showLoaderDisablePageElements(false)
           });
 
     }, () => {
-      this.renderer.setStyle(this.progressBar.nativeElement, 'visibility', 'hidden')
-      this.renderer.setProperty(this.btnAddImage.nativeElement, 'disabled', false)
-      this.renderer.setProperty(this.btnCreateGallery.nativeElement, 'disabled', false)
+      this.showLoaderDisablePageElements(false)
     })
 
     // msm da bi ovo ipak trebalo da ti stoji gore u success handleru od subscribe-a
@@ -145,14 +144,27 @@ export class CreateNewGalleryComponent implements OnInit {
     //   console.log(error)
     // });
 
-    this.renderer.setStyle(this.progressBar.nativeElement, 'visibility', 'visible')
-    this.renderer.setProperty(this.btnAddImage.nativeElement, 'disabled', true)
-    this.renderer.setProperty(this.btnCreateGallery.nativeElement, 'disabled', true)
+    // kao sto lepo vidis iz ovog primera, subscribe je asinhrona funkcija, dakle ovo ce se odmah aktivirati bez cekanja da se gornji subscribe zavrsi
+    this.showLoaderDisablePageElements(true)
   }
 
   public addAnotherImage(){
     this.domService.addDynamicComponent(AddImageComponent)
     // console.log(this.addImageViewContainerRef);
+  }
+
+  public showLoaderDisablePageElements(show: boolean){
+    if(show === true){
+      this.renderer.setStyle(this.progressBar.nativeElement, 'visibility', 'visible')
+      this.renderer.setStyle(this.disabledOverlay.nativeElement, 'visibility', 'visible')
+      this.renderer.setProperty(this.btnAddImage.nativeElement, 'disabled', true)
+      this.renderer.setProperty(this.btnCreateGallery.nativeElement, 'disabled', true)
+    }else{
+      this.renderer.setStyle(this.progressBar.nativeElement, 'visibility', 'hidden')
+      this.renderer.setStyle(this.disabledOverlay.nativeElement, 'visibility', 'hidden')
+      this.renderer.setProperty(this.btnAddImage.nativeElement, 'disabled', false)
+      this.renderer.setProperty(this.btnCreateGallery.nativeElement, 'disabled', false)
+    }
   }
 
 }

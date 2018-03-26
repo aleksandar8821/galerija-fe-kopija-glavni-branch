@@ -38,9 +38,15 @@
 
 }
 
+.myclass-image-thumbnail{
+	text-align: center;
+}
+
 .myclass-image-thumbnail img{
-	margin-top: 8px;
 	width: 80%;
+}
+.myclass-gif-loader{
+	text-align: center;
 }
 
 .myclass-arrow-link{
@@ -84,8 +90,10 @@
 }
 
 .myclass-upload-image-error{
-	box-sizing: border-box;
-	height: auto;
+	width: 90%;
+	margin-left: auto;
+	margin-right: auto;
+	text-align: center;
 	animation: flash-message 4s forwards;
 	animation-delay: 4s;
 } 

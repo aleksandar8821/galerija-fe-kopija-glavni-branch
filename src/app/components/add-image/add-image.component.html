@@ -12,6 +12,11 @@
       
       <input type="file" accept="image/*" #fileInput name="imageUrl" class="form-control-file myclass-image-url" ngModel (change)="getFiles($event)">
 
+      <div *ngIf="uploadImageLoader" class="myclass-gif-loader">
+        <img src="../../../assets/images/loader.gif">
+        <!-- (free) ikonica skinuta sa https://icons8.com/preloaders/ -->
+      </div>
+
       <div class="myclass-image-thumbnail">
         <img  *ngIf="url" [src]="url" (load)="resizeImageIfVertical($event)">
       </div>

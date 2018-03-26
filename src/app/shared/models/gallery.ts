@@ -1,5 +1,6 @@
 import { User } from '../../shared/models/user'; 
 import { Image } from '../../shared/models/image'; 
+import { GalleryComment } from '../../shared/models/gallery-comment'; 
 
 
 export class Gallery {
@@ -14,6 +15,7 @@ export class Gallery {
  		public updated_at?: string,
  		public user?: User,
 		public images: Array<Image> = [],
+		public comments: Array<GalleryComment> = [],
 		public showedImagesNumber?: number
 
 	){

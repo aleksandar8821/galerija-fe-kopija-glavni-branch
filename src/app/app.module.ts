@@ -8,6 +8,7 @@ import { HttpClientModule } from '@angular/common/http';
 import {PopoverModule} from "ngx-popover";
 import { Subject } from 'rxjs/Subject';
 
+
 import { AppComponent } from './app.component';
 import { AllGalleriesComponent } from './components/all-galleries/all-galleries.component';
 import { LoginComponent } from './components/login/login.component';
@@ -24,7 +25,9 @@ import { RegisterVerificationComponent } from './components/register-verificatio
 import { SanitizeHtmlPipe } from './shared/pipes/sanitize-html.pipe';
 import { AddImageComponent } from './components/add-image/add-image.component';
 import { DomService } from './shared/services/dom.service';
-import { AddImageRefDirective } from './shared/directives/add-image-ref.directive'
+import { AddImageRefDirective } from './shared/directives/add-image-ref.directive';
+import { ViewGalleryComponent } from './components/view-gallery/view-gallery.component';
+import { ReversePipe } from './shared/pipes/reverse.pipe'
 
 
 @NgModule({
@@ -40,6 +43,8 @@ import { AddImageRefDirective } from './shared/directives/add-image-ref.directiv
     SanitizeHtmlPipe,
     AddImageComponent,
     AddImageRefDirective,
+    ViewGalleryComponent,
+    ReversePipe,
   ],
   imports: [
     BrowserModule,

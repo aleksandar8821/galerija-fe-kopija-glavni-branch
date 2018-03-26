@@ -15,6 +15,18 @@
   	animation: progress-bar-stripes 0.5s linear infinite;
 }
 
+/*ideju za ovo pokupio ovde https://stackoverflow.com/questions/9416556/jquery-how-to-disable-the-entire-page*/
+.myclass-disabled-overlay{
+	visibility: hidden;
+	position: fixed;	/*ovde moras dodati fixed da bi ti pokrivao i deo ekrana koji se skroluje (vazi i za visinu i sirinu) https://stackoverflow.com/questions/10945268/disable-whole-page-with-an-overlay*/
+	z-index: 998;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: rgba(150, 150, 150, 0.5);
+}
+
 .alert.alert-danger{
 	margin-top: 5px;
 }

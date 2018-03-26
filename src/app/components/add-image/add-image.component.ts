@@ -24,6 +24,7 @@ export class AddImageComponent implements OnInit{
     // kasnije cu i tako morati da pretvaram isVertical u broj 0 ili 1 da bi ih uneo u bazu, tako da cu ga odmah tako definisati
     public isVertical: number = 0
     public removeUploadImageErrorTimeout: any
+    public uploadImageLoader: boolean = false
 	  
 	  getFiles(event){
     console.log('juhuuuuuuuuuuuu'); 
@@ -49,10 +50,13 @@ export class AddImageComponent implements OnInit{
             return false //ovde moram izaci iz cele funkcije, da ne bi isao dalje, jer onda naravno izbacuje neke greske, jer sam prethodno izbrisao fajl iz input type file
           }
 
+          this.uploadImageLoader = true
+
 	      // Na ovaj nacin prikazujem thumbnail nakon uploada fajla (prekopirano odavde: https://stackoverflow.com/questions/39074806/how-to-preview-picture-stored-in-the-fake-path-in-angular-2-typescript   isto imas i ovde: https://stackoverflow.com/questions/4459379/preview-an-image-before-it-is-uploaded?rq=1)
           var reader = new FileReader();
 
 	        reader.onload = (event:any) => {
+            this.uploadImageLoader = false
 	          this.url = event.target.result;
 	          // console.log(event.target)
 	        }
@@ -83,6 +87,9 @@ export class AddImageComponent implements OnInit{
       $event.path[0].style.width = '40%'
       // this.isVertical = true
       this.isVertical = 1
+    }else{
+      $event.path[0].style.width = '80%'
+      this.isVertical = 0
     }
   }
 

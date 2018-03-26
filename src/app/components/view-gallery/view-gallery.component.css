@@ -1,0 +1,50 @@
+.myclass-view-gallery-container{
+	/*display: flex;
+	flex-wrap: wrap;
+	align-items: flex-start;*/
+	background-color: #E5E5E5FF;
+	border-radius: 25px;
+	border: 2px solid #FF6A00FF;
+	padding: 25px;
+	display: grid;
+	justify-content: space-between;
+	justify-items: center;
+	align-items: center;
+	grid-template-columns: repeat(auto-fill, 30%);
+	grid-row-gap: 25px;
+	margin-bottom: 25px;
+}
+
+.myclass-view-gallery-container a{
+	border: 2.5px outset white;
+	width: 100%;
+}
+
+.myclass-view-gallery-container a:hover{
+	border-style: inset;
+}
+
+.myclass-view-gallery-images{
+	width: 100%;
+}
+
+.myclass-add-comment-form{
+	margin-bottom: 25px;
+}
+
+.myclass-gallery-comments > * + *{
+	margin-top: 15px;
+}
+
+.myclass-account-thumbnail{
+	display: flex;
+	background-color: darkblue;
+	border-radius: 50%;
+	min-width: 40px;
+	min-height: 40px;	
+}
+
+.myclass-account-thumbnail span{
+	color: white;
+	margin: auto;
+}

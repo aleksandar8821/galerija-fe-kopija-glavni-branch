@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Routes } from '@angular/router';
 
 import { AllGalleriesComponent } from '../components/all-galleries/all-galleries.component';
+import { ViewGalleryComponent } from '../components/view-gallery/view-gallery.component';
 import { CreateNewGalleryComponent } from '../components/create-new-gallery/create-new-gallery.component';
 import { LoginComponent } from '../components/login/login.component';
 import { MyGalleriesComponent } from '../components/my-galleries/my-galleries.component';
@@ -23,6 +24,10 @@ const appRoutes: Routes = [
     {
         path: 'galleries',
         component: AllGalleriesComponent,
+    },
+    {
+        path: 'galleries/:id',
+        component: ViewGalleryComponent
     },
     {
         path: 'my-galleries',
