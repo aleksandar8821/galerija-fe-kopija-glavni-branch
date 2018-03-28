@@ -1,3 +1,33 @@
+.progress{
+	visibility: hidden;
+	z-index: 999;
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	height: 10px;
+	border-radius: 0;
+}
+
+.progress .progress-bar{
+	width: 100%;
+	-webkit-animation: progress-bar-stripes 0.5 linear infinite;
+  	animation: progress-bar-stripes 0.5s linear infinite;
+}
+
+/*ideju za ovo pokupio ovde https://stackoverflow.com/questions/9416556/jquery-how-to-disable-the-entire-page*/
+.myclass-disabled-overlay{
+	visibility: hidden;
+	position: fixed;	/*ovde moras dodati fixed da bi ti pokrivao i deo ekrana koji se skroluje (vazi i za visinu i sirinu) https://stackoverflow.com/questions/10945268/disable-whole-page-with-an-overlay*/
+	z-index: 998;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: rgba(150, 150, 150, 0.5);
+	/*opacity: 0;*/
+}
+
 .myclass-view-gallery-container{
 	/*display: flex;
 	flex-wrap: wrap;
@@ -12,7 +42,7 @@
 	align-items: center;
 	grid-template-columns: repeat(auto-fill, 30%);
 	grid-row-gap: 25px;
-	margin-bottom: 25px;
+	margin-bottom: 30px;
 }
 
 .myclass-view-gallery-container a{
@@ -29,11 +59,13 @@
 }
 
 .myclass-add-comment-form{
-	margin-bottom: 25px;
+	margin-bottom: 30px;
 }
 
 .myclass-gallery-comments > * + *{
 	margin-top: 15px;
+	border-top: 1.5px solid #636363FF;
+	padding-top: 10px;
 }
 
 .myclass-account-thumbnail{
@@ -47,4 +79,24 @@
 .myclass-account-thumbnail span{
 	color: white;
 	margin: auto;
+}
+
+.myclass-delete-link{
+	display: inline-block;
+	border-radius: 50%;
+	overflow: hidden;
+	margin: 0 5px;
+}
+
+.myclass-image-delete{
+	line-height: 1;
+	font-size: 35px;
+	color: #BC0000;
+	border-radius: 50%;
+	display: inline-block;
+}
+
+.myclass-image-delete:hover{
+	color: #EA0000;
+	cursor: pointer;
 }

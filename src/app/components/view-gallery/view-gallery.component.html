@@ -1,7 +1,12 @@
+<div #progressBar class="progress">
+    <div class="progress-bar progress-bar-striped progress-bar-animated"></div>
+</div>
+<div #disabledOverlay class="myclass-disabled-overlay"></div>
+
 <div *ngIf="gallery">
 
-	<h1>{{ gallery.name }}</h1>
-	<h4>{{ gallery.description }}</h4>
+	<h2>{{ gallery.name }}</h2>
+	<h5>{{ gallery.description }}</h5>
 	
 	<div class="myclass-view-gallery-container">
 		
@@ -11,14 +16,14 @@
 	
 	</div>
 
-	<div class="myclass-add-comment-form">
+	<div *ngIf="isUserAuthenticated" class="myclass-add-comment-form">
 		
-		<form (ngSubmit)="addGalleryComment()">
+		<form #addGalleryCommentForm = "ngForm" (ngSubmit)="addGalleryComment(); addGalleryCommentForm.reset()">
 		  <div class="form-group">
 		    <label for="exampleFormControlTextarea1">Your comment for this gallery:</label>
 		    <textarea [(ngModel)]="galleryComment.commentBody" name="galleryComment" class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
 		  </div>
-		  <button type="submit" class="btn btn-primary">Add comment</button>
+		  <button #btnAddComment type="submit" class="btn btn-primary">Add comment</button>
 		</form>
 		
 	</div>
@@ -26,7 +31,7 @@
 	<div class="myclass-gallery-comments">
 		
 		<!-- skinuto sa https://getbootstrap.com/docs/4.0/layout/media-object/ -->
-		<div class="media" *ngFor="let comment of gallery.comments | reverse">
+		<div class="media" *ngFor="let comment of commentsArrayReversed">
 			<!-- reverse pipe napravljen po odogovoru od Thierry Templier sa ovog linka https://stackoverflow.com/questions/35703258/invert-angular-2-ngfor -->
 		  <!-- <img class="mr-3" alt="Image"> -->
 			<div class="myclass-account-thumbnail mr-3"><span>{{comment.user.first_name.charAt(0).toUpperCase()}}</span></div>
@@ -34,6 +39,7 @@
 		    <h5 class="mt-0">{{comment.user.first_name}} {{comment.user.last_name}} <small class="text-muted">{{comment.created_at | date: "yyyy-MM-dd"}}</small></h5>
 		    {{comment.comment_body}}
 		  </div>
+		  <a *ngIf="comment.user.email === loggedUserEmail" (click)="deleteGalleryComment(comment)" class="myclass-delete-link"><i class="fas fa-times-circle myclass-image-delete "></i></a>
 		</div>
 	
 	</div>

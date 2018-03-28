@@ -38,6 +38,8 @@ export class AuthService {
         this.loggedUser = new User(data.logedUser.id, data.logedUser.first_name, data.logedUser.last_name, data.logedUser.email)
         this.loggedUserNameFirstLetter = data.logedUser.first_name.charAt(0).toUpperCase()
         window.localStorage.setItem('loggedUserNameFirstLetter', this.loggedUserNameFirstLetter)
+        //email postavljam da bi mogao da poredim sa mailom usera koji je postavio komentar, pa da mu omogucim brisanje. Email je unikatan u bazi, stoga je dobar za identifikaciju (mada ovo mozda bas i nije dobro jer neko moze sanzati mail nekog korisnika ako ti ceprka po javascriptu, tako da je mozda bolje da ga poredis sa id-em iz baze, ali opet kolko je to safe, da imas id od korisnika prisutan u javascript kodu?):
+        window.localStorage.setItem('loggedUserEmail', this.loggedUser.email)
         // ovaj data.token se kolko sam skontao zapravo nigde ne koristi u funkciji koja se subscribeovala na ovaj observable, ali da bi se sucess handler u toj funkciji okinuo, ovaj mora nesto da mu posalje u sa o.next, inace se nista ne desava... malo glupavo, al sta ces
   			o.next(data.token);
   			return o.complete();
@@ -50,6 +52,7 @@ export class AuthService {
   public logout() {
       window.localStorage.removeItem('loginToken');
       window.localStorage.removeItem('loggedUserNameFirstLetter');
+      window.localStorage.removeItem('loggedUserEmail');
       this.isAuthenticated = false;
       this.loggedUserNameFirstLetter = '';
       this.router.navigateByUrl('/login');

@@ -133,9 +133,27 @@ export class GalleryService {
   			}).subscribe((storedComment: GalleryComment) => {
   				o.next(storedComment)
   				return o.complete()
+  			}, (error: HttpErrorResponse) => {
+  				o.error(error)
+  				return o.complete()
   			})
 			});
 
+		}
+
+
+		public deleteGalleryComment(comment: GalleryComment){
+			return new Observable((o: Observer<any>) => {
+			  this.http.delete('http://127.0.0.1:8000/api/gallery_comment/' + comment.id, {
+  				headers: this.authService.getRequestHeaders()
+  			}).subscribe((deletedComment: GalleryComment) => {
+  				o.next(deletedComment)
+  				return o.complete()
+  			}, (error: HttpErrorResponse) => {
+  				o.error(error)
+  				return o.complete();
+  			})
+			});
 		}
 
 }
