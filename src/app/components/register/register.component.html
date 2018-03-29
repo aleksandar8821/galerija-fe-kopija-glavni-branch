@@ -9,7 +9,7 @@
            First name
        </label>
         <input #firstName="ngModel" [(ngModel)]="user.firstName" type="text" required class="form-control" id="firstName" name="firstName">
-
+        <!-- ova validacija je inace radjena isto kao i ovde https://angular.io/guide/form-validation#template-driven-validation -->
         <div *ngIf="firstName.invalid && (firstName.dirty || firstName.touched)" class="alert alert-danger">
             <div *ngIf="firstName.errors.required">
                  First name is required.

@@ -21,9 +21,16 @@
 		<form #addGalleryCommentForm = "ngForm" (ngSubmit)="addGalleryComment(); addGalleryCommentForm.reset()">
 		  <div class="form-group">
 		    <label for="exampleFormControlTextarea1">Your comment for this gallery:</label>
-		    <textarea [(ngModel)]="galleryComment.commentBody" name="galleryComment" class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+		    <textarea #commentBody="ngModel" [(ngModel)]="galleryComment.commentBody" name="commentBody" class="form-control" id="exampleFormControlTextarea1" rows="3" required></textarea>
 		  </div>
-		  <button #btnAddComment type="submit" class="btn btn-primary">Add comment</button>
+		  <div *ngIf="commentBody.invalid && (commentBody.dirty || commentBody.touched)" class="alert alert-danger">
+
+		    <div *ngIf="commentBody.errors.required">
+		      Comment body is required.
+		    </div>
+		    
+		  </div>
+		  <button #btnAddComment [disabled]="!addGalleryCommentForm.valid" type="submit" class="btn btn-primary">Add comment</button>
 		</form>
 		
 	</div>
