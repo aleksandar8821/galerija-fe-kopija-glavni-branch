@@ -62,7 +62,7 @@ export class GalleryService {
 
 				if (gallery.images[i].vertical === 1) {
 					thisImagePercentWidth = 15
-				}else if(gallery.images[i].vertical === 0){
+				}else{
 					thisImagePercentWidth = 30
 				}
 

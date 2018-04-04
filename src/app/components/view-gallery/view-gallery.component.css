@@ -1,5 +1,5 @@
 .progress{
-	visibility: hidden;
+	/*visibility: hidden;*/
 	z-index: 999;
 	position: fixed;
 	top: 0;
@@ -29,12 +29,21 @@
 }
 
 .myclass-view-gallery-container{
+	background-color: #E8E8E8FF;
+	border-radius: 25px;
+	border: 2px solid #FF6A00FF;
+	overflow: hidden;
+	margin-bottom: 30px;
+}
+
+.myclass-view-gallery-images-container{
 	/*display: flex;
 	flex-wrap: wrap;
 	align-items: flex-start;*/
-	background-color: #E5E5E5FF;
+
+	/*background-color: #E5E5E5FF;
 	border-radius: 25px;
-	border: 2px solid #FF6A00FF;
+	border: 2px solid #FF6A00FF;*/
 	padding: 25px;
 	display: grid;
 	justify-content: space-between;
@@ -42,20 +51,29 @@
 	align-items: center;
 	grid-template-columns: repeat(auto-fill, 30%);
 	grid-row-gap: 25px;
-	margin-bottom: 30px;
+	margin-bottom: 20px;
 }
 
-.myclass-view-gallery-container a{
+.myclass-view-gallery-images-container a{
 	border: 2.5px outset white;
-	width: 100%;
+	width: 100%; /*sa ovim ti njemu zapravo govoris da mu je sirina sto posto od grid kolone!*/
 }
 
-.myclass-view-gallery-container a:hover{
+.myclass-view-gallery-images-container a:hover{
 	border-style: inset;
 }
 
 .myclass-view-gallery-images{
 	width: 100%;
+}
+
+.myclass-view-gallery-footer{
+	/*border-radius: 0 0 25px 25px; reseno ipak sa overflow hidden na parentu*/
+	/*border-top: 4px solid white;*/
+	border-top: 4px solid #ffffffd4;
+	/*background-color: darkgray;*/
+	background-color: #a9a9a9a1;
+	color: white !important;
 }
 
 .myclass-add-comment-form{

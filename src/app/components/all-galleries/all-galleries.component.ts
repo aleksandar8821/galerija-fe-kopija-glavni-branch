@@ -253,7 +253,7 @@ export class AllGalleriesComponent implements OnInit {
   public resizeImageIfVertical($event){
     // console.log($event);
     // kako dobaviti dimenzije slike https://davidwalsh.name/get-image-dimensions
-    if (($event.path[0].naturalHeight / $event.path[0].naturalWidth) >= 1.5) {
+    if (($event.path[0].naturalHeight / $event.path[0].naturalWidth) >= 1.2) {
       $event.path[0].style.width = '15%'
     }
   }

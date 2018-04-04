@@ -21,8 +21,8 @@
 	  </div>
 	  <div class="card-footer text-muted">
 	    <strong>Created by:</strong> <a routerLink = "/authors/{{gallery.user_id}}">{{ gallery.user.firstName }}  {{ gallery.user.lastName}}</a>
-	    <strong>Created at:</strong> {{ gallery.created_at | date: "yyyy-MM-dd" }}
-	    <span *ngIf="gallery.created_at !== gallery.updated_at"><strong>Last updated at:</strong> {{ gallery.updated_at | date: "yyyy-MM-dd" }}</span>
+	    <strong>Created at:</strong> {{ gallery.created_at | date: "MMMM d, y" }}
+	    <span *ngIf="gallery.created_at !== gallery.updated_at"><strong>Last updated at:</strong> {{ gallery.updated_at | date: "MMMM d, y" }}</span>
 	  </div>
 	</div>
 	

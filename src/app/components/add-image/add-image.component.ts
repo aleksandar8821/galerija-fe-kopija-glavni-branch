@@ -23,6 +23,7 @@ export class AddImageComponent implements OnInit{
     // public isVertical: boolean = false
     // kasnije cu i tako morati da pretvaram isVertical u broj 0 ili 1 da bi ih uneo u bazu, tako da cu ga odmah tako definisati
     public isVertical: number = 0
+    public heightWidthRatio: number
     public removeUploadImageErrorTimeout: any
     public uploadImageLoader: boolean = false
 	  
@@ -83,9 +84,14 @@ export class AddImageComponent implements OnInit{
   public resizeImageIfVertical($event){
     // console.log($event);
     // kako dobaviti dimenzije slike https://davidwalsh.name/get-image-dimensions
-    if (($event.path[0].naturalHeight / $event.path[0].naturalWidth) >= 1.5) {
+    this.heightWidthRatio = $event.path[0].naturalHeight / $event.path[0].naturalWidth
+
+    if (this.heightWidthRatio >= 1.5) {
       $event.path[0].style.width = '40%'
       // this.isVertical = true
+      this.isVertical = 1
+    }else if(this.heightWidthRatio >= 1.2){
+      $event.path[0].style.width = '50%'
       this.isVertical = 1
     }else{
       $event.path[0].style.width = '80%'
