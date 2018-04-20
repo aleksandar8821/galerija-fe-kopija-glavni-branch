@@ -11,6 +11,10 @@
 	}
 }
 
+.bg-dark{
+	background-color: black !important;
+}
+
 a.dropdown-toggle.myclass-account-thumbnail{
 	background-color: indianred;
 	border-radius: 50%;

@@ -22,7 +22,7 @@ export class RegisterVerificationComponent implements OnInit {
   constructor(private route: ActivatedRoute, private authService: AuthService, private http: HttpClient) { }
 
   ngOnInit() {
-    //ovo je isti onaj path koji navodis u routing modulu (tamo gde navodis rute za router outlet) i na osnovu toga koja je ruta aktivirana radim razlicite stvari
+    //ovo je isti onaj path koji navodis u routing modulu (tamo gde navodis rute za router outlet) i na osnovu toga koja je ruta aktivirana radim razlicite stvari (dakle ovo radim, zato sto mi dve rute gadjaju istu komponentu, pa na osnovu toga koja ruta je aktivira, radim razlicite stvari)
     this.routePath = this.route.snapshot.routeConfig.path
     this.verificationMessageDiv = document.getElementById('myid-verification-message')
     this.createdUserName = this.authService.createdUserName

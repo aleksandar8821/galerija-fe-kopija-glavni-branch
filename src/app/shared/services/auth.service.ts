@@ -88,7 +88,6 @@ export class AuthService {
   // Nova registracija, sa mail confirmation
   
   public register(user: User) {
-    console.log('nnnnnnn');
     return new Observable((o: Observer<any>) => {
       this.http.post('http://localhost:8000/api/register', {
         'first_name': user.firstName,
@@ -107,6 +106,40 @@ export class AuthService {
     });
   }
 
+  // public forgotPasswordRequest(email: string){
+  //   return new Observable((o: Observer<any>) => {
+  //     this.http.post('http://localhost:8000/api/forgot_password', {
+  //       'email': email
+  //     }).subscribe(() => {
+  //       alert('We have sent you an email with a link so you can reset your password!')
+  //     }, (err) => {
+  //       return o.error(err);
+  //     });
+  //   });
+  // }
 
+  public resetPassword(user: User, token: string){
+    return new Observable((o: Observer<any>) => {
+      this.http.post('http://localhost:8000/api/password-reset', {
+        'email': user.email,
+        'password': user.password,
+        'password_confirmation': user.confirmPassword,
+        'token': token
+      }).subscribe((data: { loginToken: string, logedUser: any}) => {
+        window.localStorage.setItem('loginToken', data.loginToken);
+        this.isAuthenticated = true;
+        this.loggedUser = new User(data.logedUser.id, data.logedUser.first_name, data.logedUser.last_name, data.logedUser.email)
+        this.loggedUserNameFirstLetter = data.logedUser.first_name.charAt(0).toUpperCase()
+        window.localStorage.setItem('loggedUserNameFirstLetter', this.loggedUserNameFirstLetter)
+        //email postavljam da bi mogao da poredim sa mailom usera koji je postavio komentar, pa da mu omogucim brisanje. Email je unikatan u bazi, stoga je dobar za identifikaciju (mada ovo mozda bas i nije dobro jer neko moze sanzati mail nekog korisnika ako ti ceprka po javascriptu, tako da je mozda bolje da ga poredis sa id-em iz baze, ali opet kolko je to safe, da imas id od korisnika prisutan u javascript kodu?):
+        window.localStorage.setItem('loggedUserEmail', this.loggedUser.email)
+        // ovaj data.loginToken se kolko sam skontao zapravo nigde ne koristi u funkciji koja se subscribeovala na ovaj observable, ali da bi se sucess handler u toj funkciji okinuo, ovaj mora nesto da mu posalje u sa o.next, inace se nista ne desava... malo glupavo, al sta ces
+        o.next(data.loginToken);
+        return o.complete();
+      }, (err) => {
+        return o.error(err);
+      });
+    });
+  }
 
 }

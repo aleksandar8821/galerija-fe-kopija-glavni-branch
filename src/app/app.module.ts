@@ -28,7 +28,9 @@ import { AddImageComponent } from './components/add-image/add-image.component';
 import { DomService } from './shared/services/dom.service';
 import { AddImageRefDirective } from './shared/directives/add-image-ref.directive';
 import { ViewGalleryComponent } from './components/view-gallery/view-gallery.component';
-import { ReversePipe } from './shared/pipes/reverse.pipe'
+import { ReversePipe } from './shared/pipes/reverse.pipe';
+import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
+import { PasswordResetComponent } from './components/password-reset/password-reset.component'
 
 
 @NgModule({
@@ -46,6 +48,8 @@ import { ReversePipe } from './shared/pipes/reverse.pipe'
     AddImageRefDirective,
     ViewGalleryComponent,
     ReversePipe,
+    ForgotPasswordComponent,
+    PasswordResetComponent,
   ],
   imports: [
     BrowserModule,

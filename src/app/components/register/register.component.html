@@ -9,7 +9,7 @@
            First name
        </label>
         <input #firstName="ngModel" [(ngModel)]="user.firstName" type="text" required class="form-control" id="firstName" name="firstName">
-        <!-- ova validacija je inace radjena isto kao i ovde https://angular.io/guide/form-validation#template-driven-validation -->
+        <!-- ova validacija je inace radjena isto kao i ovde https://angular.io/guide/form-validation#template-driven-validation , a kompletna validacija je radjena po uzoru i kolko vidim maltene je ista kao i ova ovde https://gitlab.com/vivify-ideas/vivifyacademy-advanced-rest-api-movies-fe/blob/master/src/app/components/register/register.component.html -->
         <div *ngIf="firstName.invalid && (firstName.dirty || firstName.touched)" class="alert alert-danger">
             <div *ngIf="firstName.errors.required">
                  First name is required.

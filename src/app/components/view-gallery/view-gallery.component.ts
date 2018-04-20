@@ -20,7 +20,8 @@ import { FormGroup, NgForm } from '@angular/forms'
       transition('void => *', [
         style({opacity: 0, height: 0}),
         sequence([
-          animate('400ms', style({height: '*'})),
+          // stavljam 500ms delaya zbog skrola koji se desava prethodno
+          animate('400ms 500ms', style({height: '*'})),
           animate('400ms', style({opacity: 1}))
         ])
         
@@ -47,6 +48,7 @@ export class ViewGalleryComponent implements OnInit {
   @ViewChild("disabledOverlay") disabledOverlay: ElementRef
   // @ViewChild("addGalleryCommentForm") addGalleryCommentForm: FormGroup // radilo je i sa FormGroup samo sto izgleda nije pravilno jer je FormGroup za model driven ili ti reactive forme, a ova tvoja je template driven. Vidi ovde https://stackoverflow.com/questions/48681287/reset-form-from-parent-component. Inace ideju za FormGroup pokupio ovde: https://blog.angular-university.io/introduction-to-angular-2-forms-template-driven-vs-model-driven/ i https://codecraft.tv/courses/angular/forms/submitting-and-resetting/
   @ViewChild("addGalleryCommentForm") addGalleryCommentForm: NgForm //https://stackoverflow.com/questions/48681287/reset-form-from-parent-component
+  @ViewChild("commentsContainer") commentsContainer: ElementRef
 
   constructor(private galleryService: GalleryService, private route: ActivatedRoute, private renderer: Renderer2) {
     this.isUserAuthenticated = Boolean(window.localStorage.getItem('loginToken')); 
@@ -90,6 +92,7 @@ export class ViewGalleryComponent implements OnInit {
     this.galleryService.addGalleryComment(this.galleryComment, this.gallery).subscribe((storedComment: GalleryComment) => {
       this.addGalleryCommentForm.reset()
       // console.log(this.galleryComment);
+      this.commentsContainer.nativeElement.scrollIntoView({ behavior: "smooth", block: "start"})
       this.commentsArrayReversed.unshift(storedComment)
 
       this.showLoaderDisablePageElements(false)

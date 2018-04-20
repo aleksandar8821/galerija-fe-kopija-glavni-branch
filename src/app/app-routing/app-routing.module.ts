@@ -6,6 +6,8 @@ import { AllGalleriesComponent } from '../components/all-galleries/all-galleries
 import { ViewGalleryComponent } from '../components/view-gallery/view-gallery.component';
 import { CreateNewGalleryComponent } from '../components/create-new-gallery/create-new-gallery.component';
 import { LoginComponent } from '../components/login/login.component';
+import { ForgotPasswordComponent } from '../components/forgot-password/forgot-password.component';
+import { PasswordResetComponent } from '../components/password-reset/password-reset.component'
 import { MyGalleriesComponent } from '../components/my-galleries/my-galleries.component';
 import { RegisterComponent } from '../components/register/register.component';
 import { RegisterVerificationComponent } from '../components/register-verification/register-verification.component';
@@ -43,6 +45,16 @@ const appRoutes: Routes = [
         path: 'login',
         canActivate: [GuestGuard],
         component: LoginComponent
+    },
+    {
+        path: 'forgot-password',
+        canActivate: [GuestGuard],
+        component: ForgotPasswordComponent
+    },
+    {
+        path: 'password-reset/:email/:token',
+        canActivate: [GuestGuard],
+        component: PasswordResetComponent
     },
     {
         path: 'register',

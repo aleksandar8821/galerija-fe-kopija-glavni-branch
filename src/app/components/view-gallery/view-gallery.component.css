@@ -77,7 +77,11 @@
 }
 
 .myclass-add-comment-form{
-	margin-bottom: 30px;
+	margin-bottom: 15px;
+}
+
+.myclass-gallery-comments{
+	padding-top: 15px;
 }
 
 .myclass-gallery-comments > * + *{
