@@ -1,13 +1,13 @@
 /* You can add global styles to this file, and also import other style files */
 
 body{
-	background-image: url(assets/images/binding_light_@2X.png);
+	background-image: url(assets/images/Afgalleries_pozadina7-msm-konacno-s-f-web.jpg);
 
 }
 
-.myclass-gradient-background{
+/*.myclass-gradient-background{
 	background: repeating-linear-gradient(to bottom, rgba(39,55,230,0.5) 200px, rgba(207,69,45,0.5) 400px, rgba(39,55,230,0.5) 600px);
-}
+}*/
 
 #myid-central-logo{
 	width: 100%;
