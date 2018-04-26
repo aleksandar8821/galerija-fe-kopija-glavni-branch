@@ -1,4 +1,4 @@
-<img id="myid-central-logo" src="../../../assets/images/logo10-01.svg">
+<img id="myid-central-logo" src="../../../assets/images/logo12-01.svg">
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
   <a class="navbar-brand" href="#">AF galleries</a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -51,6 +51,7 @@
 
 <!-- <br> -->
 
+<!-- foru da ti uvek skroluje na vrh stranice kad ti se promeni ruta nasao ovde https://stackoverflow.com/questions/48048299/angular-5-scroll-to-top-on-every-route-click , slicnu stvar sa malo vise koda imas ovde (prihvacen odgovor) https://stackoverflow.com/questions/39601026/angular-2-scroll-to-top-on-route-change , a na oba linka imas i varijantu kad hoces da ti se kad kliknes back ili forward u browseru ipak stranica ne skroluje na vrh, nego da ostane tamo gde je bila prethodno (na oba linka je to u odgovoru odmah ispod prihvacenog, a ja zasad ovo resenje nisam stavljao!) -->
 <div class="container myclass-router-outlet-wrapper">
-	<router-outlet></router-outlet>
+	<router-outlet (activate)="onActivate($event)"></router-outlet>
 </div>

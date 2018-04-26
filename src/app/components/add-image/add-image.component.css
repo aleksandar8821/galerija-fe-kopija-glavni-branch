@@ -9,6 +9,7 @@
 }*/
 
 .card-body{
+	background-color: beige;
 	display: flex;
 	flex-wrap: wrap;
 }
@@ -26,6 +27,7 @@
 .myclass-choose-image{
 	background-color: #FFF399FF;
 	flex: 1;
+	padding: 10px;
 }
 
 .myclass-image-url{
@@ -35,6 +37,7 @@
 .myclass-image-description{
 	background-color: beige;
 	flex: 2;
+	padding: 10px;
 
 }
 
@@ -101,4 +104,70 @@
 @keyframes flash-message {
     0%   {opacity: 1;}
     100% {opacity: 0;}
+}
+
+@media (max-width: 991.98px){
+	
+	.card-body{
+		font-size: 15px;
+	}
+
+	.myclass-choose-image{
+		
+	}
+
+	.myclass-image-url{
+		width: 250px;
+	}
+
+	.myclass-image-description{
+		
+	}
+}
+
+@media (max-width: 767.98px){
+	
+	.card-body{
+		font-size: 13px;
+		padding: 5px;
+	}
+
+	.myclass-choose-image{
+		
+	}
+
+	.myclass-image-url{
+		width: 220px;
+	}
+
+	.myclass-image-description{
+		
+	}
+}
+
+
+
+
+@media (max-width: 500px){
+	
+	.card-body{
+		display: block;
+	}
+
+	.myclass-choose-image{
+		max-width: 250px;
+
+	}
+
+	.myclass-image-url{
+		width: 220px;
+	}
+
+	.myclass-image-thumbnail{
+		text-align: left;
+	}
+
+	.myclass-image-description{
+		
+	}
 }

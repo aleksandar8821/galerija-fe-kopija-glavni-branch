@@ -1,5 +1,5 @@
 
-<input id="filter-galleries-input" class="form-control col-lg-6" type="search" placeholder="Filter galleries" aria-label="Filter galleries by name, description or author">
+<input id="filter-galleries-input" class="form-control col-lg-6 col-md-8" type="search" placeholder="Filter galleries" aria-label="Filter galleries by name, description or author">
 <small class="form-text text-muted">Filter galleries by name, description or author</small>
 
 <!-- <ul *ngFor="let gallery of galleries">
@@ -17,7 +17,8 @@
 	    {{ gallery.description }}
 	  </div>
 	  <div class="card-body myclass-galleries-images-container">
-	  	<img *ngFor="let image of gallery.images.slice(0, gallery.showedImagesNumber)" src="{{image.url}}" class="myclass-galleries-index-images" (load)="resizeImageIfVertical($event)">
+	  	<!-- Ranije dok je ovo bio flexbox umesto showedImagesNumber dole u slice funkciji je stajalo gallery.showedImagesNumber -->
+	  	<img *ngFor="let image of gallery.images.slice(0, showedImagesNumber)" src="{{image.url}}" class="myclass-galleries-index-images" (load)="resizeImageIfVertical($event)">
 	  </div>
 	  <div class="card-footer text-muted">
 	    <strong>Created by:</strong> <a routerLink = "/authors/{{gallery.user_id}}">{{ gallery.user.firstName }}  {{ gallery.user.lastName}}</a>

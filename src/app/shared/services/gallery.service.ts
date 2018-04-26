@@ -26,9 +26,9 @@ export class GalleryService {
 	          (galleries: any[]) => {
 	            galleries.forEach((g) => {
 
-	            	let showedImagesNumber = this.setShowedImagesNumber(g)
+	            	// let showedImagesNumber = this.setShowedImagesNumber(g)
 
-	              this.galleries.push(new Gallery(g.id, g.name, g.description, g.user_id, g.created_at, g.updated_at, new User(g.user.id, g.user.first_name, g.user.last_name, g.user.email), g.images, g.comments, showedImagesNumber));
+	              this.galleries.push(new Gallery(g.id, g.name, g.description, g.user_id, g.created_at, g.updated_at, new User(g.user.id, g.user.first_name, g.user.last_name, g.user.email), g.images, g.comments/*, showedImagesNumber*/));
 	            });
 	            // ovaj o.next bi po meni definitivno trebalo da ide ovde, ti si u onoj verziji koju si slao vivify-u, ovo stavljao skroz van subscribe-a i to je nekako funkcionisalo, ni ne zanima me kako, al msm da bi ovako trebalo da se radi
 	            o.next(this.galleries);
@@ -48,7 +48,7 @@ export class GalleryService {
 
 		}
 
-
+/*Odustajem od ovoga, jer izgleda malo blesavo, ali bar je bio uspesan pristup, pa ko zna, mozda ti jednog dana zatreba...
 		public setShowedImagesNumber(gallery){
 			let firstRow:number = 0
 			let secondRow:number = 0
@@ -86,7 +86,7 @@ export class GalleryService {
 
 			return showedImagesNumber
 		}
-
+*/
 		public getSpecificGallery(id){
 
 			/*Ovo se ne moze ovako raditi da ti samo ovo u funkciji stoji jer da bi se na ovu funkciju getSpecificGallery(id) neko subscribeovao, ona mora da vraca Observable, a u ovom slucaju ne vraca ona nego ova get metoda, tako da, kolko ja kontam iz ovoga, ovo sa Observable.of se moze koristiti jedino ako podaci koje mu prosledjujes nisu opet zavisni od nekog subscribe-a ko sto ovde jesu zavisni (MADA BI TI NAJVEROVATNIJE RADILO DA SAMO STAVIS RETURN ISPRED OVOG this.http.get KO STO JE RADJENO OVDE https://gitlab.com/vivify-ideas/vivify-academy-angular/blob/master/src/app/shared/services/contacts.service.ts):

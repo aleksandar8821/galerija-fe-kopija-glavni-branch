@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { GalleryService } from '../../shared/services/gallery.service';
 import { Gallery } from '../../shared/models/gallery'; 
 import { HttpErrorResponse } from '@angular/common/http';
@@ -29,7 +29,31 @@ export class AllGalleriesComponent implements OnInit {
   public noGalleriesAtAll: boolean = false
   public noGalleriesWithFilterTerm : boolean = false
 
-  constructor(private galleryService: GalleryService, private subject: Subject<string>) { }
+
+  public showedImagesNumber: number = 3
+
+  // Preporuceno ovde https://stackoverflow.com/questions/38083182/angular-2-media-queries
+  @HostListener('window:resize', ['$event'])
+  onResize(event) {
+    // console.log(event.target.innerWidth);
+    if(event.target.innerWidth < 575.98){
+      this.showedImagesNumber = 2
+    }else{
+      this.showedImagesNumber = 3
+    }
+   
+  }
+
+  constructor(private galleryService: GalleryService, private subject: Subject<string>) {
+
+    // Ovako radis sa media querijima u javascriptu (vidi https://www.w3schools.com/howto/howto_js_media_queries.asp , https://www.sitepoint.com/javascript-media-queries/ , a ovde ti kaze da ga turis u konstruktor https://stackoverflow.com/questions/40137671/how-to-call-window-matchmedia-correctly-in-an-angular-2-app):
+    let mediaQuery = window.matchMedia("(max-width: 575.98px)")
+    this.screenWidthChange(mediaQuery)
+    // Ovaj dole addListener je ok, medjutim tu dolazim do jednog jebenog problema, a to je da cim se on aktivira this u celoj funkciji vise ne pokazuje na celu komponentu ko sto bi trebalo, nego na MediaQueryList objekat i tu ti this postaje neupotrebljiv, tj ne mogu uopste da podesim this.showedImagesNumber (pokusavao sam i sa let self = this, ali dzaba ne ide...). Tako da sam, kad su real time promene sirine prozora u pitanju, to resio preko HostListener i radi!!! A ovo inicijalno skontavanje koja je sirina prozora u pitanju u momentu kad se otvori stranica radim pomocu koda iznad sa matchMedia...
+    // mediaQuery.addListener(this.screenWidthChange)
+   
+
+  }
 
   ngOnInit() {
   	this.galleryService.getGalleries().subscribe(
@@ -249,12 +273,33 @@ export class AllGalleriesComponent implements OnInit {
     }
   }
 
-
+/*Stara funkcija dok su slike bile u flexboxu
   public resizeImageIfVertical($event){
     // console.log($event);
     // kako dobaviti dimenzije slike https://davidwalsh.name/get-image-dimensions
     if (($event.path[0].naturalHeight / $event.path[0].naturalWidth) >= 1.2) {
       $event.path[0].style.width = '15%'
+    }
+  }*/
+
+  public resizeImageIfVertical($event){
+    // console.log($event);
+    // kako dobaviti dimenzije slike https://davidwalsh.name/get-image-dimensions
+    if (($event.path[0].naturalHeight / $event.path[0].naturalWidth) >= 1.5) {
+      $event.path[0].style.width = '50%'
+    } else if(($event.path[0].naturalHeight / $event.path[0].naturalWidth) >= 1.2){
+      $event.path[0].style.width = '65%'
+    }
+  }
+
+  public screenWidthChange(mediaQuery){
+    // let self = this
+    if (mediaQuery.matches) {
+      // console.log(this);
+      this.showedImagesNumber = 2
+    } else {
+      // console.log(self);
+      this.showedImagesNumber = 3
     }
   }
 

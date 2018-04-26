@@ -28,6 +28,15 @@
 	/*opacity: 0;*/
 }
 
+#myid-view-gallery-name{
+	font-size: 32px;
+}
+
+#myid-view-gallery-description{
+	font-size: 20px;
+	font-weight: normal;
+}
+
 .myclass-view-gallery-container{
 	background-color: #E8E8E8FF;
 	border-radius: 25px;
@@ -121,4 +130,46 @@
 .myclass-image-delete:hover{
 	color: #EA0000;
 	cursor: pointer;
+}
+
+@media (max-width: 991.98px){
+	#myid-view-gallery-name{
+		font-size: 28px;
+	}
+
+	#myid-view-gallery-description{
+		font-size: 18px;
+	}
+
+}
+
+
+@media (max-width: 767.98px){
+
+	#myid-view-gallery-name{
+		font-size: 24px;
+	}
+
+	#myid-view-gallery-description{
+		font-size: 16px;
+	}
+
+	.myclass-view-gallery-container{
+		border-radius: 10px;
+	}
+
+	.myclass-view-gallery-images-container{
+		grid-template-columns: repeat(auto-fill, 32%);
+		padding: 10px;
+		margin-bottom: 15px;
+	}
+
+}
+
+@media (max-width: 575.98px){
+
+	.myclass-view-gallery-images-container{
+		grid-template-columns: repeat(auto-fill, 49%);
+		grid-row-gap: 10px;
+	}
 }

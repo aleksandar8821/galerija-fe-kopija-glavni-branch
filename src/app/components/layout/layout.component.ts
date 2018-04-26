@@ -17,4 +17,8 @@ export class LayoutComponent implements OnInit {
   	
   }
 
+  public onActivate(event){
+    window.scroll(0,0);
+  }
+
 }

@@ -6,6 +6,7 @@
 	right: 0;
 	height: 10px;
 	border-radius: 0;
+	z-index: 999;
 }
 
 .progress .progress-bar{
@@ -16,4 +17,8 @@
 
 .alert.alert-danger{
 	margin-top: 5px;
+}
+
+.myclass-input-container-class{
+	max-width: 100%;
 }

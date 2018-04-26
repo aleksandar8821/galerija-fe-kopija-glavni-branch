@@ -1,17 +1,21 @@
 /* You can add global styles to this file, and also import other style files */
 
 body{
-	background-image: url(assets/images/Afgalleries_pozadina7-msm-konacno-s-f-web.jpg);
-
+	background-image: url(assets/images/Afgalleries_pozadina10-s-f-web.jpg);
 }
 
-/*.myclass-gradient-background{
+/*Pozadina sa teksturom i gradijentom
+body{
+	background-image: url(assets/images/binding_light_@2X.png);
+}
+
+.myclass-gradient-background{
 	background: repeating-linear-gradient(to bottom, rgba(39,55,230,0.5) 200px, rgba(207,69,45,0.5) 400px, rgba(39,55,230,0.5) 600px);
 }*/
 
 #myid-central-logo{
 	width: 100%;
-	margin-bottom: -20px;
+	margin-bottom: -2px;
 }
 
 .myclass-router-outlet-wrapper{
@@ -32,18 +36,32 @@ body{
 	margin-top: 45px;
 }
 
+/*Stara podesavanja sa flexboxom, prelazim na grid
 .myclass-galleries-images-container{
 	display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-around;
-  
-  
 }
 
 .myclass-galleries-index-images{
 	width: 30%;
 	margin-bottom: 20px;
+}*/
+
+.myclass-galleries-images-container{
+	padding: 25px;
+	display: grid;
+	justify-content: space-between;
+	justify-items: center;
+	align-items: center;
+	grid-template-columns: repeat(auto-fill, 30%);
+	grid-row-gap: 25px;
+	margin-bottom: 20px;
+}
+
+.myclass-galleries-index-images{
+	width: 100%;
 }
 
 .myclass-popover-div-wrapper{
@@ -107,3 +125,45 @@ body{
 button:disabled{
 	cursor: not-allowed;
 }
+
+@media (max-width: 991.98px){
+	.myclass-router-outlet-wrapper{
+		padding: 25px;
+	}
+}
+
+@media (max-width: 767.98px){
+	.myclass-whole-page-wrapper{
+		max-width: 100%;
+	/*	padding-left: 20px;
+		padding-right: 20px;*/
+	}
+
+	.myclass-router-outlet-wrapper{
+		max-width: 100%;
+	}
+
+	.myclass-galleries-images-container{
+		grid-template-columns: repeat(auto-fill, 32%);
+		padding: 10px;
+		margin-bottom: 10px;
+	}
+
+}
+
+@media (max-width: 575.98px){
+	.myclass-whole-page-wrapper{
+		padding: 0;
+	}
+
+	.myclass-router-outlet-wrapper{
+		padding: 15px 8px;
+	}
+
+	.myclass-galleries-images-container{
+		grid-template-columns: repeat(auto-fill, 49%);
+		padding: 5px;
+		/*margin: 0;*/
+	}
+}
+
