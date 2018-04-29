@@ -1,0 +1,11 @@
+.myclass-view-image-wrapper{
+	position: fixed;
+	top: 0px;
+	left: 0px;
+	right: 0px;
+	bottom: 0px;
+	background-color: blue;
+	z-index: 1000;
+	opacity: 0.8;
+	overflow: auto;
+}

@@ -1,3 +1,8 @@
+<div [ngStyle]="{'position': 'fixed', 'top': '0', 'z-index': '1000'}">
+	<ng-container #viewImageViewContainerRef></ng-container>
+</div>
+ 
+
 <div #progressBar [ngStyle]="{'visibility': disableProgressBar > 0 ? 'visible' : 'hidden'}" class="progress">
     <div class="progress-bar progress-bar-striped progress-bar-animated"></div>
 </div>
@@ -20,7 +25,7 @@
 	  
 		<div class="myclass-view-gallery-images-container">
 				
-			<a *ngFor="let image of gallery.images" href="{{image.url}}" target="_blank">
+			<a *ngFor="let image of gallery.images" routerLink="/galleries/{{gallery.id}}/{{image.id}}" href="{{image.url}}">
 				<img src="{{image.url}}" class="myclass-view-gallery-images" (load)="resizeImageIfVertical($event)">
 			</a>
 		

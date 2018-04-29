@@ -1,11 +1,13 @@
-import { Component, OnInit, ViewChild, ElementRef, Renderer2 } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { Component, OnInit, ViewChild, ElementRef, Renderer2, ViewContainerRef } from '@angular/core';
+import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Gallery } from '../../shared/models/gallery'; 
 import { GalleryComment } from '../../shared/models/gallery-comment'; 
 import { GalleryService } from '../../shared/services/gallery.service';
 import { trigger,state,style,transition,animate,keyframes,sequence} from '@angular/animations';
 import { FormGroup, NgForm } from '@angular/forms'
+import { ViewImageComponent } from '../../components/view-image/view-image.component';
+import { ViewImageService } from '../../shared/services/view-image.service';
 
 
 @Component({
@@ -49,26 +51,52 @@ export class ViewGalleryComponent implements OnInit {
   // @ViewChild("addGalleryCommentForm") addGalleryCommentForm: FormGroup // radilo je i sa FormGroup samo sto izgleda nije pravilno jer je FormGroup za model driven ili ti reactive forme, a ova tvoja je template driven. Vidi ovde https://stackoverflow.com/questions/48681287/reset-form-from-parent-component. Inace ideju za FormGroup pokupio ovde: https://blog.angular-university.io/introduction-to-angular-2-forms-template-driven-vs-model-driven/ i https://codecraft.tv/courses/angular/forms/submitting-and-resetting/
   @ViewChild("addGalleryCommentForm") addGalleryCommentForm: NgForm //https://stackoverflow.com/questions/48681287/reset-form-from-parent-component
   @ViewChild("commentsContainer") commentsContainer: ElementRef
+  @ViewChild("viewImageViewContainerRef", {read: ViewContainerRef}) viewImageViewContainerRef: ViewContainerRef;
 
-  constructor(private galleryService: GalleryService, private route: ActivatedRoute, private renderer: Renderer2) {
+  constructor(private galleryService: GalleryService, private route: ActivatedRoute, private renderer: Renderer2, private router: Router, private viewImageService: ViewImageService) {
+    
+    // ******************************************************************** //
+    // Pomocu ovoga uspevam da mi se komponenta ne refreshuje (ne inicijalizuje ponovo) kad je dve razlicite rute otvaraju i zasad radi, nasao ovde https://stackoverflow.com/questions/45497208/how-to-change-to-route-with-same-component-without-page-reload , koristi se ocigledno ovo ili nesto jako slicno tome https://angular.io/api/router/RouteReuseStrategy
+    this.router.routeReuseStrategy.shouldReuseRoute = function(){
+      return true;
+    };
+    this.router.events.subscribe((evt) => {
+        if (evt instanceof NavigationEnd) {
+            this.router.navigated = false;
+        }
+    });
+    // ******************************************************************** //
     this.isUserAuthenticated = Boolean(window.localStorage.getItem('loginToken')); 
     this.loggedUserEmail = window.localStorage.getItem('loggedUserEmail')
   }
 
   ngOnInit() {
-  	// bar po ovom (https://scotch.io/tutorials/handling-route-parameters-in-angular-v2) ovo bi moralo da se radi preko paramMap, jer on vraca Observable, ma pogledaj link samo
-  	this.route.paramMap.subscribe(params => {
-  		let id = params.get('id')
-  		this.galleryService.getSpecificGallery(id).subscribe((gallery: Gallery) => {
-        this.gallery = gallery
-        this.commentsArrayReversed = gallery.comments.slice().reverse() //prvobitno pravljen pipe, al sam onda premestio reverse (pravljenje da ti niz bude u obrnutom redosledu) ovde, vidi odgovor od Thierry Templier https://stackoverflow.com/questions/35703258/invert-angular-2-ngfor
 
-        // console.log(this.commentsArrayReversed);
-        console.log(gallery);
-  		}, (err: HttpErrorResponse) => {
-        alert(`Server returned code ${err.status} with message: ${err.error.message}`);
-        console.log(err)
-      })
+    // bar po ovom (https://scotch.io/tutorials/handling-route-parameters-in-angular-v2) ovo bi moralo da se radi preko paramMap, jer on vraca Observable, ma pogledaj link samo
+    this.route.paramMap.subscribe(params => {
+      let imageID = params.get('imageID')
+      console.log(imageID);
+      if(imageID){
+        this.viewImageService.setViewContainerRef(this.viewImageViewContainerRef)
+        this.viewImageService.setGallery(this.gallery)
+        this.viewImageService.setGalleryID(params.get('galleryID'))
+        this.viewImageService.setImageID(imageID)
+        this.viewImageService.addDynamicComponent(ViewImageComponent)
+      }
+  		let galleryID = params.get('galleryID')
+      if(!this.gallery){
+          this.galleryService.getSpecificGallery(galleryID).subscribe((gallery: Gallery) => {
+            this.gallery = gallery
+            this.commentsArrayReversed = gallery.comments.slice().reverse() //prvobitno pravljen pipe, al sam onda premestio reverse (pravljenje da ti niz bude u obrnutom redosledu) ovde, vidi odgovor od Thierry Templier https://stackoverflow.com/questions/35703258/invert-angular-2-ngfor
+
+            // console.log(this.commentsArrayReversed);
+            console.log(gallery);
+          }, (err: HttpErrorResponse) => {
+            alert(`Server returned code ${err.status} with message: ${err.error.message}`);
+            console.log(err)
+          })
+      }
+  		
   	})
 
   }

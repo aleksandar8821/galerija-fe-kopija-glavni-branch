@@ -1,4 +1,5 @@
 import { Gallery } from '../../shared/models/gallery'; 
+import { ImageComment } from '../../shared/models/image-comment'; 
 
 export class Image {
 
@@ -9,7 +10,8 @@ export class Image {
 		public description?: string,
 		public vertical?: number,
 		public galleryId?: number,
-		public gallery?: Gallery
+		public gallery?: Gallery,
+		public comments?: Array<ImageComment>
 
 	){
 

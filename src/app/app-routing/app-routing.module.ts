@@ -11,6 +11,8 @@ import { PasswordResetComponent } from '../components/password-reset/password-re
 import { MyGalleriesComponent } from '../components/my-galleries/my-galleries.component';
 import { RegisterComponent } from '../components/register/register.component';
 import { RegisterVerificationComponent } from '../components/register-verification/register-verification.component';
+import { ViewImageComponent } from '../components/view-image/view-image.component';
+
 
 import { AuthGuard } from '../shared/guards/auth.guard';
 import { GuestGuard } from '../shared/guards/guest.guard';
@@ -28,7 +30,11 @@ const appRoutes: Routes = [
         component: AllGalleriesComponent,
     },
     {
-        path: 'galleries/:id',
+        path: 'galleries/:galleryID',
+        component: ViewGalleryComponent
+    },
+    {
+        path: 'galleries/:galleryID/:imageID',
         component: ViewGalleryComponent
     },
     {

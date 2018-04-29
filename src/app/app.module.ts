@@ -30,7 +30,9 @@ import { AddImageRefDirective } from './shared/directives/add-image-ref.directiv
 import { ViewGalleryComponent } from './components/view-gallery/view-gallery.component';
 import { ReversePipe } from './shared/pipes/reverse.pipe';
 import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
-import { PasswordResetComponent } from './components/password-reset/password-reset.component'
+import { PasswordResetComponent } from './components/password-reset/password-reset.component';
+import { ViewImageComponent } from './components/view-image/view-image.component';
+import { ViewImageService } from './shared/services/view-image.service';
 
 
 @NgModule({
@@ -50,6 +52,7 @@ import { PasswordResetComponent } from './components/password-reset/password-res
     ReversePipe,
     ForgotPasswordComponent,
     PasswordResetComponent,
+    ViewImageComponent,
   ],
   imports: [
     BrowserModule,
@@ -60,8 +63,8 @@ import { PasswordResetComponent } from './components/password-reset/password-res
     PopoverModule,
     BrowserAnimationsModule,    
   ],
-  providers: [AuthService, GalleryService, AuthGuard, GuestGuard, UrlGuard, Subject, DomService],
+  providers: [AuthService, GalleryService, AuthGuard, GuestGuard, UrlGuard, Subject, DomService, ViewImageService],
   bootstrap: [AppComponent],
-  entryComponents: [ AddImageComponent ]
+  entryComponents: [ AddImageComponent, ViewImageComponent ]
 })
 export class AppModule { }
