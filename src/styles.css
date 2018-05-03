@@ -57,7 +57,8 @@ body{
 	align-items: center;
 	grid-template-columns: repeat(auto-fill, 30%);
 	grid-row-gap: 25px;
-	margin-bottom: 20px;
+	/*margin-bottom: 20px;*/
+	margin-bottom: 10px;
 }
 
 .myclass-galleries-index-images{

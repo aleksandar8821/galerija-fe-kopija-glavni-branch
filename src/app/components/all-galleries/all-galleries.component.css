@@ -1,3 +1,5 @@
+/*Senke, gradijenti i pozadine generisane ovde https://www.cssmatic.com/ */
+
 .card{
 	/*-webkit-box-shadow: 0px 0px 17px 0px rgba(87,87,87,1);
 	-moz-box-shadow: 0px 0px 17px 0px rgba(87,87,87,1);
@@ -9,6 +11,7 @@
 
 	
 }
+
 
 .card-header{
 	background: linear-gradient(to right, rgba(237,237,237,1) 0%, rgba(246,246,246,1) 53%, rgba(255,255,255,1) 100%);

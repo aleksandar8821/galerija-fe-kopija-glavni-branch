@@ -14,10 +14,11 @@ import { Gallery } from '../../shared/models/gallery';
 @Injectable()
 export class ViewImageService {
 
-	private vcRef: ViewContainerRef
-	private gallery: Gallery
-	private galleryID: string
-	private imageID: string
+	public componentRef: ComponentRef<any>;
+
+	public vcRef: ViewContainerRef
+	public imageID: string
+	public gallery: Gallery
 
   constructor(private componentFactoryResolver: ComponentFactoryResolver,
       private injector: Injector) { }
@@ -26,17 +27,17 @@ export class ViewImageService {
   	this.vcRef = vcRef
   }
 
-  setGallery(gallery: Gallery){
-  	this.gallery = gallery
-  }
-
-  setGalleryID(galleryID: string){
-  	this.galleryID = galleryID
-  }
-
+  // Moram imat posebne setere za imageID i galeriju jer se oni ne setuju uvek pri kreiranju komponente
   setImageID(imageID: string){
-  	this.imageID = imageID
+  	this.imageID = imageID;
+  	(<any>this.componentRef.instance).imageID = this.imageID;
   }
+
+  setGallery(gallery: Gallery){
+  	this.gallery = gallery;
+  	(<any>this.componentRef.instance).gallery = this.gallery;
+  }
+
 
   addDynamicComponent(component: any) {
 
@@ -45,13 +46,23 @@ export class ViewImageService {
       .resolveComponentFactory(component)
       .create(this.injector);
 
-    (<any>componentRef.instance).componentReference = componentRef;
-    (<any>componentRef.instance).gallery = this.gallery;
-    (<any>componentRef.instance).galleryID = this.galleryID;
-    (<any>componentRef.instance).imageID = this.imageID;
-
+    // Neku debilnu gresku resavam ovde tako sto stavim tacku zarez na kraj izraza, debilno al probaj ako budes imao neki problem ovde... Kolko sam skontao, problem je zapravo u sledecem redu koji pocinje sa (<any> , jer sam mi se isti ovaj problem pojavljivao ispred tog reda. Dakle u red iznad treba samo staviti tacku zarez
+   	this.componentRef = componentRef;
+    (<any>this.componentRef.instance).componentReference = componentRef;
     this.vcRef.insert(componentRef.hostView)
 
+  }
+
+  destroyComponent(componentRef: ComponentRef<any>){
+    let indexVcRef = this.vcRef.indexOf(componentRef.hostView)
+    this.vcRef.remove(indexVcRef) //msm da sam ovo skontao iz dokumentacije zvanicne kako se radi, nznm, msm da to nisam nasao u onim tutorijalima, nisam siguran
+   
+    
+    componentRef.destroy() // ovo svaki tutorijal kaze da treba da se destroyuje ovako...
+    componentRef = null; // ovo da stavlja na null sam nasao ovde https://medium.com/@DenysVuika/dynamic-content-in-angular-2-3c85023d9c36 <<< gledaj u ngOnDestroy
+
+
+    this.componentRef = null // Bez ovoga nije hteo da mi odradi da ponovo otvorim sliku, kad bi je prethodno zatvorio
   }
 
 }

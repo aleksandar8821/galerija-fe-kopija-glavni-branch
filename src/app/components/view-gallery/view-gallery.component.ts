@@ -52,45 +52,66 @@ export class ViewGalleryComponent implements OnInit {
   @ViewChild("addGalleryCommentForm") addGalleryCommentForm: NgForm //https://stackoverflow.com/questions/48681287/reset-form-from-parent-component
   @ViewChild("commentsContainer") commentsContainer: ElementRef
   @ViewChild("viewImageViewContainerRef", {read: ViewContainerRef}) viewImageViewContainerRef: ViewContainerRef;
+  @ViewChild("galleryStart") galleryStart: ElementRef
 
   constructor(private galleryService: GalleryService, private route: ActivatedRoute, private renderer: Renderer2, private router: Router, private viewImageService: ViewImageService) {
     
     // ******************************************************************** //
-    // Pomocu ovoga uspevam da mi se komponenta ne refreshuje (ne inicijalizuje ponovo) kad je dve razlicite rute otvaraju i zasad radi, nasao ovde https://stackoverflow.com/questions/45497208/how-to-change-to-route-with-same-component-without-page-reload , koristi se ocigledno ovo ili nesto jako slicno tome https://angular.io/api/router/RouteReuseStrategy
-    this.router.routeReuseStrategy.shouldReuseRoute = function(){
-      return true;
+    // Pomocu ovoga uspevam da mi se komponenta ne refreshuje (ne inicijalizuje ponovo, nego da se reuse-uje) kad je dve razlicite rute otvaraju i zasad radi!!! Ovo resenje je inace kombinacija sa ova dva linka https://github.com/angular/angular/issues/12446 (vidi odgovor od DanielKucal, a slicnu stvar imas od istog korisnika ovde https://stackoverflow.com/questions/44875644/custom-routereusestrategy-for-angulars-child-module/44876414#44876414) i https://stackoverflow.com/questions/45497208/how-to-change-to-route-with-same-component-without-page-reload . Sa prvog linka koristim ovaj deo iza returna i to sto unutar app-routing modula stavljam  data: { reuse: true } na rute koje zelim da se reuse-uju (reuse znaci da se ne inicijalizuju ponovo kad ih aktiviram nego da koriste vec prethodno izrenderovane stranice), a sa drugog linka sam skinuo ideju da ovo stavim u konstruktor komponente koju zelim da reuseujem. Metoda koju koristim se moze naci ovde https://angular.io/api/router/RouteReuseStrategy. 
+    this.router.routeReuseStrategy.shouldReuseRoute = (future, curr) => {
+      return (future.routeConfig === curr.routeConfig) || future.data.reuse;
     };
-    this.router.events.subscribe((evt) => {
-        if (evt instanceof NavigationEnd) {
-            this.router.navigated = false;
-        }
-    });
     // ******************************************************************** //
     this.isUserAuthenticated = Boolean(window.localStorage.getItem('loginToken')); 
     this.loggedUserEmail = window.localStorage.getItem('loggedUserEmail')
   }
 
   ngOnInit() {
-
     // bar po ovom (https://scotch.io/tutorials/handling-route-parameters-in-angular-v2) ovo bi moralo da se radi preko paramMap, jer on vraca Observable, ma pogledaj link samo
     this.route.paramMap.subscribe(params => {
       let imageID = params.get('imageID')
-      console.log(imageID);
+      // console.log(imageID);
       if(imageID){
-        this.viewImageService.setViewContainerRef(this.viewImageViewContainerRef)
-        this.viewImageService.setGallery(this.gallery)
-        this.viewImageService.setGalleryID(params.get('galleryID'))
-        this.viewImageService.setImageID(imageID)
-        this.viewImageService.addDynamicComponent(ViewImageComponent)
+        // Ako je view image komponenta vec instancirana, znaci da promena imageID u url-u oznacava da unutar view image komponente hocu da predjem na drugu sliku, i tada nema potrebe ponovo setovati sve, vec samo imageID
+        if(this.viewImageService.componentRef){
+          this.viewImageService.setImageID(imageID)
+        }else{
+          // Ako dolazim direktno na link slike a da pre toga nisam bio na galeriji (a to znaci da imam id slike u url-u, a galerija nije jos loadovana unutar komponente galerije), onda hocu da mi se galerija u pozadini skroluje do imena galerije, da kad zatvorim sliku odmah skontam da se nalazim na galeriji koja sadrzi sliku!
+          if(!this.gallery){
+            this.galleryStart.nativeElement.scrollIntoView()
+          }
+
+          this.viewImageService.setViewContainerRef(this.viewImageViewContainerRef)
+          this.viewImageService.addDynamicComponent(ViewImageComponent)
+          this.viewImageService.setImageID(imageID)
+          // Ako je galerija vec dobavljena u komponenti za galeriju, nema potrebe da komponenta za sliku ponovo pravi zahtev za dobavljanje galerije, pa joj ovako prosledjivam, u suprotnom ako se na sliku dolazi preko spoljnog linka, galerije ovde sigurno jos ne moze biti, pa joj prosledjujem galeriju kada je dobavim dole u getSpecificGallery() metodi. U SVAKOM SLUCAJU VAZNO JE DA PRI KREIRANJU VIEW IMAGE KOMPONENTE DA SE GALERIJA UVEK POSLEDNJA SETUJE, JER SE (UNUTAR VIEW IMAGE KOMPONENTE) POMOCU NJE DOLAZI DO SLIKE I OSTALIH PODATAKA!
+          if(this.gallery){
+            this.viewImageService.setGallery(this.gallery)
+          }
+
+        }
+        
+      }else{
+        // Ako nemam imageID u url, a view image komponenta je vec kreirana, to znaci da sam otisao sa view image komponente na stranicu view gallery komponente i da ne zelim vise da mi bude nekakva slika prikazana, zato je i fala Bogu brisem
+        if(this.viewImageService.componentRef){
+          this.viewImageService.destroyComponent(this.viewImageService.componentRef)
+        }
       }
-  		let galleryID = params.get('galleryID')
+      
+      // Ovaj uslov if(!this.gallery) je svakako potreban jer se kompletan kod unutar this.route.paramMap.subscribe gde se i sad nalazim, izvrsava svaki put kad se ruta promeni, a ovde je to predvidjeno da se cesto desava! Da nema ovog uslova tebi bi se svaki put iznova dobavljala galerija sa backenda na svaku promene rute! Takodje potreban je i zbog koraka this.viewImageService.setGallery jer nema smisla da ti se ponovo setuje galerija u view image komponenti (gore u kodu je vec jednom setujes ako u tom trenutku postoji dobavljena galerija), jedino ima smisla da je ovde setujes ako se slika posecuje sa spoljnog linka i view gallery komponenta jos nema dobavljenu galeriju (sto i kaze uslov if(!this.gallery)) pa ti ipak prvo kreiras view image komponentu da ti korisnik ne bi cekao dobavljanje galerije pa da tek onda krene formiranje view image komponente (ovako je ti odma formiras al bez slike), pa tek kad stigne galerija ti ces je proslediti view image komponenti. Dakle, kad sliku otvaras preko spoljnog linka, prvo se otvara stranica galerije kojoj ta slika pripada, pa se odmah formira kostur komponente koja treba da prikaze pojedinacnu sliku iako jos nema dobavljenu tu sliku, pa posto komponenti galerije stignu podaci ona ih naravno prikazuje u pozadini u sopstvenom UI, a komponenti slike salje te podatke i tek onda ona moze da prikaze sliku i naravno sve podatke vezane za nju. Uh!!! jbt... Naravno potreban je i uslov if(this.viewImageService.componentRef) jer ako on nije zadovoljen, to znaci da se radi o slucaju da ti ni neces da gledas pojedinacnu sliku nego samo galeriju.
       if(!this.gallery){
+      		let galleryID = params.get('galleryID')
           this.galleryService.getSpecificGallery(galleryID).subscribe((gallery: Gallery) => {
             this.gallery = gallery
+            // Naravno potreban je i uslov if(this.viewImageService.componentRef) jer ako on nije zadovoljen, to znaci da se radi o slucaju da ti ni neces da gledas pojedinacnu sliku nego samo galeriju.
+            if(this.viewImageService.componentRef){
+              // U SVAKOM SLUCAJU VAZNO JE DA PRI KREIRANJU VIEW IMAGE KOMPONENTE DA SE GALERIJA UVEK POSLEDNJA SETUJE, JER SE (UNUTAR VIEW IMAGE KOMPONENTE) POMOCU NJE DOLAZI DO SLIKE I OSTALIH PODATAKA!
+              this.viewImageService.setGallery(this.gallery)
+            }
             this.commentsArrayReversed = gallery.comments.slice().reverse() //prvobitno pravljen pipe, al sam onda premestio reverse (pravljenje da ti niz bude u obrnutom redosledu) ovde, vidi odgovor od Thierry Templier https://stackoverflow.com/questions/35703258/invert-angular-2-ngfor
 
             // console.log(this.commentsArrayReversed);
-            console.log(gallery);
+            // console.log(gallery);
           }, (err: HttpErrorResponse) => {
             alert(`Server returned code ${err.status} with message: ${err.error.message}`);
             console.log(err)

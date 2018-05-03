@@ -31,10 +31,12 @@ const appRoutes: Routes = [
     },
     {
         path: 'galleries/:galleryID',
+        data: { reuse: true },
         component: ViewGalleryComponent
     },
     {
         path: 'galleries/:galleryID/:imageID',
+        data: { reuse: true },
         component: ViewGalleryComponent
     },
     {

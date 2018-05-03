@@ -34,7 +34,7 @@ export class DomService {
       .resolveComponentFactory(component)
       .create(this.injector);
     //Prosledjujem referencu na komponentu samoj kreiranoj komponenti preko inputa (prosledjujem joj referencu na sebe zapravo, jer mislim da referencu na nju u vidu ComponentRef ne moze da dobije unutar sebe, jedino valjda ovako -> ovaj pristup nasao na linku https://medium.com/@caroso1222/angular-pro-tip-how-to-dynamically-create-components-in-body-ba200cc289e6 u komentaru od Emin Sinani):
-    (<any>componentRef.instance).componentReference = componentRef;
+    (<any>componentRef.instance).componentReference = componentRef; //PS PAZI, kad imas ovo (<any u prethodni red MORAS staviti tacku zarez na kraj, jer inace javlja neku gresku!!!
     // Na ovaj nacin se stavlja output na komponentu koja je dinamicki kreirana:
     (<any>componentRef.instance).imageData.subscribe(dataPackage => {
     	dataPackage.positionIndex = this.vcRef.indexOf(dataPackage.componentRef.hostView);

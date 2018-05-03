@@ -1,5 +1,10 @@
 <div class="myclass-view-image-wrapper">
-	<img *ngIf="showingImage" src="{{showingImage.url}}">
+
+	<button type="button" class="btn btn-primary" (click)="nextImage()">Next image</button>
+	<button type="button" class="btn btn-primary" (click)="previousImage()">Previous image</button>
+	<button #btnAddImage type="button" class="btn btn-primary" (click)="closeImage()">Close</button>
+
+	<img style="width: 100%;" *ngIf="showingImage" src="{{showingImage.url}}">
 
 	
 </div>
