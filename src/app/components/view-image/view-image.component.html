@@ -1,10 +1,14 @@
 <div class="myclass-view-image-wrapper">
 
-	<button type="button" class="btn btn-primary" (click)="nextImage()">Next image</button>
-	<button type="button" class="btn btn-primary" (click)="previousImage()">Previous image</button>
-	<button #btnAddImage type="button" class="btn btn-primary" (click)="closeImage()">Close</button>
+	<div>
+		<button type="button" class="btn btn-primary" (click)="previousImage()">Previous image</button>
+		<button type="button" class="btn btn-primary" (click)="nextImage()">Next image</button>
+		<button #btnAddImage type="button" class="btn btn-primary" (click)="closeImage()">Close</button>
+	</div>
 
-	<img style="width: 100%;" *ngIf="showingImage" src="{{showingImage.url}}">
+	<div>
+		<img class="myclass-showing-image" *ngIf="showingImage" src="{{showingImage.url}}">
+	</div>
 
 	
 </div>

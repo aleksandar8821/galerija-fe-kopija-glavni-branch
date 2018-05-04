@@ -4,8 +4,12 @@
 	left: 0px;
 	right: 0px;
 	bottom: 0px;
-	background-color: blue;
+	background-color: #333333C8;
+	text-align: center;
 	z-index: 1000;
-	opacity: 0.8;
 	overflow: auto;
+}
+
+.myclass-showing-image{
+	width: 60%;
 }
