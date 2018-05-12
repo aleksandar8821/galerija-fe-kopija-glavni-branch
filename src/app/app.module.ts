@@ -63,7 +63,7 @@ import { ViewImageService } from './shared/services/view-image.service';
     PopoverModule,
     BrowserAnimationsModule,    
   ],
-  providers: [AuthService, GalleryService, AuthGuard, GuestGuard, UrlGuard, Subject, DomService, ViewImageService],
+  providers: [AuthService, GalleryService, AuthGuard, GuestGuard, UrlGuard, Subject, DomService],
   bootstrap: [AppComponent],
   entryComponents: [ AddImageComponent, ViewImageComponent ]
 })

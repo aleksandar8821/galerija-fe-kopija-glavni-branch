@@ -1,14 +1,67 @@
-<div class="myclass-view-image-wrapper">
+<div class="myclass-view-image-background">
 
-	<div>
-		<button type="button" class="btn btn-primary" (click)="previousImage()">Previous image</button>
-		<button type="button" class="btn btn-primary" (click)="nextImage()">Next image</button>
-		<button #btnAddImage type="button" class="btn btn-primary" (click)="closeImage()">Close</button>
+	<div #progressBar [ngStyle]="{'visibility': disableProgressBar > 0 ? 'visible' : 'hidden'}" class="progress">
+	    <div class="progress-bar progress-bar-striped progress-bar-animated"></div>
 	</div>
 
-	<div>
-		<img class="myclass-showing-image" *ngIf="showingImage" src="{{showingImage.url}}">
-	</div>
+	<a (click)="closeImage()" class="myclass-view-image-close-link"><i class="fas fa-times-circle myclass-view-image-close-icon"></i></a>
 
-	
+	<div class="myclass-view-image-container">
+			
+			<div class="myclass-showing-image-wrapper">
+
+				<a #arrowLinkLeft (mouseenter)="arrowsAnimatePreventHover($event)" (click)="previousImage()" id="myid-carousel-arrow-left-link" class="myclass-carousel-arrow-link myclass-carousel-arrow-link-left"><i id="myid-carousel-arrow-left" class="fas fa-chevron-circle-left myclass-carousel-arrow myclass-carousel-arrow-left"></i></a>
+
+				<a #arrowLinkRight (click)="previousImage()" (mouseenter)="arrowsAnimatePreventHover($event)" id="myid-carousel-arrow-right-link" class="myclass-carousel-arrow-link myclass-carousel-arrow-link-right"><i id="myid-carousel-arrow-right" class="fas fa-chevron-circle-right myclass-carousel-arrow myclass-carousel-arrow-right"></i></a>
+
+				<div #showingImageContainer class="myclass-showing-image-container" (mouseenter)="arrowsAnimate($event)" (mouseleave)="arrowsAnimate($event)">
+					<img class="myclass-showing-image" *ngIf="showingImage" src="{{showingImage.url}}" (load)="resizeImageIfVertical($event)">
+
+				</div>
+
+			</div>
+
+			<!-- <div>
+				<button type="button" class="btn btn-primary" (click)="previousImage()">Previous image</button>
+				<button type="button" class="btn btn-primary" (click)="nextImage()">Next image</button>
+				<button type="button" class="btn btn-primary" (click)="closeImage()">Close</button>
+			</div> -->
+
+			<div *ngIf="isUserAuthenticated" class="myclass-add-comment-form">
+				
+				<form #addImageCommentForm = "ngForm" (ngSubmit)="addImageComment();">
+				  <div class="form-group">
+				    <label for="exampleFormControlTextarea1">Your comment for this image:</label>
+				    <textarea #commentBody="ngModel" [(ngModel)]="imageComment.commentBody" name="commentBody" class="form-control" id="exampleFormControlTextarea1" rows="3" required></textarea>
+				  </div>
+				  <div *ngIf="commentBody.invalid && (commentBody.dirty || commentBody.touched)" class="alert alert-danger">
+
+				    <div *ngIf="commentBody.errors.required">
+				      Comment body is required.
+				    </div>
+				    
+				  </div>
+				  <button #btnAddComment [disabled]="!addImageCommentForm.valid" type="submit" class="btn btn-primary">Add comment</button>
+				</form>
+				
+			</div>
+
+			<div #commentsContainer class="myclass-image-comments">
+
+				<!-- skinuto sa https://getbootstrap.com/docs/4.0/layout/media-object/ -->
+				<div class="media" [@.disabled]="disableAnimations" @fade (@fade.done)="animationDone($event)" *ngFor="let comment of commentsArrayReversed">
+					<!-- reverse pipe napravljen po odogovoru od Thierry Templier sa ovog linka, al sam ga ipak izbrisao zasad https://stackoverflow.com/questions/35703258/invert-angular-2-ngfor -->
+				  <!-- <img class="mr-3" alt="Image"> -->
+					<div class="myclass-account-thumbnail mr-3"><span>{{comment.user.first_name.charAt(0).toUpperCase()}}</span></div>
+				  <div class="media-body">
+				    <h5 class="mt-0">{{comment.user.first_name}} {{comment.user.last_name}} <small class="text-muted">{{comment.created_at | date: "longDate"}}</small></h5>
+				    {{comment.comment_body}}
+				  </div>
+				  <a *ngIf="comment.user.email === loggedUserEmail" (click)="deleteImageComment(comment)" class="myclass-delete-link"><i class="fas fa-times-circle myclass-image-delete "></i></a>
+				</div>
+			
+			</div>
+
+
+	</div>
 </div>

@@ -8,6 +8,7 @@ import {
     ComponentRef
 } from '@angular/core';
 import { Observable, Observer } from 'rxjs/Rx';
+import { Subject } from 'rxjs';
 import { Gallery } from '../../shared/models/gallery'; 
 
 
@@ -19,6 +20,10 @@ export class ViewImageService {
 	public vcRef: ViewContainerRef
 	public imageID: string
 	public gallery: Gallery
+
+  // Koristim komunikaciju parenta i childa preko servisa kao i ovde https://angular.io/guide/component-interaction#parent-and-children-communicate-via-a-service
+  private gallerySource = new Subject<Gallery>()
+  public galleryUpdatedImageComments = this.gallerySource.asObservable()
 
   constructor(private componentFactoryResolver: ComponentFactoryResolver,
       private injector: Injector) { }
@@ -36,6 +41,10 @@ export class ViewImageService {
   setGallery(gallery: Gallery){
   	this.gallery = gallery;
   	(<any>this.componentRef.instance).gallery = this.gallery;
+  }
+
+  setGalleryUpdatedImageComments(galleryUpdatedImageComments: Gallery){
+    this.gallerySource.next(galleryUpdatedImageComments)
   }
 
 

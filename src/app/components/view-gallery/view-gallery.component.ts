@@ -14,6 +14,7 @@ import { ViewImageService } from '../../shared/services/view-image.service';
   selector: 'app-view-gallery',
   templateUrl: './view-gallery.component.html',
   styleUrls: ['./view-gallery.component.css'],
+  providers: [ ViewImageService ],
   animations: [
   // ideju za animaciju heighta sa '*', nasao na ovom linku https://stackoverflow.com/questions/42376006/angular2-ngfor-animation-of-pushed-away-elements . Naime, animacija heighta ti omogucuje da vidis ovo pomeranje osstalih komentara kad jedan komentar obrises. I kolko sam ja skontao fora je u tome sto ovom kojeg brises, njemu se height postepeno smanjuje dok ne nestane i to zapravo cini da se ovi komentari pomeraju animirano, ali nisu animirani oni vec height ovog sto nestaje.
 
@@ -64,9 +65,15 @@ export class ViewGalleryComponent implements OnInit {
     // ******************************************************************** //
     this.isUserAuthenticated = Boolean(window.localStorage.getItem('loginToken')); 
     this.loggedUserEmail = window.localStorage.getItem('loggedUserEmail')
+
+    // Kada se dodaju ili obrisu komentari na slikama, potrebno je te podatke obnoviti i ovde u parent komponenti. Koristim komunikaciju parenta i childa preko servisa kao i ovde https://angular.io/guide/component-interaction#parent-and-children-communicate-via-a-service
+    this.viewImageService.galleryUpdatedImageComments.subscribe(galleryUpdatedImageComments => this.gallery = galleryUpdatedImageComments)
   }
 
   ngOnInit() {
+    // Da ova stranica po defaultu bude skrolovana do vrha, posle ima odstupanja nekih 
+    window.scrollTo(0, 0)
+
     // bar po ovom (https://scotch.io/tutorials/handling-route-parameters-in-angular-v2) ovo bi moralo da se radi preko paramMap, jer on vraca Observable, ma pogledaj link samo
     this.route.paramMap.subscribe(params => {
       let imageID = params.get('imageID')
@@ -124,12 +131,19 @@ export class ViewGalleryComponent implements OnInit {
  
 
   public resizeImageIfVertical($event){
-    // console.log($event);
+    console.log($event.target.parentElement);
     // kako dobaviti dimenzije slike https://davidwalsh.name/get-image-dimensions
-    if (($event.path[0].naturalHeight / $event.path[0].naturalWidth) >= 1.5) {
+    /*if (($event.path[0].naturalHeight / $event.path[0].naturalWidth) >= 1.5) {
       $event.path[1].style.width = '50%'
     } else if(($event.path[0].naturalHeight / $event.path[0].naturalWidth) >= 1.2){
       $event.path[1].style.width = '65%'
+    }*/
+
+    // U mozilli npr nemas ova path sranja kao gore, ali umesto toga mozes koristiti target za path[0], a target.parentElement ili target.parentNode za path[1]
+    if (($event.target.naturalHeight / $event.target.naturalWidth) >= 1.5) {
+      $event.target.parentNode.style.width = '50%'
+    } else if(($event.target.naturalHeight / $event.target.naturalWidth) >= 1.2){
+      $event.target.parentNode.style.width = '65%'
     }
   }
 

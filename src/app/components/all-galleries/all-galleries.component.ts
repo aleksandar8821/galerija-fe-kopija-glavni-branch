@@ -56,6 +56,9 @@ export class AllGalleriesComponent implements OnInit {
   }
 
   ngOnInit() {
+    // Da ova stranica uvek bude skrolovana do vrha
+    window.scrollTo(0, 0)
+
   	this.galleryService.getGalleries().subscribe(
   	      data => {
             console.log(data);

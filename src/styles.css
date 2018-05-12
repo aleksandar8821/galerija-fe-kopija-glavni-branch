@@ -127,6 +127,10 @@ button:disabled{
 	cursor: not-allowed;
 }
 
+.btn:focus{
+	box-shadow: none;
+}
+
 @media (max-width: 991.98px){
 	.myclass-router-outlet-wrapper{
 		padding: 25px;

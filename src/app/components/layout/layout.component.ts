@@ -18,7 +18,8 @@ export class LayoutComponent implements OnInit {
   }
 
   public onActivate(event){
-    window.scroll(0,0);
+    // Ipak sam ovo za sad zakomentarisao, iako je perfektno radilo, ali onda nemas utisak SPA kad ti se non stop stranica penje na gore, tako da cu samo staviti ovo ponasanje na home stranicu
+    // window.scroll(0,0);
   }
 
 }

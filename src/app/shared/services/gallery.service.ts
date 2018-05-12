@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { Observer, Observable } from 'rxjs';
 import { Gallery } from '../../shared/models/gallery';
 import { GalleryComment } from '../../shared/models/gallery-comment';
+import { Image } from '../../shared/models/image';
+import { ImageComment } from '../../shared/models/image-comment';
 import { User } from '../../shared/models/user';
 import { AuthService } from '../../shared/services/auth.service';
 import { HttpClient } from '@angular/common/http';
@@ -148,6 +150,41 @@ export class GalleryService {
   				headers: this.authService.getRequestHeaders()
   			}).subscribe((deletedComment: GalleryComment) => {
   				o.next(deletedComment)
+  				return o.complete()
+  			}, (error: HttpErrorResponse) => {
+  				o.error(error)
+  				return o.complete();
+  			})
+			});
+		}
+
+
+		public addImageComment(imageComment: ImageComment, image: Image){
+			
+			return new Observable((o: Observer<any>) => {
+			  this.http.post('http://127.0.0.1:8000/api/image_comment', {
+  				'comment_body': imageComment.commentBody,
+  				'image_id': image.id
+  			}, {
+  				headers: this.authService.getRequestHeaders()
+  			}).subscribe((data: { storedComment: ImageComment, gallery: Gallery}) => {
+  				o.next(data)
+  				return o.complete()
+  			}, (error: HttpErrorResponse) => {
+  				o.error(error)
+  				return o.complete()
+  			})
+			});
+
+		}
+
+
+		public deleteImageComment(comment: ImageComment){
+			return new Observable((o: Observer<any>) => {
+			  this.http.delete('http://127.0.0.1:8000/api/image_comment/' + comment.id, {
+  				headers: this.authService.getRequestHeaders()
+  			}).subscribe((gallery: Gallery) => {
+  				o.next(gallery)
   				return o.complete()
   			}, (error: HttpErrorResponse) => {
   				o.error(error)

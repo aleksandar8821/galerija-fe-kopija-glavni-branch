@@ -49,13 +49,14 @@ export class AuthService {
   	});
   }
 
-  public logout() {
+  public logout(event) {
+      event.preventDefault()
       window.localStorage.removeItem('loginToken');
       window.localStorage.removeItem('loggedUserNameFirstLetter');
       window.localStorage.removeItem('loggedUserEmail');
       this.isAuthenticated = false;
       this.loggedUserNameFirstLetter = '';
-      this.router.navigateByUrl('/login');
+      this.router.navigateByUrl('/galleries');
   }
   
   // Stara registracija, bez mail confirmation-a
