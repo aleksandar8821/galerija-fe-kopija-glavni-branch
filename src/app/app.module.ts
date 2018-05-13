@@ -6,7 +6,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 // import { HttpModule } from '@angular/http'; //<<< ovaj je deprecated! treba koristiti HttpClientModule umesto HttpModule, a za ono sto je tebi bilo potrebno u ovom projektu mozes kasnije u  servisima uvesti samo HttpClient koji je zapravo samo deo ovog dole HttpClientModule >>> https://stackoverflow.com/questions/48124136/angular-4-difference-between-httpclient-and-httpclientmodule
 import { HttpClientModule } from '@angular/common/http';
-import {PopoverModule} from "ngx-popover";
+// import {PopoverModule} from "ngx-popover";
 import { Subject } from 'rxjs/Subject';
 
 
@@ -60,7 +60,7 @@ import { ViewImageService } from './shared/services/view-image.service';
     FormsModule,
     // HttpModule,
     HttpClientModule,
-    PopoverModule,
+    // PopoverModule,
     BrowserAnimationsModule,    
   ],
   providers: [AuthService, GalleryService, AuthGuard, GuestGuard, UrlGuard, Subject, DomService],
