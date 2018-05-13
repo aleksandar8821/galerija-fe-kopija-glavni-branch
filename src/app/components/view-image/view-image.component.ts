@@ -32,7 +32,7 @@ import { trigger,state,style,transition,animate,keyframes,sequence} from '@angul
         animate('400ms', style({opacity: 0})),
         animate('400ms', style({height: 0}))
       ])  
-    ])
+    ]),
 
   ]
 })
@@ -57,7 +57,6 @@ export class ViewImageComponent implements OnInit, OnDestroy {
   @ViewChild("arrowLinkRight") arrowLinkRight: ElementRef
   @ViewChild("showingImageContainer") showingImageContainer: ElementRef
   
-
 	@Input() componentReference: ComponentRef<any>
 	// @Input() imageID: string
 	@Input() set imageID(imageID: string){
@@ -192,9 +191,10 @@ export class ViewImageComponent implements OnInit, OnDestroy {
     
   }
 
-  public closeImage(){
-  	this.router.navigateByUrl('/galleries/' + this.galleryID);
+  public closeImage(event: Event){
+    event.preventDefault()
   	this.viewImageService.destroyComponent(this.componentReference)
+    this.router.navigateByUrl('/galleries/' + this.galleryID);
   }
 
   public addImageComment(){
@@ -292,7 +292,7 @@ export class ViewImageComponent implements OnInit, OnDestroy {
   }
 
   public resizeImageIfVertical($event){
-    console.log($event.target);
+    // console.log($event.target);
     // kako dobaviti dimenzije slike https://davidwalsh.name/get-image-dimensions
     /*if (($event.path[0].naturalHeight / $event.path[0].naturalWidth) >= 1.5) {
       // $event.path[0].style.maxWidth = '35%'

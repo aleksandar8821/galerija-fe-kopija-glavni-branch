@@ -131,7 +131,7 @@ export class ViewGalleryComponent implements OnInit {
  
 
   public resizeImageIfVertical($event){
-    console.log($event.target.parentElement);
+    // console.log($event.target.parentElement);
     // kako dobaviti dimenzije slike https://davidwalsh.name/get-image-dimensions
     /*if (($event.path[0].naturalHeight / $event.path[0].naturalWidth) >= 1.5) {
       $event.path[1].style.width = '50%'

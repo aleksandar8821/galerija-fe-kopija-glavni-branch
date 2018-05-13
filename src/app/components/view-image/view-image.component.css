@@ -68,7 +68,7 @@
 	visibility: hidden;
 	opacity: 0;
 	transition: transform 200ms ease-in-out, visibility 200ms ease-in-out, opacity 200ms ease-in-out;
-	pointer-events: none;
+	/*pointer-events: none;*/
 }
 
 .myclass-carousel-arrow-link:hover{
@@ -123,6 +123,19 @@
 	opacity: 1;
 }
 
+#myid-image-info{
+	text-align: left;
+	color: dimgray; 
+	background-color: #FFFCEA;
+	font-size: 20px;
+	padding: 8px 15px;
+	margin-bottom: 8px;
+	border-top: 2px solid #FF6A00FF;
+	border-bottom-right-radius: 15px;
+	border-bottom-left-radius: 15px;
+	user-select: text;
+}
+
 .myclass-showing-image-container{
 	/*Ovo bi trebalo da bude nesto malo vece od font-size za velicinu arrow-a, jer ako se slika npr ne pojavi, da se ovaj div i dalje targetira za pojavljivanje arrowa i da arrowi mogu lepo da stanu unutar ovog diva*/
 	min-height: 80px;
@@ -131,6 +144,15 @@
 
 .myclass-showing-image{
 	max-width: 100%;
+}
+
+#myid-image-description{
+	text-align: left; 
+	color: dimgray; 
+	background-color: #FFFCEA;
+	margin-top: 8px;
+	padding: 5px;
+	user-select: text;
 }
 
 
