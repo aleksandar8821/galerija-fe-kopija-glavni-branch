@@ -6,6 +6,7 @@
 	right: 0;
 	height: 10px;
 	border-radius: 0;
+	z-index: 1;
 }
 
 .progress .progress-bar{
@@ -16,4 +17,42 @@
 
 .alert.alert-danger{
 	margin-top: 5px;
+}
+
+#myid-image-cropper-container{
+	width: 50%;
+	display: inline-block;
+}
+
+/*#myid-image-upload-button{
+	background-color: #F0F2F4;
+	border-color: #F0F2F4;
+}
+
+#myid-image-upload-button:hover{
+	
+}*/
+
+#myid-cropped-image-container{
+	display: inline-block;
+	text-align: center;
+	max-width: 50%;
+}
+
+#myid-cropped-image-container p{
+	text-align: left;
+}
+
+.myclass-upload-image-error{
+	width: 50%;
+	margin-left: auto;
+	margin-right: auto;
+	text-align: center;
+	animation: flash-message 4s forwards;
+	animation-delay: 4s;
+} 
+
+@keyframes flash-message {
+    0%   {opacity: 1;}
+    100% {opacity: 0;}
 }

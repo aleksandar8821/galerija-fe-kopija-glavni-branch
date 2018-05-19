@@ -2,7 +2,7 @@
     <div class="progress-bar progress-bar-striped progress-bar-animated"></div>
 </div>
 
-<form #registerForm="ngForm" (ngSubmit)="register()">
+<form #registerForm="ngForm" (ngSubmit)="registerWithProfileImage()">
     
     <div class="form-group">
         <label for="firstName">
@@ -83,6 +83,43 @@
         	<div>Confirmed password is not the same password</div>
         </div>
     </div>
+
+    <!-- ************** Image Cropper ************* -->
+
+    <div id="myid-image-upload-wrapper">
+        <label>Your profile image</label>
+        <div>
+            <input type="file" class="btn btn-light" (change)="fileChangeEvent($event)" />
+            
+            <button type="button" class="btn btn-dark" *ngIf="imageChangedEvent || croppedImage" (click)="clearImage()">Clear image</button>
+        </div>
+
+        <div #uploadImageErrorDiv [hidden]="!uploadImageError" class="alert alert-danger myclass-upload-image-error">
+          {{uploadImageError}}
+        </div>
+    
+        <div id="myid-image-cropper-container">
+            <image-cropper
+                [imageChangedEvent]="imageChangedEvent"
+                [maintainAspectRatio]="true"
+                [aspectRatio]="1 / 1"
+                [resizeToWidth]="128"
+                format="png"
+                (imageCropped)="imageCropped($event)"
+                (imageLoaded)="imageLoaded()"
+                (loadImageFailed)="loadImageFailed()"
+            ></image-cropper>
+        </div>
+        <div *ngIf="croppedImage" id="myid-cropped-image-container">
+            <p>
+                You can crop the image with handles.<br>
+                It will look like this:
+            </p>
+            <!-- ovde stavljam [style.borderRadius]="'50%'" cisto da vidis sintaksu kako se pise, inace mogao je komotno ovde da ide samo style atribut-->
+            <img [src]="croppedImage" [style.borderRadius]="'50%'"/>
+        </div>
+    </div>
+    <!-- ****************************************** -->
 
     <div class="form-check">
 	    <label class="form-check-label">

@@ -9,7 +9,7 @@
 }*/
 
 .card-body{
-	background-color: beige;
+	background-color: lightyellow;
 	display: flex;
 	flex-wrap: wrap;
 }
@@ -35,7 +35,7 @@
 }
 
 .myclass-image-description{
-	background-color: beige;
+	background-color: lightyellow;
 	flex: 2;
 	padding: 10px;
 

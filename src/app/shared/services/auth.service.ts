@@ -107,6 +107,18 @@ export class AuthService {
     });
   }
 
+  public registerWithProfileImage(userData: FormData) {
+    return new Observable((o: Observer<any>) => {
+      this.http.post('http://localhost:8000/api/register_with_profile_image', userData).subscribe((data: { createdUserName: string }) => {
+        this.urlGuard.allow = true;
+        this.createdUserName = data.createdUserName 
+        this.router.navigateByUrl('register/verification-message');
+      }, (err) => {
+        return o.error(err);
+      });
+    });
+  }
+
   // public forgotPasswordRequest(email: string){
   //   return new Observable((o: Observer<any>) => {
   //     this.http.post('http://localhost:8000/api/forgot_password', {

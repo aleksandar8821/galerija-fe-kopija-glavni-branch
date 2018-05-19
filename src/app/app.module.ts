@@ -33,6 +33,7 @@ import { ForgotPasswordComponent } from './components/forgot-password/forgot-pas
 import { PasswordResetComponent } from './components/password-reset/password-reset.component';
 import { ViewImageComponent } from './components/view-image/view-image.component';
 import { ViewImageService } from './shared/services/view-image.service';
+import { ImageCropperModule } from 'ngx-image-cropper';
 
 
 @NgModule({
@@ -61,7 +62,8 @@ import { ViewImageService } from './shared/services/view-image.service';
     // HttpModule,
     HttpClientModule,
     // PopoverModule,
-    BrowserAnimationsModule,    
+    BrowserAnimationsModule,
+    ImageCropperModule,    
   ],
   providers: [AuthService, GalleryService, AuthGuard, GuestGuard, UrlGuard, Subject, DomService],
   bootstrap: [AppComponent],

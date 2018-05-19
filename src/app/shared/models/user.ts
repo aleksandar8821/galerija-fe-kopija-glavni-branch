@@ -9,7 +9,8 @@ export class User {
 	    public confirmPassword?: string,
 	    public acceptedTerms?: boolean,
 	    public verified?: boolean,
-	    public verifyToken?: string
+	    public verifyToken?: string,
+	    public profileImage?: string
  		 ) { }
 
 }
