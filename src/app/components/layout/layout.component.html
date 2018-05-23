@@ -26,8 +26,12 @@
             <ul id="myid-logged-user-dropdown-links" class="navbar-nav" *ngIf="authService.isAuthenticated">
               
               <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle myclass-account-thumbnail" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  <span>{{authService.loggedUserNameFirstLetter}}</span>
+                <!-- Za ovu foru sa ngStyle i && vidi https://stackoverflow.com/questions/45740089/how-to-set-a-ngstyle-in-angular-2-if-condition-matches . To ti sluzi da kad hoces da setujes samo vrednost ako je uslov zadovoljen a vrednost za else te ne zanima. Jos jedno interesantno resenje imas ovde https://stackoverflow.com/questions/37051496/combine-ngstyle-with-condition-if-else/46089536 vidi odgovor od Zohar -->
+                <a class="nav-link dropdown-toggle myclass-account-thumbnail" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" [ngStyle]="{'padding': authService.loggedUserProfileImage && '2px'}">
+                  <img *ngIf="authService.loggedUserProfileImage; else loggedUserNameFirstLetter" src="{{authService.loggedUserProfileImage}}">
+                  <ng-template #loggedUserNameFirstLetter>
+                    <span>{{authService.loggedUserNameFirstLetter}}</span>
+                  </ng-template>
                 </a>
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
                   <a class="dropdown-item" href="#" routerLink="/my-galleries">My galleries</a>

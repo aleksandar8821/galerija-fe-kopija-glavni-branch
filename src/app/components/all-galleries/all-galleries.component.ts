@@ -31,6 +31,8 @@ export class AllGalleriesComponent implements OnInit {
 
 
   public showedImagesNumber: number = 3
+  // Ovde treba definisati subject, a ne injectirati ga u constructoru
+  private subject: Subject<string> = new Subject()
 
   // Preporuceno ovde https://stackoverflow.com/questions/38083182/angular-2-media-queries
   @HostListener('window:resize', ['$event'])
@@ -44,7 +46,7 @@ export class AllGalleriesComponent implements OnInit {
    
   }
 
-  constructor(private galleryService: GalleryService, private subject: Subject<string>) {
+  constructor(private galleryService: GalleryService) {
 
     // Ovako radis sa media querijima u javascriptu (vidi https://www.w3schools.com/howto/howto_js_media_queries.asp , https://www.sitepoint.com/javascript-media-queries/ , a ovde ti kaze da ga turis u konstruktor https://stackoverflow.com/questions/40137671/how-to-call-window-matchmedia-correctly-in-an-angular-2-app):
     let mediaQuery = window.matchMedia("(max-width: 575.98px)")

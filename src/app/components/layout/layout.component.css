@@ -22,12 +22,40 @@
 	background-color: black !important;
 }
 
+#myid-logged-user-dropdown-links, #myid-logged-user-dropdown-links > li{
+	border-radius: 50%;
+}
+
 a.dropdown-toggle.myclass-account-thumbnail{
+	display: flex;
+	/*Vertical align sam uradio po ovom linku https://stackoverflow.com/questions/25311541/how-to-vertically-align-text-inside-a-flexbox mada ima tu jos nacina osim ovog*/
+	justify-content: center;
+  flex-direction: column;
 	background-color: indianred;
 	border-radius: 50%;
-	min-width: 40px;
-	min-height: 40px;
+	min-width: 44px;
+	min-height: 44px;
+	max-width: 60px;
+	max-height: 60px;
 	text-align: center;
+	border: 2px solid black;
+  /*box-shadow: 0px 2px 4px 0px #eeeeee;*/
+  box-shadow: 0px 2px 4px 0px #E0E0E0;
+  transition: box-shadow 200ms ease-in-out;
+}
+
+#myid-logged-user-dropdown-links:hover a.dropdown-toggle.myclass-account-thumbnail {
+  box-shadow: 0px 2px 2px 0px white;
+}
+
+/*Ovde sam skontao da kad se aktivira dropdown da se na bootstrap na li dodaje show klasu koja uzrokuje da se apliciraju odredjeni stilovi na link koji aktivira dropdown, dok je dropdown aktivan. Ja je isto koristim da dodam neke svoje stilove koje zelim!*/
+li.show a{
+	box-shadow: 0px 2px 2px 0px white;
+}
+
+a.dropdown-toggle.myclass-account-thumbnail img{
+	width: 100%;
+	border-radius: 50%;
 }
 
 a.dropdown-toggle.myclass-account-thumbnail::after{

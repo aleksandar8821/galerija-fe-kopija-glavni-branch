@@ -64,7 +64,13 @@
 		<div class="media" [@.disabled]="disableAnimations" @fade *ngFor="let comment of commentsArrayReversed">
 			<!-- reverse pipe napravljen po odogovoru od Thierry Templier sa ovog linka, al sam ga ipak izbrisao zasad https://stackoverflow.com/questions/35703258/invert-angular-2-ngfor -->
 		  <!-- <img class="mr-3" alt="Image"> -->
-			<div class="myclass-account-thumbnail mr-3"><span>{{comment.user.first_name.charAt(0).toUpperCase()}}</span></div>
+			<div class="myclass-account-thumbnail-wrapper mr-3">
+				<div [ngStyle]="{'width': comment.user.profile_image ? '60px' : '40px', 'height': comment.user.profile_image ? '60px' : '40px', 'background-color': comment.user.profile_image && 'transparent'}" class="myclass-account-thumbnail">
+					<img *ngIf="comment.user.profile_image" src="{{comment.user.profile_image}}">
+					<span *ngIf="!comment.user.profile_image">{{comment.user.first_name.charAt(0).toUpperCase()}}
+					</span>
+				</div>
+			</div>
 		  <div class="media-body">
 		    <h5 class="mt-0">{{comment.user.first_name}} {{comment.user.last_name}} <small class="text-muted">{{comment.created_at | date: "longDate"}}</small></h5>
 		    {{comment.comment_body}}

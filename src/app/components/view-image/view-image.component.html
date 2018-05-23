@@ -8,22 +8,26 @@
 
 	<div class="myclass-view-image-container">
 			
+			<h1 *ngIf="_gallery" id="myid-image-info"><strong>Gallery:</strong> <a href="#" (click)="closeImage($event)" style="font-weight: normal">{{_gallery.name}}</a> <strong>Author:</strong> <a routerLink = "/authors/{{_gallery.user_id}}" style="font-weight: normal">{{_gallery.user.first_name}} {{_gallery.user.last_name}}</a></h1>
+
 			<div class="myclass-showing-image-wrapper">
 
 				<a #arrowLinkLeft (mouseenter)="arrowsAnimatePreventHover($event)" (click)="previousImage()" id="myid-carousel-arrow-left-link" class="myclass-carousel-arrow-link myclass-carousel-arrow-link-left"><i id="myid-carousel-arrow-left" class="fas fa-chevron-circle-left myclass-carousel-arrow myclass-carousel-arrow-left"></i></a>
 
 				<a #arrowLinkRight (click)="nextImage()" (mouseenter)="arrowsAnimatePreventHover($event)" id="myid-carousel-arrow-right-link" class="myclass-carousel-arrow-link myclass-carousel-arrow-link-right"><i id="myid-carousel-arrow-right" class="fas fa-chevron-circle-right myclass-carousel-arrow myclass-carousel-arrow-right"></i></a>
 
-				<h1 *ngIf="_gallery" id="myid-image-info"><strong>Gallery:</strong> <a href="#" (click)="closeImage($event)" style="font-weight: normal">{{_gallery.name}}</a> <strong>Author:</strong> <a routerLink = "/authors/{{_gallery.user_id}}" style="font-weight: normal">{{_gallery.user.first_name}} {{_gallery.user.last_name}}</a></h1>
+				<!-- <h1 *ngIf="_gallery" id="myid-image-info"><strong>Gallery:</strong> <a href="#" (click)="closeImage($event)" style="font-weight: normal">{{_gallery.name}}</a> <strong>Author:</strong> <a routerLink = "/authors/{{_gallery.user_id}}" style="font-weight: normal">{{_gallery.user.first_name}} {{_gallery.user.last_name}}</a></h1> -->
 
 				<div #showingImageContainer class="myclass-showing-image-container" (mouseenter)="arrowsAnimate($event)" (mouseleave)="arrowsAnimate($event)">
 					<img class="myclass-showing-image" *ngIf="showingImage" src="{{showingImage.url}}" (load)="resizeImageIfVertical($event)">
 
 				</div>
 
-				<p *ngIf="showingImage" id="myid-image-description">&nbsp;<strong>Image description:</strong>&nbsp;<em>{{showingImage.description}}</em></p>
+				<!-- <p *ngIf="showingImage" id="myid-image-description">&nbsp;<strong>Image description:</strong>&nbsp;<em>{{showingImage.description}}</em></p> -->
 
 			</div>
+
+			<p *ngIf="showingImage" id="myid-image-description">&nbsp;<strong>Image description:</strong>&nbsp;<em>{{showingImage.description}}</em></p>
 
 			<!-- <div>
 				<button type="button" class="btn btn-primary" (click)="previousImage()">Previous image</button>
@@ -56,7 +60,13 @@
 				<div class="media" [@.disabled]="disableAnimations" @fade (@fade.done)="animationDone($event)" *ngFor="let comment of commentsArrayReversed">
 					<!-- reverse pipe napravljen po odogovoru od Thierry Templier sa ovog linka, al sam ga ipak izbrisao zasad https://stackoverflow.com/questions/35703258/invert-angular-2-ngfor -->
 				  <!-- <img class="mr-3" alt="Image"> -->
-					<div class="myclass-account-thumbnail mr-3"><span>{{comment.user.first_name.charAt(0).toUpperCase()}}</span></div>
+					<div class="myclass-account-thumbnail-wrapper mr-3">
+						<div [ngStyle]="{'width': comment.user.profile_image ? '60px' : '40px', 'height': comment.user.profile_image ? '60px' : '40px', 'background-color': comment.user.profile_image && 'transparent'}" class="myclass-account-thumbnail">
+							<img *ngIf="comment.user.profile_image" src="{{comment.user.profile_image}}">
+							<span *ngIf="!comment.user.profile_image">{{comment.user.first_name.charAt(0).toUpperCase()}}
+							</span>
+						</div>
+					</div>
 				  <div class="media-body">
 				    <h5 class="mt-0">{{comment.user.first_name}} {{comment.user.last_name}} <small class="text-muted">{{comment.created_at | date: "longDate"}}</small></h5>
 				    {{comment.comment_body}}
