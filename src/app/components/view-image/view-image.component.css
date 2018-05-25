@@ -68,6 +68,7 @@
 	visibility: hidden;
 	opacity: 0;
 	transition: transform 200ms ease-in-out, visibility 200ms ease-in-out, opacity 200ms ease-in-out;
+	/*Sto se tice ove novije animacije koja nije radjena u cistom css-u, ovaj pointer-events ti ovde i nije potreban. Zasto? Zato sto kada krene animacija dolazenja arrowa na sliku, ti iako hoverujes u medjuvremenu strelice tranzicija se nece ponovo okinuti, jer ona deluje samo kad se stilovi promene. A posto je animacija vec krenula to jest stilovi su vec promenjeni ti sa hoverom nista ne menjas i nece doci do nikakvog poigravanja strelica i sl...*/
 	/*pointer-events: none;*/
 }
 

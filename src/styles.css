@@ -2,6 +2,8 @@
 
 body{
 	background-image: url(assets/images/Afgalleries_pozadina10-s-f-web.jpg);
+	/*Pomocu ovoga stavljas da ti se pozadinska slika ne skroluje zajedno sa stranicom!*/
+	background-attachment: fixed;
 }
 
 /*Pozadina sa teksturom i gradijentom

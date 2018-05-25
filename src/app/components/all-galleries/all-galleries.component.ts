@@ -20,8 +20,8 @@ export class AllGalleriesComponent implements OnInit {
 
   // Galerije koje se prikazuju preko load more button-a
   public showedGalleries: Array<Gallery> = []
-  readonly galleriesLoadNumber: number = 2
-  readonly initiallyShowedGalleriesNumber: number = 2
+  readonly galleriesLoadNumber: number = 5
+  readonly initiallyShowedGalleriesNumber: number = 5
   public showedGalleriesNumber: number = this.initiallyShowedGalleriesNumber
   public filterInput: any //document.getElementById ne mozes pozvati ovde, jer ovog jos nece biti u domu tad
 
