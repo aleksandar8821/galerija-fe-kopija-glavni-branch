@@ -191,6 +191,24 @@ export class ViewImageComponent implements OnInit, OnDestroy {
     
   }
 
+  // Ovu funkciju sam dodao kad sam podesio da se link za promenu slike proteze preko cele visine slike i ide do kraja stranice slike u sirinu. Dakle kad ti sa takvog linka odes direktno misem van slike vise se ne aktivira mouseleave koji je registrovan na slici, nego se aktivira mouseleave registrovan na linku i zato se mora ovde posebno definisati
+  public arrowsAnimateIfLeaveImage(event: any){
+    // console.log('pjera');
+    // Ovaj relatedTarget postoji na mouseleave eventu i odnosi se na onaj element na kojem se nadje kursor kad se desi mouseleave. Ovde mi se pojavljuje greska u konzoli ako se mouseleave desi na delu koji nije stranica (npr konzola) jer je tamo relatedTarget undefined pa moram da proveravam da li postoji relatedTarget
+    if(event.relatedTarget){
+      // console.log(event.relatedTarget);
+
+      if (event.relatedTarget.id !== 'myid-showing-image') {
+        this.renderer.setStyle(this.arrowLinkLeft.nativeElement, 'pointer-events', 'none')
+        this.renderer.setStyle(this.arrowLinkRight.nativeElement, 'pointer-events', 'none')
+
+        this.renderer.removeClass(this.arrowLinkLeft.nativeElement, "myclass-carousel-arrow-link-left-animate")
+        this.renderer.removeClass(this.arrowLinkRight.nativeElement, 'myclass-carousel-arrow-link-right-animate')
+      }
+    }
+    
+  }
+
   public closeImage(event: Event){
     event.preventDefault()
   	this.viewImageService.destroyComponent(this.componentReference)

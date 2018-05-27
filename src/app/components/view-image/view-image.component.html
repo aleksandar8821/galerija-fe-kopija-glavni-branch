@@ -12,14 +12,14 @@
 
 			<div class="myclass-showing-image-wrapper">
 
-				<a #arrowLinkLeft (mouseenter)="arrowsAnimatePreventHover($event)" (click)="previousImage()" id="myid-carousel-arrow-left-link" class="myclass-carousel-arrow-link myclass-carousel-arrow-link-left"><i id="myid-carousel-arrow-left" class="fas fa-chevron-circle-left myclass-carousel-arrow myclass-carousel-arrow-left"></i></a>
+				<a #arrowLinkLeft (mouseenter)="arrowsAnimatePreventHover($event)" (mouseleave)="arrowsAnimateIfLeaveImage($event)" (click)="previousImage()" id="myid-carousel-arrow-left-link" class="myclass-carousel-arrow-link myclass-carousel-arrow-link-left"><i id="myid-carousel-arrow-left" class="fas fa-chevron-circle-left myclass-carousel-arrow myclass-carousel-arrow-left"></i></a>
 
-				<a #arrowLinkRight (click)="nextImage()" (mouseenter)="arrowsAnimatePreventHover($event)" id="myid-carousel-arrow-right-link" class="myclass-carousel-arrow-link myclass-carousel-arrow-link-right"><i id="myid-carousel-arrow-right" class="fas fa-chevron-circle-right myclass-carousel-arrow myclass-carousel-arrow-right"></i></a>
+				<a #arrowLinkRight (click)="nextImage()" (mouseenter)="arrowsAnimatePreventHover($event)" (mouseleave)="arrowsAnimateIfLeaveImage($event)" id="myid-carousel-arrow-right-link" class="myclass-carousel-arrow-link myclass-carousel-arrow-link-right"><i id="myid-carousel-arrow-right" class="fas fa-chevron-circle-right myclass-carousel-arrow myclass-carousel-arrow-right"></i></a>
 
 				<!-- <h1 *ngIf="_gallery" id="myid-image-info"><strong>Gallery:</strong> <a href="#" (click)="closeImage($event)" style="font-weight: normal">{{_gallery.name}}</a> <strong>Author:</strong> <a routerLink = "/authors/{{_gallery.user_id}}" style="font-weight: normal">{{_gallery.user.first_name}} {{_gallery.user.last_name}}</a></h1> -->
 
 				<div #showingImageContainer class="myclass-showing-image-container" (mouseenter)="arrowsAnimate($event)" (mouseleave)="arrowsAnimate($event)">
-					<img class="myclass-showing-image" *ngIf="showingImage" src="{{showingImage.url}}" (load)="resizeImageIfVertical($event)">
+					<img class="myclass-showing-image" id="myid-showing-image" *ngIf="showingImage" src="{{showingImage.url}}" (load)="resizeImageIfVertical($event)">
 
 				</div>
 

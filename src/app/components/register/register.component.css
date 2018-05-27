@@ -37,6 +37,7 @@
 	display: inline-block;
 	text-align: center;
 	max-width: 50%;
+	vertical-align: middle;
 }
 
 #myid-cropped-image-container p{
@@ -55,4 +56,58 @@
 @keyframes flash-message {
     0%   {opacity: 1;}
     100% {opacity: 0;}
+}
+
+@media (max-width: 991.98px) {
+	#myid-image-cropper-container{
+		width: 65%;
+	}
+
+	#myid-cropped-image-container{
+		max-width: 30%;
+	}
+	
+	#myid-cropped-image-container p{
+		text-align: center;
+	}
+}
+
+@media (max-width: 575.98px) {
+	#myid-choose-profile-image{
+		width: 100%;
+	}
+
+	#myid-clear-profile-image{
+		width: 100%;
+		margin-top: 5px;
+	}
+
+	/*#myid-cropped-image-container{
+		vertical-align: bottom;
+	}*/
+
+	#myid-cropped-image-container img{
+		width: 80%;
+	}
+
+	.myclass-upload-image-error{
+		width: 100%;
+	}
+
+	#myid-image-cropper-container{
+		width: 70%;
+	}
+
+	#myid-cropped-image-container{
+		max-width: 25%;
+	}
+
+	#myid-cropped-image-container img{
+		width: 90%;
+	}
+
+	#myid-cropped-image-container p{
+		font-size: 14px;
+	}
+	
 }

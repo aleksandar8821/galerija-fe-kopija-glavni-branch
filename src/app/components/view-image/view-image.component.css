@@ -64,7 +64,10 @@
 
 .myclass-carousel-arrow-link{
 	position: absolute;
-	top: 40%;
+	/*top: 40%;*/
+	height: 100%;
+	width: 100px;
+	text-align: center;
 	visibility: hidden;
 	opacity: 0;
 	transition: transform 200ms ease-in-out, visibility 200ms ease-in-out, opacity 200ms ease-in-out;
@@ -74,28 +77,49 @@
 
 .myclass-carousel-arrow-link:hover{
 	cursor: pointer;
+	/*background-color: #80808050;*/
 }
 
 .myclass-carousel-arrow{
 	font-size: 50px;
 	color: #404040FF;
-	transition: color 200ms ease-in-out;
+	transition: color 200ms ease-in-out, border 200ms ease-in-out;
 	background-color: white;
 	border: 1px solid white;
 	border-radius: 50%;
+
+	position: relative;
+	top: 40%;
 }
 
-.myclass-carousel-arrow:hover{
+/*.myclass-carousel-arrow:hover{
+	color: #808080FF;
+}
+*/
+
+.myclass-carousel-arrow-link:hover .myclass-carousel-arrow{
+	/*color: #5B5B5BFF;*/
 	color: #808080FF;
 }
 
 .myclass-carousel-arrow-link-left{
-	left: -70px;
+	/*left: -70px;*/
+	left: -100px;
 }
 
 .myclass-carousel-arrow-link-right{
-	right: -70px;
+	/*right: -70px;*/
+	right: -100px;
 }
+
+/*Gradijenti koje dobijas na hover linkova
+.myclass-carousel-arrow-link-left:hover{
+	background:   linear-gradient(to right, rgba(181,181,181,0.65) 0%, rgba(246,246,246,0.31) 53%, rgba(255,255,255,0) 100%);
+}
+
+.myclass-carousel-arrow-link-right:hover{
+	background:  linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(246,246,246,0.31) 47%, rgba(181,181,181,0.65) 100%);
+}*/
 
 /*************************************************************************/
 /*Ovako je isla stara animacija za pojavljivanje strelica, jedina je mana ta da se ova animacija primenjuje i kad hoverujes strelice i kad ih hoverujes u momentu kad napustaju povrsinu slike, onda onako poigravaju i to deluje blesavo jbg... Da bi ti ovo proradilo moras jos i da skines gore iz .myclass-carousel-arrow-link pointer-events: none*/

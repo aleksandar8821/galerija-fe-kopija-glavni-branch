@@ -89,9 +89,9 @@
     <div id="myid-image-upload-wrapper">
         <label>Your profile image</label>
         <div>
-            <input type="file" class="btn btn-light" (change)="fileChangeEvent($event)" />
+            <input type="file" id="myid-choose-profile-image" class="btn btn-light" (change)="fileChangeEvent($event)" />
             
-            <button type="button" class="btn btn-dark" *ngIf="imageChangedEvent || croppedImage" (click)="clearImage()">Clear image</button>
+            <button type="button" id="myid-clear-profile-image" class="btn btn-dark" *ngIf="imageChangedEvent || croppedImage" (click)="clearImage()">Clear image</button>
         </div>
 
         <div #uploadImageErrorDiv [hidden]="!uploadImageError" class="alert alert-danger myclass-upload-image-error">

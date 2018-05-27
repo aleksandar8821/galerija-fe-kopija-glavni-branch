@@ -48,7 +48,7 @@
               
               <!-- Ukoliko nemas u donjem primeru href="#" neces imati lepo dizajniran link  -->
               
-              <a class="nav-link" href="#" (click)="authService.logout()" *ngIf="authService.isAuthenticated">Logout</a>
+              <a class="nav-link" href="#" (click)="authService.logout($event)" *ngIf="authService.isAuthenticated">Logout</a>
             </span>
   </div>
 </nav>
