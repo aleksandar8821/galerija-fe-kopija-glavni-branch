@@ -8,6 +8,7 @@ import { CreateNewGalleryComponent } from '../components/create-new-gallery/crea
 import { LoginComponent } from '../components/login/login.component';
 import { ForgotPasswordComponent } from '../components/forgot-password/forgot-password.component';
 import { PasswordResetComponent } from '../components/password-reset/password-reset.component'
+import { MyAccountComponent } from '../components/my-account/my-account.component'
 import { MyGalleriesComponent } from '../components/my-galleries/my-galleries.component';
 import { RegisterComponent } from '../components/register/register.component';
 import { RegisterVerificationComponent } from '../components/register-verification/register-verification.component';
@@ -38,6 +39,11 @@ const appRoutes: Routes = [
         path: 'galleries/:galleryID/:imageID',
         data: { reuse: true },
         component: ViewGalleryComponent
+    },
+    {
+        path: 'my-account',
+        canActivate: [AuthGuard],
+        component: MyAccountComponent
     },
     {
         path: 'my-galleries',

@@ -34,6 +34,7 @@ import { PasswordResetComponent } from './components/password-reset/password-res
 import { ViewImageComponent } from './components/view-image/view-image.component';
 import { ViewImageService } from './shared/services/view-image.service';
 import { ImageCropperModule } from 'ngx-image-cropper';
+import { MyAccountComponent } from './components/my-account/my-account.component';
 
 
 @NgModule({
@@ -54,6 +55,7 @@ import { ImageCropperModule } from 'ngx-image-cropper';
     ForgotPasswordComponent,
     PasswordResetComponent,
     ViewImageComponent,
+    MyAccountComponent,
   ],
   imports: [
     BrowserModule,

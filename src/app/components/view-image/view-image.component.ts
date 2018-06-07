@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ComponentRef, Renderer2, OnDestroy, ViewChild, ViewChildren, ElementRef, QueryList } from '@angular/core';
+import { Component, OnInit, Input, ComponentRef, Renderer2, OnDestroy, ViewChild, ViewChildren, ElementRef, QueryList, HostListener } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Gallery } from '../../shared/models/gallery';
 import { Image } from '../../shared/models/image';
@@ -48,6 +48,7 @@ export class ViewImageComponent implements OnInit, OnDestroy {
   public imageComment: ImageComment = new ImageComment()
   public disableAnimations: boolean = true
   public disableProgressBar: number = 0
+  public isDeviceTouchScreen: boolean = false
   @ViewChild("progressBar") progressBar: ElementRef
   @ViewChild("btnAddComment") btnAddComment: ElementRef
   // @ViewChild("addGalleryCommentForm") addGalleryCommentForm: FormGroup // radilo je i sa FormGroup samo sto izgleda nije pravilno jer je FormGroup za model driven ili ti reactive forme, a ova tvoja je template driven. Vidi ovde https://stackoverflow.com/questions/48681287/reset-form-from-parent-component. Inace ideju za FormGroup pokupio ovde: https://blog.angular-university.io/introduction-to-angular-2-forms-template-driven-vs-model-driven/ i https://codecraft.tv/courses/angular/forms/submitting-and-resetting/
@@ -56,6 +57,15 @@ export class ViewImageComponent implements OnInit, OnDestroy {
   @ViewChild("arrowLinkLeft") arrowLinkLeft: ElementRef
   @ViewChild("arrowLinkRight") arrowLinkRight: ElementRef
   @ViewChild("showingImageContainer") showingImageContainer: ElementRef
+
+  // koristio savet odavde https://codeburst.io/the-only-way-to-detect-touch-with-javascript-7791a3346685
+  @HostListener('window:touchstart', ['$event'])
+  touchScreenDetector(event) {
+    // sudeci po ovome sto kaze ovde https://developer.mozilla.org/en-US/docs/Web/API/Touch_events/Supporting_both_TouchEvent_and_MouseEvent (a kaze: If the browser fires both touch and mouse events because of a single user input, the browser must fire a touchstart before any mouse events.) ne bi trebalo da ti se desi situacija da ti se prvo pozove arrowsAnimate() funkcija pa tek onda ovaj hostlistener, nego bi uvek trebalo prvi da se poziva hostlistener. Za svaki slucaj podesavam da ovu funkciju hostlistenera ne poziva samo touchstart event na window-u, nego i touchstart event na div containeru slike koji inace poziva animirane strelice na mouseenter
+    console.log(event);
+    // Dakle ovaj isDeviceTouchScreen podesavam ovde na true, da bi onemogucio kad se radi o touchscreen uredjaju da se pojavljuju strelice za menjanje slike, vec se u tom slucaju slika menja prevlacenjem prsta (swipe) ulevo ili udesno
+    this.isDeviceTouchScreen = true
+  }
   
 	@Input() componentReference: ComponentRef<any>
 	// @Input() imageID: string
@@ -120,65 +130,71 @@ export class ViewImageComponent implements OnInit, OnDestroy {
   }
 
   public arrowsAnimate(event: any){
+    console.log(event);
+    // sudeci po ovome sto kaze ovde https://developer.mozilla.org/en-US/docs/Web/API/Touch_events/Supporting_both_TouchEvent_and_MouseEvent (a kaze: If the browser fires both touch and mouse events because of a single user input, the browser must fire a touchstart before any mouse events.) ne bi trebalo da ti se desi situacija da ti se prvo pozove ova funkcija pa tek onda gore hostlistener koji ti podesava this.isDeviceTouchScreen na true, nego bi uvek trebalo prvi da se poziva hostlistener. On podesava this.isDeviceTouchScreen na true, da bi onemogucio kad se radi o touchscreen uredjaju da se pojavljuju ove strelice za menjanje slike, vec se u tom slucaju slika menja prevlacenjem prsta (swipe) ulevo ili udesno
+    if(!this.isDeviceTouchScreen){
 
-    if(event.type === 'mouseenter'){
-     
-      this.renderer.addClass(this.arrowLinkLeft.nativeElement, "myclass-carousel-arrow-link-left-animate")
-      this.renderer.addClass(this.arrowLinkRight.nativeElement, 'myclass-carousel-arrow-link-right-animate')
-      
-      this.renderer.setStyle(this.arrowLinkLeft.nativeElement, 'pointer-events', 'auto')
-      this.renderer.setStyle(this.arrowLinkRight.nativeElement, 'pointer-events', 'auto')
-      
-      
-    }else if(event.type === 'mouseleave'){
+      if(event.type === 'mouseenter'){
+       
+        this.renderer.addClass(this.arrowLinkLeft.nativeElement, "myclass-carousel-arrow-link-left-animate")
+        this.renderer.addClass(this.arrowLinkRight.nativeElement, 'myclass-carousel-arrow-link-right-animate')
+        
+        this.renderer.setStyle(this.arrowLinkLeft.nativeElement, 'pointer-events', 'auto')
+        this.renderer.setStyle(this.arrowLinkRight.nativeElement, 'pointer-events', 'auto')
+        
+        
+      }else if(event.type === 'mouseleave'){
 
-      // Ovaj relatedTarget postoji na mouseleave eventu i odnosi se na onaj element na kojem se nadje kursor kad se desi mouseleave. Ovde mi se pojavljuje greska u konzoli ako se mouseleave desi na delu koji nije stranica (npr konzola) jer je tamo relatedTarget undefined pa moram da proveravam da li postoji relatedTarget
-      if(event.relatedTarget){
-        // Posto arrow cini link i ovaj <i> element koji se u domu pojavljuje kao svg i path element, ovde stavljam uslove za sve ovo sto sam naveo, a sam kod kaze sledece: ukoliko stavim kursor na arrow desice se mouseleave sa elementa (div koji okruzuje sliku) koji osluskuje mouseenter i mouseleave. U tom slucaju zelim da mi se ne desi da se strelice sklone i pomocu ovoga to sprecavam
-        if(event.relatedTarget.id === "myid-carousel-arrow-left" || event.relatedTarget.id === "myid-carousel-arrow-right" || event.relatedTarget.id === "myid-carousel-arrow-left-link" || event.relatedTarget.id === "myid-carousel-arrow-right-link" || event.relatedTarget.parentElement.id === "myid-carousel-arrow-left" || event.relatedTarget.parentElement.id === "myid-carousel-arrow-right"){
+        // Ovaj relatedTarget postoji na mouseleave eventu i odnosi se na onaj element na kojem se nadje kursor kad se desi mouseleave. Ovde mi se pojavljuje greska u konzoli ako se mouseleave desi na delu koji nije stranica (npr konzola) jer je tamo relatedTarget undefined pa moram da proveravam da li postoji relatedTarget
+        if(event.relatedTarget){
+          // Posto arrow cini link i ovaj <i> element koji se u domu pojavljuje kao svg i path element, ovde stavljam uslove za sve ovo sto sam naveo, a sam kod kaze sledece: ukoliko stavim kursor na arrow desice se mouseleave sa elementa (div koji okruzuje sliku) koji osluskuje mouseenter i mouseleave. U tom slucaju zelim da mi se ne desi da se strelice sklone i pomocu ovoga to sprecavam
+          if(event.relatedTarget.id === "myid-carousel-arrow-left" || event.relatedTarget.id === "myid-carousel-arrow-right" || event.relatedTarget.id === "myid-carousel-arrow-left-link" || event.relatedTarget.id === "myid-carousel-arrow-right-link" || event.relatedTarget.parentElement.id === "myid-carousel-arrow-left" || event.relatedTarget.parentElement.id === "myid-carousel-arrow-right"){
 
-            return;
+              return;
 
-             /* Kao sto vidis ovaj deo koda ti i nije potreban, ali vidis i sam da ti browseri cudno malo funkcionisu, tako da mozda ti ovo i zatreba, zasad je dovoljan ovaj return;
+               /* Kao sto vidis ovaj deo koda ti i nije potreban, ali vidis i sam da ti browseri cudno malo funkcionisu, tako da mozda ti ovo i zatreba, zasad je dovoljan ovaj return;
 
-             this.renderer.addClass(this.arrowLinkLeft.nativeElement, "myclass-carousel-arrow-link-left-animate")
-             this.renderer.setStyle(this.arrowLinkLeft.nativeElement, 'pointer-events', 'auto')
+               this.renderer.addClass(this.arrowLinkLeft.nativeElement, "myclass-carousel-arrow-link-left-animate")
+               this.renderer.setStyle(this.arrowLinkLeft.nativeElement, 'pointer-events', 'auto')
 
-             this.renderer.addClass(this.arrowLinkRight.nativeElement, "myclass-carousel-arrow-link-right-animate")
-             this.renderer.setStyle(this.arrowLinkRight.nativeElement, 'pointer-events', 'auto')*/
-          
-           // Testiranje:
-           // this.renderer.setStyle(this.arrowLinkRight.nativeElement, 'background-color', 'yellow')
+               this.renderer.addClass(this.arrowLinkRight.nativeElement, "myclass-carousel-arrow-link-right-animate")
+               this.renderer.setStyle(this.arrowLinkRight.nativeElement, 'pointer-events', 'auto')*/
+            
+             // Testiranje:
+             // this.renderer.setStyle(this.arrowLinkRight.nativeElement, 'background-color', 'yellow')
+          }else{
+
+            this.renderer.setStyle(this.arrowLinkLeft.nativeElement, 'pointer-events', 'none')
+            this.renderer.setStyle(this.arrowLinkRight.nativeElement, 'pointer-events', 'none')
+           
+
+            this.renderer.removeClass(this.arrowLinkLeft.nativeElement, "myclass-carousel-arrow-link-left-animate")
+            this.renderer.removeClass(this.arrowLinkRight.nativeElement, 'myclass-carousel-arrow-link-right-animate')
+
+            // Testiranje:
+            // this.renderer.setStyle(this.arrowLinkRight.nativeElement, 'background-color', 'blue')
+            // console.log(event.relatedTarget);
+            // console.log(event);
+          }
+
         }else{
-
+          
+          // Jbg sad ovde moram da dupliram kod iz ovog elsa iznad, jer sam morao da stavim gore dva if-a da mi ne bi izbacivao greske u konzoli...
           this.renderer.setStyle(this.arrowLinkLeft.nativeElement, 'pointer-events', 'none')
           this.renderer.setStyle(this.arrowLinkRight.nativeElement, 'pointer-events', 'none')
-         
 
           this.renderer.removeClass(this.arrowLinkLeft.nativeElement, "myclass-carousel-arrow-link-left-animate")
           this.renderer.removeClass(this.arrowLinkRight.nativeElement, 'myclass-carousel-arrow-link-right-animate')
 
           // Testiranje:
-          // this.renderer.setStyle(this.arrowLinkRight.nativeElement, 'background-color', 'blue')
-          // console.log(event.relatedTarget);
-          // console.log(event);
+          // this.renderer.setStyle(this.arrowLinkRight.nativeElement, 'background-color', 'red')
         }
 
-      }else{
-        
-        // Jbg sad ovde moram da dupliram kod iz ovog elsa iznad, jer sam morao da stavim gore dva if-a da mi ne bi izbacivao greske u konzoli...
-        this.renderer.setStyle(this.arrowLinkLeft.nativeElement, 'pointer-events', 'none')
-        this.renderer.setStyle(this.arrowLinkRight.nativeElement, 'pointer-events', 'none')
 
-        this.renderer.removeClass(this.arrowLinkLeft.nativeElement, "myclass-carousel-arrow-link-left-animate")
-        this.renderer.removeClass(this.arrowLinkRight.nativeElement, 'myclass-carousel-arrow-link-right-animate')
-
-        // Testiranje:
-        // this.renderer.setStyle(this.arrowLinkRight.nativeElement, 'background-color', 'red')
       }
-
-
+    
     }
+  
   }
 
   // Ova funkcija je tu sad zapravo za svaki slucaj, jer sam ovu gore arrowsAnimate() naterao da radi kako treba, al nek ova ipak ostane tu. Njena poenta je u tome da kad predjes preko strelica da se ne desi ono sto je definisano za mouseleave event u arrowsAnimate(), konkretno da ti na hover preko strelica arrowsAnimate() ne odradi standardnu akciju za mouseleave a to je da ti skloni strelice! Sa onim silnim if uslovima u arrowsAnimate() je to reseno i radi u svim browserima koje sam ja testirao, a za ostale verzije i druge browsere nisam siguran, pa nek ostane za svaki slucaj i ovo cudo ovde...
@@ -333,6 +349,8 @@ export class ViewImageComponent implements OnInit, OnDestroy {
     }
 
   }
+
+  
 
   ngOnDestroy(){
   	this.renderer.setStyle(document.body, 'overflow', 'visible') //visible je default vrednost https://developer.mozilla.org/en-US/docs/Web/CSS/overflow

@@ -18,7 +18,8 @@
 
 				<!-- <h1 *ngIf="_gallery" id="myid-image-info"><strong>Gallery:</strong> <a href="#" (click)="closeImage($event)" style="font-weight: normal">{{_gallery.name}}</a> <strong>Author:</strong> <a routerLink = "/authors/{{_gallery.user_id}}" style="font-weight: normal">{{_gallery.user.first_name}} {{_gallery.user.last_name}}</a></h1> -->
 
-				<div #showingImageContainer class="myclass-showing-image-container" (mouseenter)="arrowsAnimate($event)" (mouseleave)="arrowsAnimate($event)">
+				<!-- Ove (swipeleft) i (swiperight) mogu koristiti jer sam instalirao hammerjs (vidi http://hammerjs.github.io/ i https://www.npmjs.com/package/hammerjs, a ideju sam pokupio ovde https://www.youtube.com/watch?v=5Z2C0wy4bmg), a instaliras ga na sledeci nacin: kucas npm install hammerjs --save , zatim odes u main.ts file i odradis samo import 'hammerjs' da bi ti ovi eventovi bili globalno dostupni i to je to. Taj nacin instalacije sam inace pokupio na pomenutom youtube linku -->
+				<div #showingImageContainer class="myclass-showing-image-container" (touchstart)="touchScreenDetector($event)" (mouseenter)="arrowsAnimate($event)" (mouseleave)="arrowsAnimate($event)" (swipeleft)="nextImage()" (swiperight)="previousImage()">
 					<img class="myclass-showing-image" id="myid-showing-image" *ngIf="showingImage" src="{{showingImage.url}}" (load)="resizeImageIfVertical($event)">
 
 				</div>
