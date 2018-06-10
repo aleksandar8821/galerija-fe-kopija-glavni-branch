@@ -245,6 +245,11 @@
 	.myclass-view-image-container{
 		width: 80%;
 	}
+
+	.myclass-view-image-close-link{
+		top: 10px;
+		right: 10px;
+	}
 }
 
 

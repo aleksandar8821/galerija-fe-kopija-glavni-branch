@@ -24,7 +24,9 @@ body{
 	background-color: white;
 	padding: 50px 80px;
 	min-height: 100vh;
+	/*position: relative;Ovo jos nije istestirano na svim stranama*/
 }
+
 
 .myclass-galleries-container{
 	margin-top: 25px;
@@ -159,6 +161,10 @@ button:disabled{
 }
 
 @media (max-width: 575.98px){
+	body{
+		background: none;
+	}
+
 	.myclass-whole-page-wrapper{
 		padding: 0;
 	}
@@ -174,3 +180,21 @@ button:disabled{
 	}
 }
 
+/* ********************************************** */
+/*Za fluid sirinu stranice skini container klasu i dodaj container-fluid na myclass-whole-page-wrapper i myclass-router-outlet-wrapper divove, i na myclass-whole-page-wrapper dodaj width kolko procenata stranice hoces da zauzima, a na myclass-router-outlet-wrapper dodaj width: 100%. AKO HOCES DA VRATIS NA STARO SAMO IZBRISI OVAJ CEO DEO KODA I NA POMENUTA DVA DIVA STAVI container KLASU UMESTO container-fluid*/
+.myclass-whole-page-wrapper{
+	width: 90%;
+}
+
+.myclass-router-outlet-wrapper{
+	width: 100%;
+}
+
+@media (max-width: 575.98px){
+	
+	.myclass-whole-page-wrapper{
+		width: 100%;
+	}
+	
+}
+/* ********************************************** */

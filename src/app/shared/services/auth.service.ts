@@ -113,6 +113,7 @@ export class AuthService {
     });
   }
 
+  // Registracija sa mail confirmation i profile slikom
   public registerWithProfileImage(userData: FormData) {
     return new Observable((o: Observer<any>) => {
       this.http.post('http://localhost:8000/api/register_with_profile_image', userData).subscribe((data: { createdUserName: string }) => {
@@ -161,6 +162,17 @@ export class AuthService {
         return o.error(err);
       });
     });
+  }
+
+  public getUserInfo(){
+    return new Observable((o: Observer<any>) => {
+      this.http.get('http://localhost:8000/api/get_user_info', {headers: this.getRequestHeaders()}).subscribe((loggedUser) => {
+        o.next(loggedUser)
+        return o.complete()
+      }, (err) => {
+        return o.error(err)
+      })
+    })
   }
 
 }

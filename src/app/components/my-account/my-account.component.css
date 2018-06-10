@@ -1,0 +1,141 @@
+#myid-my-account-wrapper{
+	position: relative;
+}
+
+.myclass-input-container-class{
+	max-width: 100%;
+}
+
+.alert.alert-danger{
+	margin-top: 5px;
+}
+
+.myclass-password-change-container{
+	height: 0;
+	overflow-y: hidden;
+	transition: height 500ms ease-in-out;
+}
+
+.showPasswordChangeContainer{
+	/*Ovde ocigledno moras koristiti konkretne brojeve da bi animacija uspela (NE MORAS, VIDI KOMENTAR ISPOD OVOG! OVU KLASU VISE NE KORISTIM AL JE OSTAVLJAM ZA SVAKI SLUCAJ!). Ne moze da se koristi auto kao podrazumevana visina, vec je moram konkretno zadati. U inspektoru sam nasao da je visina diva kad je prikazan 172px. E sad da li ce ovo browser uvek renderovati kao 172px, to nisam bas siguran, mada bi po racunici trebalo jer bootstrap elementi su sa rem-ovima uglavnom zadavani (a removi su umnozci velicine fonta koja je na sajtu ipak stalna)*/
+
+	/*Ne mora se zadavati konkretna visina, nju mozes da dobijes u js-u preko propertija scrollHeight - vidi https://developer.mozilla.org/en-US/docs/Web/API/CSS_Object_Model/Determining_the_dimensions_of_elements*/
+
+	height: 172px;
+}
+
+#loggedUserExsistingProfileImageContainer{
+	position: absolute;
+	top: 0;
+	right: 0;
+	display: inline-block;
+	text-align: center;
+}
+
+#loggedUserExsistingProfileImage{
+	border-radius: 50%;
+	margin-bottom: 10px;
+}
+
+#myid-image-cropper-container{
+	width: 50%;
+	display: inline-block;
+}
+
+/*#myid-image-upload-button{
+	background-color: #F0F2F4;
+	border-color: #F0F2F4;
+}
+
+#myid-image-upload-button:hover{
+	
+}*/
+
+#myid-cropped-image-container{
+	display: inline-block;
+	text-align: center;
+	max-width: 50%;
+	vertical-align: middle;
+}
+
+#myid-cropped-image-container p{
+	text-align: left;
+}
+
+.myclass-upload-image-error{
+	width: 50%;
+	margin-left: auto;
+	margin-right: auto;
+	text-align: center;
+	animation: flash-message 4s forwards;
+	animation-delay: 4s;
+} 
+
+@keyframes flash-message {
+    0%   {opacity: 1;}
+    100% {opacity: 0;}
+}
+
+@media (max-width: 991.98px) {
+	#myid-image-cropper-container{
+		width: 65%;
+	}
+
+	#myid-cropped-image-container{
+		max-width: 30%;
+	}
+	
+	#myid-cropped-image-container p{
+		text-align: center;
+	}
+}
+
+@media (max-width: 767.98px){
+	#loggedUserExsistingProfileImageContainer{
+		position: static;
+	}
+
+	#loggedUserExsistingProfileImageContainer p{
+		display: none;
+	}
+}
+
+@media (max-width: 575.98px) {
+	#myid-choose-profile-image{
+		width: 100%;
+	}
+
+	#myid-clear-profile-image{
+		width: 100%;
+		margin-top: 5px;
+	}
+
+	/*#myid-cropped-image-container{
+		vertical-align: bottom;
+	}*/
+
+	#myid-cropped-image-container img{
+		width: 80%;
+	}
+
+	.myclass-upload-image-error{
+		width: 100%;
+	}
+
+	#myid-image-cropper-container{
+		width: 70%;
+	}
+
+	#myid-cropped-image-container{
+		max-width: 25%;
+	}
+
+	#myid-cropped-image-container img{
+		width: 90%;
+	}
+
+	#myid-cropped-image-container p{
+		font-size: 14px;
+	}
+	
+}
