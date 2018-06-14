@@ -40,7 +40,7 @@
             <label for="password">Password</label>
             <div class="container myclass-input-container-class">
                 <div class="row">
-                    <input #passwordInput type="password" name="password" id="password" class="form-control col-8 col-sm-6 col-md-5" [(ngModel)] = "user.password">
+                    <input #passwordInput type="password" name="password" id="password" class="form-control col-8 col-sm-6 col-md-5" [(ngModel)] = "user.password" disabled="disabled">
                 </div>
             </div>
         </div>
@@ -49,7 +49,7 @@
             <label for="password_confirmation">Confirm password</label>
             <div class="container myclass-input-container-class">
                 <div class="row">
-                    <input #confirmPasswordInput type="password" name="password_confirmation" id="password_confirmation" class="form-control col-8 col-sm-6 col-md-5" [(ngModel)] = "user.confirmPassword">
+                    <input #confirmPasswordInput type="password" name="password_confirmation" id="password_confirmation" class="form-control col-8 col-sm-6 col-md-5" [(ngModel)] = "user.confirmPassword" disabled="disabled">
                 </div>
             </div>
         </div>
@@ -63,8 +63,8 @@
 </form>
 
 
-<div id="loggedUserExsistingProfileImageContainer">
-    <img id="loggedUserExsistingProfileImage" *ngIf="loggedUserExsistingProfileImage" src="{{loggedUserExsistingProfileImage}}">
+<div *ngIf="loggedUserExsistingProfileImage" id="loggedUserExsistingProfileImageContainer">
+    <img id="loggedUserExsistingProfileImage" src="{{loggedUserExsistingProfileImage}}">
     <p>Your current profile image</p>
 </div>
 

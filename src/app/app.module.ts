@@ -65,7 +65,7 @@ import { MyAccountComponent } from './components/my-account/my-account.component
     HttpClientModule,
     // PopoverModule,
     BrowserAnimationsModule,
-    ImageCropperModule,    
+    ImageCropperModule,
   ],
   providers: [AuthService, GalleryService, AuthGuard, GuestGuard, UrlGuard, Subject, DomService],
   bootstrap: [AppComponent],

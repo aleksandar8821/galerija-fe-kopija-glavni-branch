@@ -180,8 +180,8 @@ button:disabled{
 	}
 }
 
-/* ********************************************** */
-/*Za fluid sirinu stranice skini container klasu i dodaj container-fluid na myclass-whole-page-wrapper i myclass-router-outlet-wrapper divove, i na myclass-whole-page-wrapper dodaj width kolko procenata stranice hoces da zauzima, a na myclass-router-outlet-wrapper dodaj width: 100%. AKO HOCES DA VRATIS NA STARO SAMO IZBRISI OVAJ CEO DEO KODA I NA POMENUTA DVA DIVA STAVI container KLASU UMESTO container-fluid*/
+/* ************* CSS za fluid sirinu stranice (mora ostati na dnu nakon svih media queries da bi funkcionisalo) *************** */
+/*Za fluid sirinu stranice skini container klasu i dodaj container-fluid na myclass-whole-page-wrapper i myclass-router-outlet-wrapper divove, i kao sto vidis u ovoj oznacenoj celini koda na myclass-whole-page-wrapper dodaj width kolko procenata stranice hoces da zauzima, a na myclass-router-outlet-wrapper dodaj width: 100%. AKO HOCES DA VRATIS NA STARO SAMO IZBRISI OVAJ CEO OZNACENI DEO KODA I NA POMENUTA DVA DIVA STAVI container KLASU UMESTO container-fluid*/
 .myclass-whole-page-wrapper{
 	width: 90%;
 }
@@ -197,4 +197,4 @@ button:disabled{
 	}
 	
 }
-/* ********************************************** */
+/* ********************************************************** */

@@ -149,7 +149,7 @@ export class MyAccountComponent implements OnInit {
     console.log('just height', this.passwordChangeContainer.nativeElement.style.height);
   	// offsetHeight properti koristis za dobavljanje visine prikazanog elementa (vidi ovo, tu imas sve https://developer.mozilla.org/en-US/docs/Web/API/CSS_Object_Model/Determining_the_dimensions_of_elements)
   	if(this.passwordChangeContainer.nativeElement.offsetHeight !== 0){
-  		// this.renderer.removeClass(this.passwordChangeContainer.nativeElement, 'showPasswordChangeContainer')
+  		// DAKLE, NE OVAKO: this.renderer.removeClass(this.passwordChangeContainer.nativeElement, 'showPasswordChangeContainer')
   		// Dakle, ne moras u CSS-u zadavati tacnu visinu elementa, pa onda ovde toggleovati tu klasu, vec se dimenzije elementa koje nisu prikazane na stranici, mogu dobaviti preko propertija scrollHeight ko sto vidis iz prilozenog (vidi i ovaj link, tu imas sve https://developer.mozilla.org/en-US/docs/Web/API/CSS_Object_Model/Determining_the_dimensions_of_elements)! I ovo je po meni najjednostavniji i za sad najbolji nacin da se odradi toggle slide nekog elementa: Dakle u css-u se samo zada tranzicija za height i doda se overflow: hidden na element, a zatim se animacija odvija tako sto se toggluje height sa nule na visinu koju element ima kad je u potpunosti prikazan. Da ne bi morao da tu visinu dobavljas iz inspektora pa da je eksplicitno navodis, mozes je dobaviti preko propertija scrollHeight sto ovde i radim (ps moras navesti visinu u pikselima, tj mozda moze jos neka merna jedinica, ali mora biti brojevna vrednost, sa height: auto ti animacija nece raditi!)! I to je sve sto je potrebno za toggle slide i slide uopste nekog elementa!
   		this.renderer.setStyle(this.passwordChangeContainer.nativeElement, 'height', 0)
   		this.user.password = ''
@@ -163,7 +163,7 @@ export class MyAccountComponent implements OnInit {
   		this.renderer.addClass(this.btnChangePassword.nativeElement, 'btn-success')
   		this.renderer.setValue(this.btnChangePassword.nativeElement.childNodes[0], 'Change your password')
   	}else{
-  		// this.renderer.addClass(this.passwordChangeContainer.nativeElement, 'showPasswordChangeContainer')
+  		// DAKLE, NE OVAKO: this.renderer.addClass(this.passwordChangeContainer.nativeElement, 'showPasswordChangeContainer')
   		
   		this.renderer.setStyle(this.passwordChangeContainer.nativeElement, 'height', String(this.passwordChangeContainer.nativeElement.scrollHeight) + 'px')
       this.renderer.removeAttribute(this.passwordInput.nativeElement, 'disabled')
