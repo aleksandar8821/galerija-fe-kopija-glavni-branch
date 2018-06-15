@@ -1,12 +1,12 @@
 <div id="myid-my-account-wrapper">
     
-<form #updateAccountDataForm="ngForm" (ngSubmit)="updateAccountData()">
+<form (ngSubmit)="updateAccountData()" [formGroup]="updateAccountDataForm">
     <div class="form-group">
         <label for="firstName">First name</label>
         <!-- Da bi mogao da stavim odredjenu sirinu input polja (da mi ne ide preko celog ekrana ko po defaultu) po onom sto pise u dokumentaciji i sto se preporucuje i ovde https://www.w3schools.com/bootstrap4/bootstrap_forms_sizing.asp to treba raditi sa dodavanjem col klasa. E sad one bi trebalo da su u divu koji ima row klasu. E da, ali ti kad dodas row klasu, on ti doda negativne margine i to ovde rezultira da ti nisu label i input polje poravnati, vec input polje strci ulevo za 15px. I da bi se to anuliralo tj ponistilo nasao sam ovu foru da ga strpam u div sa container klasom (vidi https://medium.com/@evidanary/fixing-negative-margins-in-bootstrap-til-ebe3f6b8a6ec , https://stackoverflow.com/questions/18969051/bootstrap-3-why-is-row-class-is-wider-than-its-container). Ima jos fora da se to resi naravno, al mi se ova bar zasad cini najpouzdanijom -->
         <div class="container myclass-input-container-class">
             <div class="row">
-                <input #firstNameInput type="text" name="firstName" id="firstName" class="form-control col-8 col-sm-6 col-md-5" [(ngModel)] = "user.firstName" readonly="readonly">
+                <input #firstNameInput type="text" name="firstName" id="firstName" class="form-control col-8 col-sm-6 col-md-5" formControlName="firstName" readonly="readonly">
                 &nbsp;&nbsp;<button #btnChangeFirstName *ngIf="userDataReceived" (click)="changeInputToggle($event)" type="button" id="btnChangeFirstName" class="btn btn-success">Change</button>
             </div>
         </div>
@@ -16,7 +16,7 @@
         <label for="lastName">Last name</label>
         <div class="container myclass-input-container-class">
             <div class="row">
-                <input #lastNameInput type="text" name="lastName" id="lastName" class="form-control col-8 col-sm-6 col-md-5" [(ngModel)] = "user.lastName" readonly>
+                <input #lastNameInput type="text" name="lastName" id="lastName" class="form-control col-8 col-sm-6 col-md-5" formControlName="lastName" readonly>
                 &nbsp;&nbsp;<button #btnChangeLastName *ngIf="userDataReceived" (click)="changeInputToggle($event)" type="button" id="btnChangeLastName" class="btn btn-success">Change</button>
             </div>
         </div>
@@ -26,7 +26,7 @@
         <label for="email">Email</label>
         <div class="container myclass-input-container-class">
             <div class="row">
-                <input #emailInput type="email" name="email" id="email" class="form-control col-8 col-sm-6 col-md-5" [(ngModel)] = "user.email" readonly>
+                <input #emailInput type="email" name="email" id="email" class="form-control col-8 col-sm-6 col-md-5" formControlName="email" readonly>
                 &nbsp;&nbsp;<button #btnChangeEmail *ngIf="userDataReceived" (click)="changeInputToggle($event)" type="button" id="btnChangeEmail" class="btn btn-success">Change</button>
             </div>
         </div>
@@ -34,13 +34,13 @@
 
     
 
-    <div #passwordChangeContainer class="myclass-password-change-container">
+    <div #passwordChangeContainer class="myclass-password-change-container" formGroupName="changePassword">
         
         <div class="form-group">
             <label for="password">Password</label>
             <div class="container myclass-input-container-class">
                 <div class="row">
-                    <input #passwordInput type="password" name="password" id="password" class="form-control col-8 col-sm-6 col-md-5" [(ngModel)] = "user.password" disabled="disabled">
+                    <input #passwordInput type="password" name="password" id="password" class="form-control col-8 col-sm-6 col-md-5" formControlName="password">
                 </div>
             </div>
         </div>
@@ -49,7 +49,7 @@
             <label for="password_confirmation">Confirm password</label>
             <div class="container myclass-input-container-class">
                 <div class="row">
-                    <input #confirmPasswordInput type="password" name="password_confirmation" id="password_confirmation" class="form-control col-8 col-sm-6 col-md-5" [(ngModel)] = "user.confirmPassword" disabled="disabled">
+                    <input #confirmPasswordInput type="password" name="password_confirmation" id="password_confirmation" class="form-control col-8 col-sm-6 col-md-5" formControlName="confirmPassword">
                 </div>
             </div>
         </div>
@@ -60,52 +60,56 @@
         <button #btnChangePassword type="button" id="btnChangePassword" class="btn btn-success" (click)="togglePasswordChangeContainer()">Change your password</button>
     </div>
 
+
+
+
+    <div *ngIf="loggedUserExsistingProfileImage" id="loggedUserExsistingProfileImageContainer">
+        <img id="loggedUserExsistingProfileImage" src="{{loggedUserExsistingProfileImage}}">
+        <p>Your current profile image</p>
+    </div>
+
+    <!-- ************** Image Cropper ************* -->
+
+    <div id="myid-image-upload-wrapper">
+        <label for="myid-choose-profile-image" *ngIf="!loggedUserExsistingProfileImage; else changeImage">Add your profile image</label>
+        <ng-template #changeImage>
+            <label for="myid-choose-profile-image">Change your profile image</label>
+        </ng-template>
+        <div>
+            <input type="file" accept="image/*" id="myid-choose-profile-image" class="btn btn-light" (change)="fileChangeEvent($event)" />
+            
+            <button type="button" id="myid-clear-profile-image" class="btn btn-dark" *ngIf="imageChangedEvent || croppedImage" (click)="clearImage()">Clear image</button>
+        </div>
+
+        <div #uploadImageErrorDiv [hidden]="!uploadImageError" class="alert alert-danger myclass-upload-image-error">
+          {{uploadImageError}}
+        </div>
+
+        <div id="myid-image-cropper-container">
+            <image-cropper
+                [imageChangedEvent]="imageChangedEvent"
+                [maintainAspectRatio]="true"
+                [aspectRatio]="1 / 1"
+                [resizeToWidth]="128"
+                format="png"
+                (imageCropped)="imageCropped($event)"
+                (imageLoaded)="imageLoaded()"
+                (loadImageFailed)="loadImageFailed()"
+            ></image-cropper>
+        </div>
+        <div *ngIf="croppedImage" id="myid-cropped-image-container">
+            <p>
+                You can crop the image with handles.<br>
+                It will look like this:
+            </p>
+            <!-- ovde stavljam [style.borderRadius]="'50%'" cisto da vidis sintaksu kako se pise, inace mogao je komotno ovde da ide samo style atribut-->
+            <img [src]="croppedImage" [style.borderRadius]="'50%'"/>
+        </div>
+    </div>
+    <!-- ****************************************** -->
+
+    <button type="submit" class="btn btn-primary btn-block" [disabled]="updateAccountDataForm.invalid">Submit changes</button>
+
 </form>
-
-
-<div *ngIf="loggedUserExsistingProfileImage" id="loggedUserExsistingProfileImageContainer">
-    <img id="loggedUserExsistingProfileImage" src="{{loggedUserExsistingProfileImage}}">
-    <p>Your current profile image</p>
-</div>
-
-<!-- ************** Image Cropper ************* -->
-
-<div id="myid-image-upload-wrapper">
-    <label for="myid-choose-profile-image" *ngIf="!loggedUserExsistingProfileImage; else changeImage">Add your profile image</label>
-    <ng-template #changeImage>
-        <label for="myid-choose-profile-image">Change your profile image</label>
-    </ng-template>
-    <div>
-        <input type="file" id="myid-choose-profile-image" class="btn btn-light" (change)="fileChangeEvent($event)" />
-        
-        <button type="button" id="myid-clear-profile-image" class="btn btn-dark" *ngIf="imageChangedEvent || croppedImage" (click)="clearImage()">Clear image</button>
-    </div>
-
-    <div #uploadImageErrorDiv [hidden]="!uploadImageError" class="alert alert-danger myclass-upload-image-error">
-      {{uploadImageError}}
-    </div>
-
-    <div id="myid-image-cropper-container">
-        <image-cropper
-            [imageChangedEvent]="imageChangedEvent"
-            [maintainAspectRatio]="true"
-            [aspectRatio]="1 / 1"
-            [resizeToWidth]="128"
-            format="png"
-            (imageCropped)="imageCropped($event)"
-            (imageLoaded)="imageLoaded()"
-            (loadImageFailed)="loadImageFailed()"
-        ></image-cropper>
-    </div>
-    <div *ngIf="croppedImage" id="myid-cropped-image-container">
-        <p>
-            You can crop the image with handles.<br>
-            It will look like this:
-        </p>
-        <!-- ovde stavljam [style.borderRadius]="'50%'" cisto da vidis sintaksu kako se pise, inace mogao je komotno ovde da ide samo style atribut-->
-        <img [src]="croppedImage" [style.borderRadius]="'50%'"/>
-    </div>
-</div>
-<!-- ****************************************** -->
 
 </div>

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, Renderer2 } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../shared/services/auth.service';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -17,6 +17,8 @@ export class RegisterComponent implements OnInit {
   public progressBar: any
   public uploadImageError: string
   public removeUploadImageErrorTimeout: any
+  @ViewChild("uploadImageErrorDiv") uploadImageErrorDiv: ElementRef
+
 
   /* **************** Image cropper ***************** */
   // PS. skinuto odavde https://www.npmjs.com/package/ngx-image-cropper
@@ -45,6 +47,12 @@ export class RegisterComponent implements OnInit {
       this.imageChangedEvent.target.value = null
       this.imageChangedEvent = ''
       this.croppedImage = ''
+
+      //Ovo je kod koji omogucava da se jednom izvrsena css animacija nad elementom ponovo izvrsi, bez ovoga kad bi animacija odradila jednom svoje, vise ne bi mogao ponovo da je pokrenes, tj restartujes. Ima o ovome na netu samo trazi restart css animation(super link npr https://css-tricks.com/restart-css-animation/). Inace ovaj kod je nadjen na ovom linku https://stackoverflow.com/questions/6268508/restart-animation-in-css3-any-better-way-than-removing-the-element, u odgovoru od usera po imenu user.
+      this.renderer.setStyle(this.uploadImageErrorDiv.nativeElement, 'animation', 'none')
+      this.uploadImageErrorDiv.nativeElement.offsetHeight /* s ovom linijom koda triggerujes taj neki reflow, ovde imas sve te neke stvari koje trigeruju taj reflow https://gist.github.com/paulirish/5d52fb081b3570c81e3a */
+      this.renderer.setStyle(this.uploadImageErrorDiv.nativeElement, 'animation', null)
+
       clearTimeout(this.removeUploadImageErrorTimeout) // problem je kad vise puta zaredom trigerujes ovu gresku stari setTimeout koji je aktiviran ostaje aktivan i sklonice gresku pre vremena, zato radim clearTimeout
       this.uploadImageError = "File must be an image!"
       this.removeUploadImageErrorTimeout = setTimeout(() => {this.uploadImageError = null}, 8500) //ovo ubacujem zato sto u css animacijama ne mogu da koristim display property, pa kad podesim uploadImageError = null, angular hidden direktiva ce ga podesiti na display: none
@@ -62,7 +70,8 @@ export class RegisterComponent implements OnInit {
 
 	constructor(
 		private router: Router,
-		private authService: AuthService
+		private authService: AuthService,
+    private renderer: Renderer2
 	) {}
 
 

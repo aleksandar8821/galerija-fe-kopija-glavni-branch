@@ -37,6 +37,10 @@
 	margin-bottom: 10px;
 }
 
+#myid-image-upload-wrapper{
+	margin-bottom: 15px;
+}
+
 #myid-image-cropper-container{
 	width: 50%;
 	display: inline-block;
