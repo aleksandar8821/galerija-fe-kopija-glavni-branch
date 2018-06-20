@@ -6,8 +6,18 @@
         <!-- Da bi mogao da stavim odredjenu sirinu input polja (da mi ne ide preko celog ekrana ko po defaultu) po onom sto pise u dokumentaciji i sto se preporucuje i ovde https://www.w3schools.com/bootstrap4/bootstrap_forms_sizing.asp to treba raditi sa dodavanjem col klasa. E sad one bi trebalo da su u divu koji ima row klasu. E da, ali ti kad dodas row klasu, on ti doda negativne margine i to ovde rezultira da ti nisu label i input polje poravnati, vec input polje strci ulevo za 15px. I da bi se to anuliralo tj ponistilo nasao sam ovu foru da ga strpam u div sa container klasom (vidi https://medium.com/@evidanary/fixing-negative-margins-in-bootstrap-til-ebe3f6b8a6ec , https://stackoverflow.com/questions/18969051/bootstrap-3-why-is-row-class-is-wider-than-its-container). Ima jos fora da se to resi naravno, al mi se ova bar zasad cini najpouzdanijom -->
         <div class="container myclass-input-container-class">
             <div class="row">
-                <input #firstNameInput type="text" name="firstName" id="firstName" class="form-control col-8 col-sm-6 col-md-5" formControlName="firstName" readonly="readonly">
+                <input #firstNameInput type="text" name="firstName" id="firstName" class="form-control col-8 col-sm-6 col-md-5" formControlName="firstName" readonly="readonly" (blur)="inputBlurHandler($event)">
                 &nbsp;&nbsp;<button #btnChangeFirstName *ngIf="userDataReceived" (click)="changeInputToggle($event)" type="button" id="btnChangeFirstName" class="btn btn-success">Change</button>
+            </div>
+            <div class="row">
+                <div *ngIf="firstName.invalid && (firstName.dirty || firstName.touched)" class="alert alert-danger col-8 col-sm-6 col-md-5">
+                    <div *ngIf="firstName.errors.required">
+                        Please fill this field or press cancel.
+                    </div>
+                    <div *ngIf="firstName.errors.sameValue">
+                        You can not enter the same value.
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -16,8 +26,18 @@
         <label for="lastName">Last name</label>
         <div class="container myclass-input-container-class">
             <div class="row">
-                <input #lastNameInput type="text" name="lastName" id="lastName" class="form-control col-8 col-sm-6 col-md-5" formControlName="lastName" readonly>
+                <input #lastNameInput type="text" name="lastName" id="lastName" class="form-control col-8 col-sm-6 col-md-5" formControlName="lastName" readonly (blur)="inputBlurHandler($event)">
                 &nbsp;&nbsp;<button #btnChangeLastName *ngIf="userDataReceived" (click)="changeInputToggle($event)" type="button" id="btnChangeLastName" class="btn btn-success">Change</button>
+            </div>
+            <div class="row">
+                <div *ngIf="lastName.invalid && (lastName.dirty || lastName.touched)" class="alert alert-danger col-8 col-sm-6 col-md-5">
+                    <div *ngIf="lastName.errors.required">
+                        Please fill this field or press cancel.
+                    </div>
+                    <div *ngIf="lastName.errors.sameValue">
+                        You can not enter the same value.
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -26,8 +46,23 @@
         <label for="email">Email</label>
         <div class="container myclass-input-container-class">
             <div class="row">
-                <input #emailInput type="email" name="email" id="email" class="form-control col-8 col-sm-6 col-md-5" formControlName="email" readonly>
+                <input #emailInput type="email" name="email" id="email" class="form-control col-8 col-sm-6 col-md-5" formControlName="email" readonly (blur)="inputBlurHandler($event)">
                 &nbsp;&nbsp;<button #btnChangeEmail *ngIf="userDataReceived" (click)="changeInputToggle($event)" type="button" id="btnChangeEmail" class="btn btn-success">Change</button>
+            </div>
+            <div class="row">
+                <div *ngIf="email.invalid && (email.dirty || email.touched)" class="alert alert-danger col-8 col-sm-6 col-md-5">
+                    <div *ngIf="email.errors.required">
+                        Please fill this field or press cancel.
+                    </div>
+                
+                    <div *ngIf="email.errors.email">
+                        Please provide valid email address.
+                    </div>
+
+                    <div *ngIf="email.errors.sameValue">
+                        You can not enter the same value.
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -40,7 +75,23 @@
             <label for="password">Password</label>
             <div class="container myclass-input-container-class">
                 <div class="row">
-                    <input #passwordInput type="password" name="password" id="password" class="form-control col-8 col-sm-6 col-md-5" formControlName="password">
+                    <input #passwordInput type="password" name="password" id="password" class="form-control col-8 col-sm-6 col-md-5" formControlName="password" (blur)="inputBlurHandler($event)">
+                </div>
+                <div class="row">
+                    <div *ngIf="password.invalid && (password.dirty || password.touched)" class="alert alert-danger col-8 col-sm-6 col-md-5">
+                        <div *ngIf=" password.errors.required ">
+                           Please fill in this field or press cancel
+                        </div>
+                        <ng-container *ngIf="password.dirty">
+                          <div *ngIf=" password.errors.minlength ">
+                             Password must be at least 8 chars
+                          </div>
+                          <div *ngIf=" password.errors.pattern ">
+                             Password must contain at least one number
+                          </div>
+                        </ng-container>
+                    </div>
+                    
                 </div>
             </div>
         </div>
@@ -49,15 +100,34 @@
             <label for="password_confirmation">Confirm password</label>
             <div class="container myclass-input-container-class">
                 <div class="row">
-                    <input #confirmPasswordInput type="password" name="password_confirmation" id="password_confirmation" class="form-control col-8 col-sm-6 col-md-5" formControlName="confirmPassword">
+                    <input #confirmPasswordInput type="password" name="password_confirmation" id="password_confirmation" class="form-control col-8 col-sm-6 col-md-5" formControlName="confirmPassword" (blur)="inputBlurHandler($event)">
                 </div>
             </div>
+
+            <div class="container myclass-error-container-class">
+              <div class="row">
+
+                  <div *ngIf="(confirmPassword.invalid || confirmPassword.value !== password.value) && (confirmPassword.touched || confirmPassword.dirty)" class="alert alert-danger col-8 col-md-6 col-lg-5">
+                    
+                     <div *ngIf="confirmPassword.invalid && confirmPassword.errors.required ">
+                        Please fill in this field or press cancel
+                     </div>
+                      
+                     <div *ngIf="confirmPassword.dirty && confirmPassword.value !== password.value">
+                        Confirmed password is not the same password
+                     </div>
+
+                  </div>
+
+              </div>
+            </div>
+
         </div>
 
     </div>
 
     <div class="form-group">
-        <button #btnChangePassword type="button" id="btnChangePassword" class="btn btn-success" (click)="togglePasswordChangeContainer()">Change your password</button>
+        <button #btnChangePassword *ngIf="userDataReceived" type="button" id="btnChangePassword" class="btn btn-success" (click)="togglePasswordChangeContainer()">Change your password</button>
     </div>
 
 
@@ -76,7 +146,7 @@
             <label for="myid-choose-profile-image">Change your profile image</label>
         </ng-template>
         <div>
-            <input type="file" accept="image/*" id="myid-choose-profile-image" class="btn btn-light" (change)="fileChangeEvent($event)" />
+            <input type="file" accept="image/*" id="myid-choose-profile-image" class="btn btn-light" (change)="fileChangeEvent($event)" formControlName="profileImage"/>
             
             <button type="button" id="myid-clear-profile-image" class="btn btn-dark" *ngIf="imageChangedEvent || croppedImage" (click)="clearImage()">Clear image</button>
         </div>
@@ -108,7 +178,7 @@
     </div>
     <!-- ****************************************** -->
 
-    <button type="submit" class="btn btn-primary btn-block" [disabled]="updateAccountDataForm.invalid">Submit changes</button>
+    <button type="submit" class="btn btn-primary btn-block" [disabled]="!userDataReceived || updateAccountDataForm.invalid || !formDataChanged || confirmPassword.value !== password.value">Submit changes</button>
 
 </form>
 

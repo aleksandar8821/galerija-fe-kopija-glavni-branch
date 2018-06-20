@@ -2,7 +2,7 @@
 	position: relative;
 }
 
-.myclass-input-container-class{
+.myclass-input-container-class, .myclass-error-container-class{
 	max-width: 100%;
 }
 
