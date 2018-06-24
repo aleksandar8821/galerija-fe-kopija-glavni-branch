@@ -8,10 +8,10 @@
         <label for="firstName">
            First name
        </label>
-        <input #firstName="ngModel" [(ngModel)]="user.firstName" type="text" required class="form-control" id="firstName" name="firstName">
+        <input #firstName="ngModel" [(ngModel)]="user.firstName" type="text" required pattern=".*\S+.*" class="form-control" id="firstName" name="firstName"><!-- Ovaj pattern .*\S+.* ovdje znaci da ne mozes unositi samo whitespaceove nego moras i neke konkretne znakove, naso ovde na jedvite jade https://stackoverflow.com/questions/41622490/how-to-add-pattern-to-validate-not-white-spaces-only-in-html-pattern -->
         <!-- ova validacija je inace radjena isto kao i ovde https://angular.io/guide/form-validation#template-driven-validation , a kompletna validacija je radjena po uzoru i kolko vidim maltene je ista kao i ova ovde https://gitlab.com/vivify-ideas/vivifyacademy-advanced-rest-api-movies-fe/blob/master/src/app/components/register/register.component.html -->
         <div *ngIf="firstName.invalid && (firstName.dirty || firstName.touched)" class="alert alert-danger">
-            <div *ngIf="firstName.errors.required">
+            <div *ngIf="firstName.errors.required || firstName.errors.pattern">
                  First name is required.
             </div>            
         </div>
@@ -21,10 +21,10 @@
         <label for="lastName">
            Last name
        </label>
-        <input #lastName="ngModel" [(ngModel)]="user.lastName" type="text" required class="form-control" id="lastName" name="lastName">
+        <input #lastName="ngModel" [(ngModel)]="user.lastName" type="text" required pattern=".*\S+.*" class="form-control" id="lastName" name="lastName">
 
         <div *ngIf="lastName.invalid && (lastName.dirty || lastName.touched)" class="alert alert-danger">
-            <div *ngIf="lastName.errors.required">
+            <div *ngIf="lastName.errors.required || lastName.errors.pattern">
                  Last name is required.
             </div>            
         </div>
@@ -32,10 +32,10 @@
 
     <div class="form-group">
         <label for="email">Email address</label>
-        <input #email="ngModel" [(ngModel)]="user.email" type="email" class="form-control" id="email" name="email" required email>
+        <input #email="ngModel" [(ngModel)]="user.email" type="email" class="form-control" id="email" name="email" required email pattern=".*\S+.*">
 
         <div *ngIf="email.invalid && (email.dirty || email.touched)" class="alert alert-danger">
-            <div *ngIf="email.errors.required">
+            <div *ngIf="email.errors.required || email.errors.pattern">
                 Email is required.
             </div>
 
@@ -50,6 +50,7 @@
            Password
            
        </label>
+       <!-- Vivifyev pattern za regex (pattern="\w*[0-9]{1,}\w*") da mora sadrzati bar jedan broj ne valja!!! On isto tako ne dozvoljava ni whitespace! Ovo sto sam ja sad stavio je zasad dobro, dakle vrsi restrikciju bas samo (bar kolko ja vidim samo) za brojeve (.*[0-9].* - nasao ovde https://stackoverflow.com/questions/17342626/regular-expression-for-at-least-one-number)-->
         <input #password="ngModel" [(ngModel)]="user.password" required minlength="8" pattern="\w*[0-9]{1,}\w*" 
             type="password" class="form-control" id="password" name="password">
 

@@ -11,7 +11,7 @@
             </div>
             <div class="row">
                 <div *ngIf="firstName.invalid && (firstName.dirty || firstName.touched)" class="alert alert-danger col-8 col-sm-6 col-md-5">
-                    <div *ngIf="firstName.errors.required">
+                    <div *ngIf="firstName.errors.required || firstName.errors.pattern">
                         Please fill this field or press cancel.
                     </div>
                     <div *ngIf="firstName.errors.sameValue">
@@ -31,7 +31,7 @@
             </div>
             <div class="row">
                 <div *ngIf="lastName.invalid && (lastName.dirty || lastName.touched)" class="alert alert-danger col-8 col-sm-6 col-md-5">
-                    <div *ngIf="lastName.errors.required">
+                    <div *ngIf="lastName.errors.required || lastName.errors.pattern">
                         Please fill this field or press cancel.
                     </div>
                     <div *ngIf="lastName.errors.sameValue">
@@ -51,11 +51,12 @@
             </div>
             <div class="row">
                 <div *ngIf="email.invalid && (email.dirty || email.touched)" class="alert alert-danger col-8 col-sm-6 col-md-5">
-                    <div *ngIf="email.errors.required">
+                    <div *ngIf="email.errors.required || email.errors.pattern">
                         Please fill this field or press cancel.
                     </div>
-                
-                    <div *ngIf="email.errors.email">
+                    
+                    <!-- Ovde moze da stoji ovaj dupli uslov, nekad to nije dobro jer ti se uslov iz parrent diva sa klasama alert alert-danger zadovolji a ne zadovolji ti se nijedan od pojedinacnih child divova i onda ti se na stranici pojavi prazan crveni div bez poruke-->
+                    <div *ngIf="email.errors.email && email.dirty">
                         Please provide valid email address.
                     </div>
 

@@ -175,4 +175,18 @@ export class AuthService {
     })
   }
 
+  public updateUserData(userData){
+    // console.log(userData);
+    return new Observable((o: Observer<any>) => {
+      this.http.post('http://localhost:8000/api/update_user_data', userData, {headers: this.getRequestHeaders()}).subscribe((request) => {
+        console.log(request);
+        // o.next(loggedUser)
+        // return o.complete()
+      }, (err) => {
+        console.log(err)
+        // return o.error(err)
+      })
+    })
+  }
+
 }

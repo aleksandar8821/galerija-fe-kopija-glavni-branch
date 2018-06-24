@@ -180,10 +180,10 @@ export class MyAccountComponent implements OnInit {
         /* ************************************************* */
 
         let changedUserFormData = this.updateAccountDataForm.getRawValue()
-        // Ova petlja sluzi za proveru da vidis da li se ista promenilo od pocetnih vrednosti forme i to ne iz neceg u nista (npr iz postojeceg maila u prazan string), nego iz neceg u nesto drugo (mail u neki drugi mail i sl), i prilicno je REUSABLE
+        // Ova petlja sluzi za proveru da vidis da li se ista promenilo od pocetnih vrednosti forme i to ne iz neceg u nista (npr iz postojeceg maila u prazan string), nego iz neceg u nesto drugo (mail u neki drugi mail i sl), i prilicno je REUSABLE (recimo)
         parentloop:
         for(const prop in changedUserFormData){
-          // Moram na pocetku da proveravam ove nested objekte iz razloga zato sto ovi objekti iako imaju potpuno iste vrednosti opet ako ih uporedis javascript ce ti vratiti false. Tako da ne smem da pustim da mi se u sadasnjem else if delu koda proveravaju bilo kakkvi objekti (jer bi ti dva potpuno jednaka objekta (sa potpuno jednakim vrednostima) on protumacio kao nejednake i uslov bi prosao). Time sto kao prvi if navodim proveru za objekte, u else if delu koda se ne mogu naci objekti i time je to reseno
+          // Moram na pocetku da proveravam ove nested objekte iz razloga zato sto ovi objekti iako imaju potpuno iste vrednosti opet ako ih uporedis javascript ce ti vratiti false (moras im proveravati propertije jedan po jedan ako hoces da ih uporedis). Tako da ne smem da pustim da mi se u sadasnjem else if delu (else if delovima kako god) koda proveravaju bilo kakkvi objekti (jer bi ti dva potpuno jednaka objekta (sa potpuno jednakim vrednostima) on protumacio kao nejednake i uslov bi prosao). Time sto kao prvi if navodim proveru za objekte, u else if delu koda se ne mogu naci objekti i time je to reseno
           if(typeof changedUserFormData[prop] === 'object'){
             for(const nestedProp in changedUserFormData[prop]){
               // Ovaj uslov zapravo detektuje promenu u formi u odnosu na ono kakva je bila na samom pocetku, i to ne promenu iz neceg u nista (npr iz postojeceg maila u prazan string), nego iz neceg u nesto drugo (mail u neki drugi mail i sl)
@@ -194,10 +194,18 @@ export class MyAccountComponent implements OnInit {
               }
             }
           }
+          // Ispitivanje za sliku mora ici u zaseban blok koda, jer je njoj pocetna vrednost null, a nad nullom se ne moze izvrsiti trim() ko sto radim u narednom else if
+          else if(prop === 'profileImage'){
+            if(changedUserFormData[prop] !== null){
+              this.formDataChanged = true;
+              console.log('Promenjena pocetna vrednost slike!');
+              break
+            }
+          }
           // Ovaj uslov zapravo detektuje promenu u formi u odnosu na ono kakva je bila na samom pocetku, i to ne promenu iz neceg u nista (npr iz postojeceg maila u prazan string), nego iz neceg u nesto drugo (mail u neki drugi mail i sl)
-          else if(changedUserFormData[prop] && (changedUserFormData[prop] !== this.unchangedUserFormData[prop])) {
+          else if(changedUserFormData[prop].trim() && (changedUserFormData[prop].trim() !== this.unchangedUserFormData[prop].trim())) {
             this.formDataChanged = true
-            console.log('Promenjena pocetna vrednost nekog od polja koja nisu unutar zasebne nested form grupe (imena, prezimena, maila ili slike)');
+            console.log('Promenjena pocetna vrednost nekog od polja koja nisu unutar zasebne nested form grupe (osim slike, dakle: imena, prezimena ili maila)');
             break
           }else{
             this.formDataChanged = false
@@ -216,10 +224,11 @@ export class MyAccountComponent implements OnInit {
   	switch (event.target.id) {
   		case "btnChangeFirstName":
   			if (this.firstNameInput.nativeElement.readOnly) {
+          this.firstName.markAsUntouched() //User ce ti cesto kliknuti prvo na readonly polje sto ce se racunati kao touched, pa kasnije kad klikne na change odmah ce im iskociti greska. Ovim to sprecavam
   				this.renderer.removeAttribute(this.firstNameInput.nativeElement, 'readonly')
           // this.user.firstName = ''
           // Ovo je jako bitno, moras prvo ovde da stavis required validator, pa tek onda da ga podesavas na prazan string, u suprotnom ti nece raditi required odmah
-          this.firstName.setValidators([Validators.required, this.validateSameValue.bind(this)]) // Ovde moras da koristis ovaj bind, da bi na doticni validator prosledio this koji ce oznacavati ovu komponentu, jer kolko vidim njemu je po defaultu this undefined unutar validatora! Pokupio ovde https://stackoverflow.com/questions/48785362/angular-4-validator-custom-function-this-is-undefined . 
+          this.firstName.setValidators([Validators.required, Validators.pattern('.*\\S+.*')/*Ovo je pattern za to da ne mozes da unosis samo whitespace nego da mora da bude bar nekog konkretnog sadrzaja, neki znak, bilo sta. Odgovor nasao na jedvite jade ovde, vidi odgovor od Serg Chernata: https://stackoverflow.com/questions/41622490/how-to-add-pattern-to-validate-not-white-spaces-only-in-html-pattern , INACE mogao si ovo lako uraditi sa custom validatorom gde bi samo napisao if(string.trim()) pa ako ovo vrati true, string je validan*/, this.validateSameValue.bind(this)]) // Ovde moras da koristis ovaj bind, da bi na doticni validator prosledio this koji ce oznacavati ovu komponentu, jer kolko vidim njemu je po defaultu this undefined unutar validatora! Pokupio ovde https://stackoverflow.com/questions/48785362/angular-4-validator-custom-function-this-is-undefined . 
           this.updateAccountDataForm.patchValue({
             firstName: ''
           })
@@ -247,10 +256,11 @@ export class MyAccountComponent implements OnInit {
 
   		case "btnChangeLastName":
   			if (this.lastNameInput.nativeElement.readOnly) {
+          this.lastName.markAsUntouched() //User ce ti cesto kliknuti prvo na readonly polje sto ce se racunati kao touched, pa kasnije kad klikne na change odmah ce im iskociti greska. Ovim to sprecavam
   				this.renderer.removeAttribute(this.lastNameInput.nativeElement, 'readonly')
   				// this.user.lastName = ''
           // Ovo je jako bitno, moras prvo ovde da stavis required validator, pa tek onda da ga podesavas na prazan string, u suprotnom ti nece raditi required odmah
-          this.lastName.setValidators([Validators.required, this.validateSameValue.bind(this)]) // Ovde moras da koristis ovaj bind, da bi na doticni validator prosledio this koji ce oznacavati ovu komponentu, jer kolko vidim njemu je po defaultu this undefined unutar validatora! Pokupio ovde https://stackoverflow.com/questions/48785362/angular-4-validator-custom-function-this-is-undefined .
+          this.lastName.setValidators([Validators.required, Validators.pattern('.*\\S+.*')/*Ovo je pattern za to da ne mozes da unosis samo whitespace nego da mora da bude bar nekog konkretnog sadrzaja, neki znak, bilo sta. Odgovor nasao na jedvite jade ovde, vidi odgovor od Serg Chernata: https://stackoverflow.com/questions/41622490/how-to-add-pattern-to-validate-not-white-spaces-only-in-html-pattern , INACE mogao si ovo lako uraditi sa custom validatorom gde bi samo napisao if(string.trim()) pa ako ovo vrati true, string je validan*/, this.validateSameValue.bind(this)]) // Ovde moras da koristis ovaj bind, da bi na doticni validator prosledio this koji ce oznacavati ovu komponentu, jer kolko vidim njemu je po defaultu this undefined unutar validatora! Pokupio ovde https://stackoverflow.com/questions/48785362/angular-4-validator-custom-function-this-is-undefined .
           this.updateAccountDataForm.patchValue({
             lastName: ''
           })
@@ -277,11 +287,12 @@ export class MyAccountComponent implements OnInit {
 
   		case "btnChangeEmail":
   			if (this.emailInput.nativeElement.readOnly) {
+          this.email.markAsUntouched() //User ce ti cesto kliknuti prvo na readonly polje sto ce se racunati kao touched, pa kasnije kad klikne na change odmah ce im iskociti greska. Ovim to sprecavam
   				this.renderer.removeAttribute(this.emailInput.nativeElement, 'readonly')
   				// this.user.email = ''
           // Ako hoces da stavljas vise validatora na jedno polje, MORAS ih ovako proslediti kao niz, drugacije NE MOZE
           // Ovo je jako bitno, moras prvo ovde da stavis required validator, pa tek onda da ga podesavas na prazan string, u suprotnom ti nece raditi required odmah
-          this.email.setValidators([Validators.required, Validators.email,this.validateSameValue.bind(this)]) // Ovde moras da koristis ovaj bind, da bi na doticni validator prosledio this koji ce oznacavati ovu komponentu, jer kolko vidim njemu je po defaultu this undefined unutar validatora! Pokupio ovde https://stackoverflow.com/questions/48785362/angular-4-validator-custom-function-this-is-undefined .
+          this.email.setValidators([Validators.required, Validators.pattern('.*\\S+.*')/*Ovo je pattern za to da ne mozes da unosis samo whitespace nego da mora da bude bar nekog konkretnog sadrzaja, neki znak, bilo sta. Odgovor nasao na jedvite jade ovde, vidi odgovor od Serg Chernata: https://stackoverflow.com/questions/41622490/how-to-add-pattern-to-validate-not-white-spaces-only-in-html-pattern , INACE mogao si ovo lako uraditi sa custom validatorom gde bi samo napisao if(string.trim()) pa ako ovo vrati true, string je validan*/, Validators.email, this.validateSameValue.bind(this)]) // Ovde moras da koristis ovaj bind, da bi na doticni validator prosledio this koji ce oznacavati ovu komponentu, jer kolko vidim njemu je po defaultu this undefined unutar validatora! Pokupio ovde https://stackoverflow.com/questions/48785362/angular-4-validator-custom-function-this-is-undefined .
           this.updateAccountDataForm.patchValue({
             email: ''
           })
@@ -368,7 +379,7 @@ export class MyAccountComponent implements OnInit {
       this.renderer.setStyle(this.passwordChangeContainer.nativeElement, 'height', String(this.passwordChangeContainer.nativeElement.scrollHeight) + 'px')
       // OVO NE RADI, KAZE DA JE offsetHeight readonly property! this.renderer.setProperty(this.passwordChangeContainer.nativeElement, 'offsetHeight', String(this.passwordChangeContainer.nativeElement.scrollHeight) + 'px')
 
-      // Pomocu ovog intervala proveravam da li je animacija slajda nadole zaista gotova i tek kad je gotova dodajem divu visinu auto, da bi greske validacije mogle mu povecaju visinu automatski, a ne da mu ostane fiksna visina jer onda nema mesta za validacione greske. Pretpostavljam elegantnije i pouzdanije od varijante gde u setTimeout stavis vreme animacije, mada moze i tako
+      // Pomocu ovog intervala proveravam da li je animacija slajda nadole zaista gotova i tek kad je gotova dodajem divu visinu auto, da bi greske validacije mogle mu povecaju visinu automatski, a ne da mu ostane fiksna visina jer onda nema mesta za validacione greske. Pretpostavljam elegantnije i pouzdanije od varijante gde u setTimeout stavis vreme animacije, mada moze i tako (dodao kasnije: bas i ne mora da znaci! ukoliko ti se desi da ti se visina diva moze promeniti U TOKU animacije, onda ti setinterval nece uraditi posao uopste! jer mu se ovaj uslov koji proverava nece zadovoljiti nikad, pa u tom slucaju koristi setTimeout! Sad sam inace namestio da mi se visina diva ne moze promeniti tokom animacije tj. ne mogu mi iskakati validacione greske pre nego sto mi se slide down potpuno ne zavrsi, tako da setInterval ovde radi dobar posao - bar zasad)
       let interval = setInterval(() => {
         if(this.passwordChangeContainer.nativeElement.offsetHeight === this.passwordChangeContainer.nativeElement.scrollHeight){
           clearInterval(interval)
@@ -376,7 +387,7 @@ export class MyAccountComponent implements OnInit {
           /*this.renderer.removeAttribute(this.passwordInput.nativeElement, 'disabled')
           this.renderer.removeAttribute(this.confirmPasswordInput.nativeElement, 'disabled')*/
           
-          this.password.setValidators([Validators.required, Validators.minLength(8), Validators.pattern("\\w*[0-9]{1,}\\w*")]) //Backslash moras ovde da eskejpujes sa dodatnim backslashom <<< vidi sta kaze James Ellis-Jones ovde https://stackoverflow.com/questions/42392373/angular-2-validators-pattern-not-working + imas na ovom linku jos neke zackoljice oko ovih regexa
+          this.password.setValidators([Validators.required, Validators.minLength(8),/*Ovaj vivifyev pattern (\w*[0-9]{1,}\w*) ipak ne valja jer vrsi restrikciju i na whitespace i trazi bar jedan broj. Kao sto vidis stavljam novi (.*[0-9].* - nasao ovde https://stackoverflow.com/questions/17342626/regular-expression-for-at-least-one-number)  Validators.pattern("\\w*[0-9]{1,}\\w*")]) //Backslash moras ovde da eskejpujes sa dodatnim backslashom <<< vidi sta kaze James Ellis-Jones ovde https://stackoverflow.com/questions/42392373/angular-2-validators-pattern-not-working + imas na ovom linku jos neke zackoljice oko ovih regexa*/ Validators.pattern(".*[0-9].*")])
 
           this.confirmPassword.setValidators(Validators.required)
 
@@ -396,6 +407,18 @@ export class MyAccountComponent implements OnInit {
 
   // Pomocu ove funkcije resavam to da mi validacione greske ne iskacu kad stisnem cancel dugme polja, jer se one okidaju u sustini kad im se na poljima okine blur dogadjaj, sto ti i kaze ovde " The checks for dirty and touched prevent errors from showing until the user does one of two things: changes the value, turning the control dirty; or blurs the form control element, setting the control to touched." - https://angular.io/guide/form-validation
   public inputBlurHandler(event){
+
+    // Ovde pravim mali izuzetak i ovo handlujem van onog switcha dole i naravno pre provere da li event.relatedTarget ne postoji jer mi je ovde i taj slucaj potreban. Dakle ovim postizem da kada mi user validno popuni sifru, pa klikne negde van (osim na samo polje confirm passworda ili dugme cancel) da se pojavi greska ispod confirm passworda da polje mora da se popuni! Jer je greska ako validno popunis sifru pa kliknes bilo gde drugde osim na confirm password
+    if(event.target.id === "password"){
+      if(event.relatedTarget){
+        if(event.relatedTarget.id !== "password_confirmation" && event.relatedTarget.id !== "btnChangePassword" && this.password.valid && this.confirmPassword.hasError('required')){
+          this.confirmPassword.markAsTouched()
+        }
+      }else if(this.password.valid && this.confirmPassword.hasError('required')){
+        this.confirmPassword.markAsTouched()
+      }
+    }
+
     // Nekad je relatedTarget null pa mi izbacuje gresku, pa da me ne bi jebavao vise u zdrav mozak, ovde ga odmah izbacujem ako nema relatedTarget
     if(!event.relatedTarget){
       return;
@@ -423,6 +446,7 @@ export class MyAccountComponent implements OnInit {
       case "password":
         if(event.relatedTarget.id === "btnChangePassword"){
           this.password.markAsUntouched()
+          console.log('mitke');
         }
       break;
 
@@ -450,8 +474,108 @@ export class MyAccountComponent implements OnInit {
   }
  
   public updateAccountData(){
-    console.log(this.updateAccountDataForm.value);
-    console.log(this.updateAccountDataForm.controls.changePassword.value);
+    let sendData = new FormData()
+    let changedUserFormData = this.updateAccountDataForm.getRawValue()
+    console.log(changedUserFormData);
+    let needPasswordReEnter: boolean = false
+    let allFieldsChanged: boolean =  true //bice true ako korisnik ispuni kompletnu formu (ukljucujuci i profil sliku naravno) sa novim vrednostima. Postavljam je na true, pa ako se pri proveri ispostavi da je barem jedan podatak isti sa pocetnim bice false
+
+    // Ova petlja sluzi za proveru da vidis da li se ista promenilo od pocetnih vrednosti forme i to ne iz neceg u nista (npr iz postojeceg maila u prazan string), nego iz neceg u nesto drugo (mail u neki drugi mail i sl), i prilicno je REUSABLE (recimo)
+    for(const prop in changedUserFormData){
+      // Moram na pocetku da proveravam ove nested objekte iz razloga zato sto ovi objekti iako imaju potpuno iste vrednosti opet ako ih uporedis javascript ce ti vratiti false (moras im proveravati propertije jedan po jedan ako hoces da ih uporedis). Tako da ne smem da pustim da mi se u sadasnjem else if delu (else if delovima kako god) koda proveravaju bilo kakkvi objekti (jer bi ti dva potpuno jednaka objekta (sa potpuno jednakim vrednostima) on protumacio kao nejednake i uslov bi prosao). Time sto kao prvi if navodim proveru za objekte, u else if delu koda se ne mogu naci objekti i time je to reseno
+      if(typeof changedUserFormData[prop] === 'object'){
+        for(const nestedProp in changedUserFormData[prop]){
+          // Ovaj uslov zapravo detektuje promenu u formi u odnosu na ono kakva je bila na samom pocetku, i to ne promenu iz neceg u nista (npr iz postojeceg maila u prazan string), nego iz neceg u nesto drugo (mail u neki drugi mail i sl)
+          if(changedUserFormData[prop][nestedProp] && (changedUserFormData[prop][nestedProp] !== this.unchangedUserFormData[prop][nestedProp])){
+            needPasswordReEnter = true
+            if(nestedProp === 'confirmPassword'){
+              // Moram ga ovde promenuti iz confirmPassword u password_confirmation, jer Laravel za konfirmaciju sifre trazi da potvrdjena sifra ima key password_confirmation
+              sendData.append('password_confirmation', changedUserFormData[prop][nestedProp])
+            }else{
+              sendData.append(nestedProp, changedUserFormData[prop][nestedProp])
+            }
+            console.log(nestedProp, changedUserFormData[prop][nestedProp]);
+          }
+
+        }
+      }
+      // Ispitivanje za sliku mora ici u zaseban blok koda, jer je njoj pocetna vrednost null, a nad nullom se ne moze izvrsiti trim() ko sto radim u narednom else if
+      else if(prop === 'profileImage'){
+        if(changedUserFormData[prop] !== null){
+          // Ne stavljam changedUserFormData[prop] u sendData, nego this.croppedImage jer mi se tu nalazi base64 string koji je zapravo ta slika i to treba da se posalje na server
+          sendData.append(prop, this.croppedImage)
+          console.log(prop, this.croppedImage);
+          
+        }
+      }
+      // Ovaj uslov zapravo detektuje promenu u formi u odnosu na ono kakva je bila na samom pocetku, i to ne promenu iz neceg u nista (npr iz postojeceg maila u prazan string), nego iz neceg u nesto drugo (mail u neki drugi mail i sl)
+      else if(changedUserFormData[prop].trim() && (changedUserFormData[prop].trim() !== this.unchangedUserFormData[prop].trim())) {
+        needPasswordReEnter = true
+        sendData.append(prop, changedUserFormData[prop].trim())
+        console.log(prop, changedUserFormData[prop].trim());
+      }else{
+        // console.log('Upade u else!');
+      }
+
+    }
+
+    // Ova for in petlja proverava da li postoji barem jedan element forme koji je ostao nepromenjen, pa ukoliko jeste setuje se allFieldsChanged na false, a u odnosu na to ce se slati put ili patch request na server. Put ako je sve promenjeno, a patch ako je izmenjeno samo nesto!
+    parentloop:
+    for(const prop in changedUserFormData){
+     /* if(prop === 'profileImage'){
+        console.log('eve slike!', typeof changedUserFormData[prop]);//Ako je null, ispisace object!!!
+      }*/
+
+      // Ispitivanje za sliku mora ici u zaseban blok koda, jer je njoj pocetna vrednost null, a null je ocigledno tipa object pa mora ici pre prvog else if-a, a nad nullom se ne moze ni izvrsiti trim() ko sto radim u drugom else if
+      if(prop === 'profileImage'){
+        if(changedUserFormData[prop] === null){
+          allFieldsChanged = false
+          console.log('Nepromenjena pocetna vrednost slike!');
+          break
+        }
+      }
+      // Moram na pocetku da proveravam ove nested objekte iz razloga zato sto ovi objekti iako imaju potpuno iste vrednosti opet ako ih uporedis javascript ce ti vratiti false (moras im proveravati propertije jedan po jedan ako hoces da ih uporedis). Tako da ne smem da pustim da mi se u sadasnjem else if delu koda proveravaju bilo kakkvi objekti (jer bi ti dva potpuno jednaka objekta (sa potpuno jednakim vrednostima) on protumacio kao nejednake i uslov bi prosao). Time sto kao prvi else if navodim proveru za objekte, u drugom else if delu koda se ne mogu naci objekti i time je to reseno
+      else if(typeof changedUserFormData[prop] === 'object'){
+        for(const nestedProp in changedUserFormData[prop]){
+          if(changedUserFormData[prop][nestedProp] === this.unchangedUserFormData[prop][nestedProp]){
+            console.log('Nepromenjena pocetna vrednost nekog od polja unutar nested form grupe (passworda ili confirm passworda)');
+            allFieldsChanged = false
+            break parentloop
+          }
+        }
+      }else if(changedUserFormData[prop].trim() === this.unchangedUserFormData[prop].trim()) {
+        allFieldsChanged = false
+        console.log('Nepromenjena pocetna vrednost nekog od polja koja nisu unutar zasebne nested form grupe (osim slike, dakle: imena, prezimena ili maila), a to jeeeee', prop);
+        break
+      }else{
+        // allFieldsChanged = true
+        console.log('Promenjeno polje: ', prop);
+      }
+
+    }
+
+    if(needPasswordReEnter === true){
+      alert('unes sifru bre')
+    }
+
+    /*Heh, ovo se inace ovako ne radi (da ti u body requesta stavljas koja je http metoda u pitanju) nego koristis angularove HttpClient metode put, patch, post i sl. ALI u ovom konkretnom slucaju ovo se mora ovako uraditi, jer laravel (cak mozda i php uopste) ne prima podatke tipa FormData preko put ili patch requesta! Workaroundova ima par kolko vidim po netu, ali ovde je npr taj da ne koristis FormData podatke uopste, nego da stavljas sve unutar onog body objekta unutar angularovih http metoda, a ako hoces da koristis FormData e onda treba da uradis ovo, tj. da stavis ovaj _method property unutar FormData i da mu zadas ime metode, a koristis angularovu http post metodu! Server tj laravel u ovom slucaju ce prepoznati da se radi o onom requestu, kojeg si ti naveo kao vrednost od _method unutar FormData objekta. Linkovi sa ovim workaroundom koji ti koristis i sa jos nekima:
+    https://github.com/laravel/framework/issues/13457
+    https://laravel.io/forum/02-13-2014-i-can-not-get-inputs-from-a-putpatch-request
+    https://stackoverflow.com/questions/50691938/patch-and-put-request-does-not-working-with-form-data
+    https://stackoverflow.com/questions/44689311/angular2-http-put-method-not-sending-formdata - vidi odgovor od levis
+
+    */
+    // Inace ovo mi je ovde i zgodno cak zato sto lako mogu da odaberem hocu li da koristim PUT ili PATCH request. Da ovoga nema morao bi da u if else bloku da pisem dve odvojene angularove http metode
+    if(allFieldsChanged === true){
+      console.log('Put metoda ce se koristiti!');
+      sendData.append('_method', 'PUT')
+    }else{
+      console.log('Patch metoda ce se koristiti!');
+      sendData.append('_method', 'PATCH')
+    }
+
+    this.authService.updateUserData(sendData).subscribe()
+
   }
 
 }
