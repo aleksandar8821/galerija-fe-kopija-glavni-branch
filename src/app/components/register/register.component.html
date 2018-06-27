@@ -8,7 +8,7 @@
         <label for="firstName">
            First name
        </label>
-        <input #firstName="ngModel" [(ngModel)]="user.firstName" type="text" required pattern=".*\S+.*" class="form-control" id="firstName" name="firstName"><!-- Ovaj pattern .*\S+.* ovdje znaci da ne mozes unositi samo whitespaceove nego moras i neke konkretne znakove, naso ovde na jedvite jade https://stackoverflow.com/questions/41622490/how-to-add-pattern-to-validate-not-white-spaces-only-in-html-pattern -->
+        <input #firstName="ngModel" [(ngModel)]="user.firstName" type="text" required pattern=".*\S+.*" class="form-control" id="firstName" name="firstName"><!-- Ovaj pattern .*\S+.* ovdje znaci da ne mozes unositi samo whitespaceove nego moras i neke konkretne znakove, naso ovde na jedvite jade (odgovor od Serg Chernata) https://stackoverflow.com/questions/41622490/how-to-add-pattern-to-validate-not-white-spaces-only-in-html-pattern -->
         <!-- ova validacija je inace radjena isto kao i ovde https://angular.io/guide/form-validation#template-driven-validation , a kompletna validacija je radjena po uzoru i kolko vidim maltene je ista kao i ova ovde https://gitlab.com/vivify-ideas/vivifyacademy-advanced-rest-api-movies-fe/blob/master/src/app/components/register/register.component.html -->
         <div *ngIf="firstName.invalid && (firstName.dirty || firstName.touched)" class="alert alert-danger">
             <div *ngIf="firstName.errors.required || firstName.errors.pattern">

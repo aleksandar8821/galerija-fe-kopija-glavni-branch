@@ -20,6 +20,7 @@ export class MyAccountComponent implements OnInit {
   public formDataChanged: boolean = false
   public passwordChangeContainerOpened: boolean = false
   public targetClickedOnBody: any
+  public sendData: FormData
 
 
   public updateAccountDataForm = new FormGroup({
@@ -53,6 +54,8 @@ export class MyAccountComponent implements OnInit {
   @ViewChild("passwordChangeContainer") passwordChangeContainer: ElementRef
   @ViewChild("passwordInput") passwordInput: ElementRef
   @ViewChild("confirmPasswordInput") confirmPasswordInput: ElementRef
+  @ViewChild("passwordModal") passwordModal: ElementRef
+  @ViewChild("passwordModalButtonTrigger") passwordModalButtonTrigger: ElementRef
 
 	public loggedUserExsistingProfileImage = window.localStorage.getItem('loggedUserProfileImage')
 	public uploadImageError: string
@@ -125,7 +128,7 @@ export class MyAccountComponent implements OnInit {
 
   ngOnInit() {
   	this.authService.getUserInfo().subscribe((loggedUser) => {
-  		// console.log(loggedUser)
+  		console.log(loggedUser)
   		this.user = new User(loggedUser.id, loggedUser.first_name, loggedUser.last_name, loggedUser.email, loggedUser.profile_image)
   		// Moram praviti dva odvojena objekta, jer kod objekata vazi by reference pravilo, ne mogu napraviti jedan pa ih dodati ostalima onda bi imao samo jedan objekat na kojeg ostali referenciraju. Ovako imam dva odvojena objekta. PS OVO MI KOD REACTIVE FORME NE TREBA, JER KOD NJE NE POSTOJI TWO WAY DATA BINDING, ALI CU IPAK OSTAVITI DA OVDE STOJI DA NE BI MORAO SAD POLA KODA DA BRISEM I PRILAGODJAVAM
   		this.unchangedUserData = new User(loggedUser.id, loggedUser.first_name, loggedUser.last_name, loggedUser.email, loggedUser.profile_image)
@@ -503,7 +506,7 @@ export class MyAccountComponent implements OnInit {
       else if(prop === 'profileImage'){
         if(changedUserFormData[prop] !== null){
           // Ne stavljam changedUserFormData[prop] u sendData, nego this.croppedImage jer mi se tu nalazi base64 string koji je zapravo ta slika i to treba da se posalje na server
-          sendData.append(prop, this.croppedImage)
+          sendData.append('profile_image', this.croppedImage)
           console.log(prop, this.croppedImage);
           
         }
@@ -511,7 +514,13 @@ export class MyAccountComponent implements OnInit {
       // Ovaj uslov zapravo detektuje promenu u formi u odnosu na ono kakva je bila na samom pocetku, i to ne promenu iz neceg u nista (npr iz postojeceg maila u prazan string), nego iz neceg u nesto drugo (mail u neki drugi mail i sl)
       else if(changedUserFormData[prop].trim() && (changedUserFormData[prop].trim() !== this.unchangedUserFormData[prop].trim())) {
         needPasswordReEnter = true
-        sendData.append(prop, changedUserFormData[prop].trim())
+        if(prop === 'firstName'){
+          sendData.append('first_name', changedUserFormData[prop].trim())
+        }else if(prop === 'lastName'){
+          sendData.append('last_name', changedUserFormData[prop].trim())
+        }else{
+          sendData.append(prop, changedUserFormData[prop].trim())
+        }
         console.log(prop, changedUserFormData[prop].trim());
       }else{
         // console.log('Upade u else!');
@@ -554,9 +563,6 @@ export class MyAccountComponent implements OnInit {
 
     }
 
-    if(needPasswordReEnter === true){
-      alert('unes sifru bre')
-    }
 
     /*Heh, ovo se inace ovako ne radi (da ti u body requesta stavljas koja je http metoda u pitanju) nego koristis angularove HttpClient metode put, patch, post i sl. ALI u ovom konkretnom slucaju ovo se mora ovako uraditi, jer laravel (cak mozda i php uopste) ne prima podatke tipa FormData preko put ili patch requesta! Workaroundova ima par kolko vidim po netu, ali ovde je npr taj da ne koristis FormData podatke uopste, nego da stavljas sve unutar onog body objekta unutar angularovih http metoda, a ako hoces da koristis FormData e onda treba da uradis ovo, tj. da stavis ovaj _method property unutar FormData i da mu zadas ime metode, a koristis angularovu http post metodu! Server tj laravel u ovom slucaju ce prepoznati da se radi o onom requestu, kojeg si ti naveo kao vrednost od _method unutar FormData objekta. Linkovi sa ovim workaroundom koji ti koristis i sa jos nekima:
     https://github.com/laravel/framework/issues/13457
@@ -576,6 +582,22 @@ export class MyAccountComponent implements OnInit {
 
     this.authService.updateUserData(sendData).subscribe()
 
+
+    if(needPasswordReEnter === true){
+      this.sendData = sendData
+      this.updateAccountDataForm.addControl('reEnteredPassword', new FormControl())
+      console.log(this.updateAccountDataForm.getRawValue());
+      // Msm da je ovo najjednostavniji nacin da se otvori bootstrap modal u angularu (vidi https://stackoverflow.com/questions/35400811/how-to-use-code-to-open-a-modal-in-angular-2)
+      this.passwordModalButtonTrigger.nativeElement.click()
+    }else{
+      // this.authService.updateUserData(sendData).subscribe()
+    }
+
+
+  }
+
+  public updateAccountDataWithReEnteredPassword(){
+    console.log('podaci sas sifrom', this.updateAccountDataForm.getRawValue());
   }
 
 }
