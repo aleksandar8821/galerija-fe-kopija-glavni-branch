@@ -178,13 +178,20 @@ export class AuthService {
   public updateUserData(userData){
     // console.log(userData);
     return new Observable((o: Observer<any>) => {
-      this.http.post('http://localhost:8000/api/update_user_data', userData, {headers: this.getRequestHeaders()}).subscribe((request) => {
-        console.log(request);
-        // o.next(loggedUser)
-        // return o.complete()
+      this.http.post('http://localhost:8000/api/update_user_data', userData, {headers: this.getRequestHeaders()}).subscribe((loggedUser: any) => {
+        console.log(loggedUser);
+        this.loggedUserNameFirstLetter = loggedUser.first_name.charAt(0).toUpperCase()
+        window.localStorage.setItem('loggedUserNameFirstLetter', this.loggedUserNameFirstLetter)
+        this.loggedUserProfileImage = loggedUser.profile_image
+        window.localStorage.setItem('loggedUserProfileImage', this.loggedUserProfileImage)
+        //email postavljam da bi mogao da poredim sa mailom usera koji je postavio komentar, pa da mu omogucim brisanje. Email je unikatan u bazi, stoga je dobar za identifikaciju (mada ovo mozda bas i nije dobro jer neko moze sanzati mail nekog korisnika ako ti ceprka po javascriptu, tako da je mozda bolje da ga poredis sa id-em iz baze, ali opet kolko je to safe, da imas id od korisnika prisutan u javascript kodu?):
+        window.localStorage.setItem('loggedUserEmail', loggedUser.email)
+        o.next(loggedUser)
+        return o.complete()
       }, (err) => {
         console.log(err)
-        // return o.error(err)
+        o.error(err)
+        return o.complete()
       })
     })
   }

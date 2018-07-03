@@ -1,3 +1,8 @@
+<div #progressBar class="progress">
+    <div class="progress-bar progress-bar-striped progress-bar-animated"></div>
+</div>
+<div #disabledOverlay class="myclass-disabled-overlay"></div>
+
 <div id="myid-my-account-wrapper">
     
 <form (ngSubmit)="updateAccountData()" [formGroup]="updateAccountDataForm">
@@ -76,7 +81,8 @@
             <label for="password">Password</label>
             <div class="container myclass-input-container-class">
                 <div class="row">
-                    <input #passwordInput type="password" name="password" id="password" class="form-control col-8 col-sm-6 col-md-5" formControlName="password" (blur)="inputBlurHandler($event)">
+                    <!-- Pomocu ovog autocomplete="new-password" se postize u chromu da ti ne ispisuje odmah sifru u input polju, ali em ovo msm nije u svim browserima implementirano, em ti i chrome cim kliknes na polje sifre odmah u dropdownu nudi tu sifru, tako da slaba vajda, al ajd... Nesto o tome ovde https://developer.mozilla.org/en-US/docs/Web/Security/Securing_your_site/Turning_off_form_autocompletion , a imas ina stackoverflow https://stackoverflow.com/questions/15738259/disabling-chrome-autofill i ima toga jos po istom sajtu a i po netu, ali nisam nasao jos nesto sto stvarno skroz disableuje ove zapamcene sifre-->
+                    <input autocomplete="new-password" #passwordInput type="password" name="password" id="password" class="form-control col-8 col-sm-6 col-md-5" formControlName="password" (blur)="inputBlurHandler($event)">
                 </div>
                 <div class="row">
                     <div *ngIf="password.invalid && (password.dirty || password.touched)" class="alert alert-danger col-8 col-sm-6 col-md-5">
@@ -101,7 +107,7 @@
             <label for="password_confirmation">Confirm password</label>
             <div class="container myclass-input-container-class">
                 <div class="row">
-                    <input #confirmPasswordInput type="password" name="password_confirmation" id="password_confirmation" class="form-control col-8 col-sm-6 col-md-5" formControlName="confirmPassword" (blur)="inputBlurHandler($event)">
+                    <input autocomplete="new-password" #confirmPasswordInput type="password" name="password_confirmation" id="password_confirmation" class="form-control col-8 col-sm-6 col-md-5" formControlName="confirmPassword" (blur)="inputBlurHandler($event)">
                 </div>
             </div>
 
@@ -183,9 +189,9 @@
 
 </form>
 
-<!-- Posto je zajebano otvarati modal iz angularovog koda, morao il rucno da dodajem klase, atribute i ko zna sta jos, ili bi morao na neki hacky nacin da ubacujem jquery, najlakse je zapravo simulirati klik na ovo sakriveno dugme -->
+<!-- Posto je zajebano otvarati modal iz angularovog koda, morao bi il rucno da dodajem klase, atribute i ko zna sta jos, ili bi morao na neki hacky nacin da ubacujem jquery, najlakse je zapravo simulirati klik na ovo sakriveno dugme (pokupio ovde https://stackoverflow.com/questions/35400811/how-to-use-code-to-open-a-modal-in-angular-2), inace ovaj data-toggle="modal" govori da ovo dugme i otvara i zatvara modal (https://getbootstrap.com/docs/4.0/components/modal/#via-data-attributes)-->
 <button #passwordModalButtonTrigger type="button" [hidden]="true" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
-  Launch modal
+  Toggle modal
 </button>
 
 
@@ -195,21 +201,21 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="exampleModalLabel">Please reenter your password</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <button (click)="resetReEnteredPasswordForm()" type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
         <p>When changing sensitive data like name, email or password, we need to be sure it is actually YOU who is changing this data, so you need to provide us your <strong>password</strong> with which you are currently logged in, and <strong>confirmation</strong> via the email that we will send you!</p>
         <hr>
-        <form [formGroup]="updateAccountDataForm" (ngSubmit)="updateAccountDataWithReEnteredPassword()">
+        
+        <form #reEnteredPasswordForm="ngForm" (ngSubmit)="updateAccountDataWithReEnteredPassword(reEnteredPassword)">
           <div class="form-group">
             <label for="reEnteredPassword" class="col-form-label">Password:</label>
-            <!-- Ovaj formControlName ne moze da stoji ovde ako u ts kodu ti nisi definisao form control sa tim imenom unutar forme. E sad ti ga dodajes kasnije dinamicki i zato ovde imas onda u startu error. Da se to ne bi desavalo moram ovaj ngIf ovde da stavim, a foru sam pokupio ovde https://stackoverflow.com/questions/49266469/angular-reactive-forms-adding-and-removing-fields  -->
-            <input *ngIf="updateAccountDataForm.get('reEnteredPassword')" type="password" class="form-control" id="reEnteredPassword" formControlName="reEnteredPassword">
+            <input #reEnteredPasswordInput [(ngModel)]="reEnteredPassword" type="password" class="form-control" id="reEnteredPassword" name="reEnteredPassword" (paste)="$event.preventDefault()"><!-- Sa ovim (paste)="$event.preventDefault()" zabranjujem da se bilo sta pasteuje u ovo polje, pokupio ovde https://stackoverflow.com/questions/12805803/disable-copy-paste-in-html-input-fields , mada i kad bi sklonio ovaj kod nista ne bi mogao da pasteujes jer u ts fajlu imam kod koji zabranjuje da se u ovo polje odjednom unese vise znakova, ali oba rade posao-->
           </div>
-          <button type="submit" class="btn btn-primary">Submit</button>
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+          <button [disabled]="!reEnteredPassword" type="submit" class="btn btn-primary">Submit</button>
+          <button (click)="resetReEnteredPasswordForm()" type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
         </form>
       </div>
       <!-- <div class="modal-footer">

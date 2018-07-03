@@ -13,6 +13,7 @@ import { MyGalleriesComponent } from '../components/my-galleries/my-galleries.co
 import { RegisterComponent } from '../components/register/register.component';
 import { RegisterVerificationComponent } from '../components/register-verification/register-verification.component';
 import { ViewImageComponent } from '../components/view-image/view-image.component';
+import { EmptyComponentComponent } from '../components/empty-component/empty-component.component';
 
 
 import { AuthGuard } from '../shared/guards/auth.guard';
@@ -44,6 +45,10 @@ const appRoutes: Routes = [
         path: 'my-account',
         canActivate: [AuthGuard],
         component: MyAccountComponent
+    },
+    {
+        path: 'reload-component',
+        component: EmptyComponentComponent
     },
     {
         path: 'my-galleries',

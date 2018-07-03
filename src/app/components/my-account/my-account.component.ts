@@ -1,8 +1,15 @@
 import { Component, OnInit, ViewChild, ElementRef, Renderer2, HostListener } from '@angular/core';
 import { AuthService } from '../../shared/services/auth.service';
 import { HttpErrorResponse } from '@angular/common/http';
+import { Router } from '@angular/router';
 import { User } from '../../shared/models/user';
-import { FormControl, FormGroup, Validators, AbstractControl } from '@angular/forms';
+import { FormControl, FormGroup, Validators, AbstractControl, NgForm } from '@angular/forms';
+import { Subscription } from 'rxjs';
+
+// Na ovaj nacin mozes koristiti jQuery! Samo prethodno treba da ti je instaliran, sto sam ja uradio kad sam instalirao bootstrap. Isto ovako radi ovaj lik https://www.youtube.com/watch?v=mAwqk-eIPL8 , slicno ovaj sa jos nekim zanimljivim informacijama https://www.youtube.com/watch?v=vrdHEBkGAow . Ovo je malko drugacije al slicno https://medium.com/@swarnakishore/how-to-include-and-use-jquery-in-angular-cli-project-592e0fe63176 . Postoji i nacin gde uvodis tipove za jQuery pa onda valjda ne moras da radis ovaj declare ko sad sto radis, vidi https://stackoverflow.com/questions/42510334/how-to-include-jquery-properly-in-angular-cli-1-0-0-rc-0 , https://stackoverflow.com/questions/43934727/how-to-use-jquery-plugin-with-angular-4 - odgovor od Ervin Llojku, opet slicno https://stackoverflow.com/questions/39511788/how-to-import-jquery-to-angular2-typescript-projects , itd
+// declare var $:any;
+// Mozda bolje ovako, jer ovaj dolar ipak koristis za $event npr, pa da ne dodje do nekog konflikta, a tako radi i ovaj lik (https://www.youtube.com/watch?v=vrdHEBkGAow) koji je mozda i najpouzdaniji:
+declare var jQuery:any;
 
 @Component({
   selector: 'app-my-account',
@@ -21,6 +28,8 @@ export class MyAccountComponent implements OnInit {
   public passwordChangeContainerOpened: boolean = false
   public targetClickedOnBody: any
   public sendData: FormData
+  public reEnteredPassword: string;
+  public reEnteredPasswordFormSubscription: Subscription;
 
 
   public updateAccountDataForm = new FormGroup({
@@ -56,6 +65,11 @@ export class MyAccountComponent implements OnInit {
   @ViewChild("confirmPasswordInput") confirmPasswordInput: ElementRef
   @ViewChild("passwordModal") passwordModal: ElementRef
   @ViewChild("passwordModalButtonTrigger") passwordModalButtonTrigger: ElementRef
+  @ViewChild("reEnteredPasswordInput") reEnteredPasswordInput: ElementRef
+  @ViewChild("reEnteredPasswordForm") reEnteredPasswordForm: NgForm
+
+  @ViewChild("progressBar") progressBar: ElementRef
+  @ViewChild("disabledOverlay") disabledOverlay: ElementRef
 
 	public loggedUserExsistingProfileImage = window.localStorage.getItem('loggedUserProfileImage')
 	public uploadImageError: string
@@ -124,7 +138,7 @@ export class MyAccountComponent implements OnInit {
 	}
 	/* ************************************************ */
 
-  constructor(private authService: AuthService, private renderer: Renderer2) { }
+  constructor(private authService: AuthService, private renderer: Renderer2, private router: Router) { }
 
   ngOnInit() {
   	this.authService.getUserInfo().subscribe((loggedUser) => {
@@ -148,7 +162,7 @@ export class MyAccountComponent implements OnInit {
       this.unchangedUserFormData = this.updateAccountDataForm.getRawValue()
 
 
-      // Ovakav subscribe radi i ovaj https://medium.com/@luukgruijs/validating-reactive-forms-with-default-and-custom-form-field-validators-in-angular-5586dc51c4ae
+      // Ovakav subscribe radi i ovaj https://medium.com/@luukgruijs/validating-reactive-forms-with-default-and-custom-form-field-validators-in-angular-5586dc51c4ae . PS dobro je verovatno sto ti ovaj subscribe stoji bas ovde, on ce bez obzira sto se nalazi u success handleru drugog subscribea ostati aktivan tokom celog zivota komponente, a dobro je sto ti stoji ovde zato sto ce gledati promene u odnosu na podatke koji ti prvobitno stizu sa servera unutar pomenutog success handlera
       this.updateAccountDataForm.valueChanges.subscribe((data) => {
         // Podaci koje vraca valueChanges properti na kojeg se suscribeujem (nazalost ne vraca mi podatke iz polja forme koja su u novoj zasebnoj grupi koja se zove changePassword (KASNIJE SKONTAO, NIJE IH VRACAO ZATO STO SU BILE DISABLED, getRawValue() metoda vraca i disabled polja), ali se valueChanges ipak trigeruje kad se podaci u ovoj grupi promene!
         // console.log('Podaci koje vraca valueChanges properti na kojeg se suscribeujem (nazalost ne vraca mi podatke iz polja forme koja su u novoj zasebnoj grupi koja se zove changePassword (KASNIJE SKONTAO, NIJE IH VRACAO ZATO STO SU BILE DISABLED, getRawValue() metoda vraca i disabled polja), ali se valueChanges ipak trigeruje kad se podaci u ovoj grupi promene!)', data);
@@ -220,6 +234,11 @@ export class MyAccountComponent implements OnInit {
       })
 
   	})
+    
+    // Ovako fokusiras polje unutar bootstrap modala, imas na bootstrap dokumentaciji ovo
+    jQuery('#exampleModal').on('shown.bs.modal', function () {
+      jQuery('#reEnteredPassword').trigger('focus')
+    })
 
   }
 
@@ -449,7 +468,7 @@ export class MyAccountComponent implements OnInit {
       case "password":
         if(event.relatedTarget.id === "btnChangePassword"){
           this.password.markAsUntouched()
-          console.log('mitke');
+          console.log('Blur na password');
         }
       break;
 
@@ -465,7 +484,7 @@ export class MyAccountComponent implements OnInit {
 
   // Kao sto vidis custom validator funkcije mogu komontno da stoje ovde u komponenti, tako npr radi i ovaj pajvan https://www.youtube.com/watch?v=YCEk1kGWb6A
   public validateSameValue(control: FormControl){
-    /* ****** Na ovaj nacin se dobavlja ime kontrole (polja, odnosno onoga sto si stavio u formControlName) koja se validira, vidi odgovor od Chris https://stackoverflow.com/questions/40361799/how-to-get-name-of-input-field-from-angular2-formcontrol-object ****** */
+    /* ****** Na ovaj nacin se dobavlja ime kontrole (polja, odnosno onoga sto si stavio u formControlName) koja se validira, vidi odgovor od Chris https://stackoverflow.com/questions/40361799/how-to-get-name-of-input-field-from-angular2-formcontrol-object . Msm da je ovo najjednostavnije resenje, posto ti ime po defaultu nije dostupno iz nekog debilnog razloga ****** */
     const formGroup = control.parent.controls;
     const controlName = Object.keys(formGroup).find(name => control === formGroup[name])
     /* ******************************************************** */
@@ -580,24 +599,139 @@ export class MyAccountComponent implements OnInit {
       sendData.append('_method', 'PATCH')
     }
 
-    this.authService.updateUserData(sendData).subscribe()
-
-
+    // Ukoliko je needPasswordReEnter === true, sto znaci da se menja neki od osetljivih podataka a to su svi osim slike, radi se ponovni unos sifre iz sigurnosnih razloga, a u else delu koda hendlujes podatke koji nisu osetljivi a to je jedino slika
     if(needPasswordReEnter === true){
+      // Moram ga zalepiti za this.sendData, jer cu ga ponovo koristiti u drugoj funkciji
       this.sendData = sendData
-      this.updateAccountDataForm.addControl('reEnteredPassword', new FormControl())
-      console.log(this.updateAccountDataForm.getRawValue());
       // Msm da je ovo najjednostavniji nacin da se otvori bootstrap modal u angularu (vidi https://stackoverflow.com/questions/35400811/how-to-use-code-to-open-a-modal-in-angular-2)
       this.passwordModalButtonTrigger.nativeElement.click()
+
+      /**************************************************************/
+      /*Kod koji onemogucava da se unese sifra zapamcena od strane browsera (u trenutnoj verziji Chrome-a radi, u Mozilli radi samo kad ti ponudi da uneses zapamcenu sifru pa ti kliknes, ali nekad ti se samo unese u polje i tad ne radi. TAKO DA OVO NIJE CROSS BROWSER RESENJE, NE RADI SVUGDE POSAO, A NISAM NI SVE BROWSERE TESTIRAO), odnosno onemogucava da se u password input odjednom unese vise vrednosti, nego mora jedna po jedna.
+
+      Filozofija je ta da ono sto uneses u password polje nikad ne moze biti za dva (i vise) znakova duze od prethodne vrednosti, nego moze samo za jedan, jer tako i user unosi sifru, znak po znak, odnosno prilikom svakog unosa ukupan zbir unetih znakova biva uvecan za 1 i ovde upravo kazem da se moze uvecati samo za 1 a ne za dva ili vise. Ako se unese za dva ili vise to znaci il da pasteujes sifru il da je browser automatski unosi a ovaj kod to zabranjuje. Mada jbg kao sto vidis npr Mozilla ipak uspeva nekako da unese sifru, ne znam bas kako al jbg
+      */
+
+      // Uporedjujem dve vrednosti, trenutnu koja mi trenutno stoji u input polju i prethodnu
+      let reEnteredPasswordPreviousValue: string = ''
+      let reEnteredPasswordCurrentValue: string = ''
+      // Subscribeujem se na promene u formi
+      this.reEnteredPasswordFormSubscription = this.reEnteredPasswordForm.valueChanges.subscribe((data) => {
+
+        reEnteredPasswordCurrentValue = data.reEnteredPassword
+
+        console.log('current value length before any change', reEnteredPasswordCurrentValue.length);
+        console.log('previous value length before any change', reEnteredPasswordPreviousValue.length);
+
+        // Ako trenutna je duzina trenutne vrednosti veca od duzine prethodne za dva karaktera ili vise to znaci da user ne unosi sifru karakter po karakter, vec unosi vise karaktera ODJEDNOM, ja to ne dozvoljavam i u tom slucaju ponistavam vrednost input polja na prazan string
+        if(reEnteredPasswordCurrentValue.length > reEnteredPasswordPreviousValue.length + 1){
+          this.reEnteredPasswordForm.setValue({reEnteredPassword: ''})
+        }else{
+          // Stavljanjem ovoga u else onemogucavam da previous value ikada dobije ovu prekoracenu nedozvoljenu vrednost (mada se to ne desava i bez stavljanja u else, ali jebem li ga, za svaki slucaj ipak nek stoji u elsu). Dakle trenutna vrednost se dodeljuje prethodnoj vrednosti, da bi pri narednom unosu trenutna vrednost predstavljala prethodnu
+          console.log('Trenutna vrednost se dodeljuje prethodnoj vrednosti, da bi pri narednom unosu trenutna vrednost predstavljala prethodnu:');
+          reEnteredPasswordPreviousValue = reEnteredPasswordCurrentValue
+        }
+
+        console.log('current value length after any change', reEnteredPasswordCurrentValue.length);
+        console.log('previous value length after any change', reEnteredPasswordPreviousValue.length);
+
+      })
+      /**************************************************************/
+
     }else{
-      // this.authService.updateUserData(sendData).subscribe()
+      this.showLoaderDisablePageElements(true)
+      this.authService.updateUserData(sendData).subscribe(() => {
+        console.log('Uploadovana samo slika!');
+        this.showLoaderDisablePageElements(false)
+
+        /*Pomocu ovoga postizem da ne moram rucno da updateujem formu nakon promene podataka, vec jednostavno reloadujem celu my-account komponentu. To se postize na ovaj nacin koji je verovatno malo hacky, ali radi, jer kolko sam video ne postoji neki regularan nacin da se ovo uradi. Ti ovde samo ides na adresu jedne prazne komponente koju si napravio, pa se vracas na pocetnu adresu i to prouzrokuje da se pocetna komponenta reloaduje. Ovu foru sam pokupio ovde https://stackoverflow.com/questions/47813927/how-to-refresh-a-component-in-angular (odgovor od Sreehari Ballampalli) i mislim da je ovo prilicno dobra fora zato sto koristi i ovaj skipLocationChange pomocu kojeg ti se ova prazna komponenta uopste ne upisuje u history browsera i ne remeti back funkciju (https://angular.io/api/router/NavigationExtras#skipLocationChange). Postoje jos neki nacini kolko vidim (IZGLEDA DA ZA ANGULAR > 5 POSTOJI NACIN KOJI NIJE HACK, VIDI https://medium.com/engineering-on-the-incline/reloading-current-route-on-click-angular-5-1a1bfc740ab2), ali ovo mi za sad lepo radi i cini mi se da je najbolji nacin, evo jos nekih linkova korisnih:
+        
+        - https://github.com/angular/angular/issues/13831
+        - https://stackoverflow.com/questions/38836674/how-do-i-re-render-a-component-manually
+        - https://medium.com/engineering-on-the-incline/reloading-current-route-on-click-angular-5-1a1bfc740ab2
+        - itd
+
+        */
+        this.router.navigateByUrl('/reload-component', {skipLocationChange: true}).then(() => this.router.navigate(["/my-account"])).then(() => alert('You have successfully updated your data!'));;
+      }, (err: HttpErrorResponse) => {
+        if(err.error.errors){
+          this.showLoaderDisablePageElements(false)
+          let errors = Object.values(err.error.errors) 
+          let errorString: string = ''
+          errors.forEach(function(message){
+            errorString += message + '\n'
+          });
+          alert(errorString);
+          
+        }else{
+          alert(err.error.error)
+        }
+      })
     }
 
 
   }
 
-  public updateAccountDataWithReEnteredPassword(){
-    console.log('podaci sas sifrom', this.updateAccountDataForm.getRawValue());
+  public updateAccountDataWithReEnteredPassword(reEnteredPassword: string){
+    if(reEnteredPassword){
+      
+      if(this.sendData.has('reentered_password')){
+        /*The difference between FormData.set and append() is that if the specified key already exists, FormData.set will overwrite all existing values with the new one, whereas append() will append the new value onto the end of the existing set of values.(https://developer.mozilla.org/en-US/docs/Web/API/FormData/append)*/
+        this.sendData.set('reentered_password', reEnteredPassword)
+      }else{
+        this.sendData.append('reentered_password', reEnteredPassword)
+      }
+      
+      this.renderer.setStyle(this.progressBar.nativeElement, 'visibility', 'visible')
+      this.reEnteredPasswordForm.setValue({reEnteredPassword: ''})
+      this.authService.updateUserData(this.sendData).subscribe(() => {
+        // Kako radis unsubscribe() https://stackoverflow.com/questions/43840955/angular-2-formgroup-valuechanges-unsubscribe
+        this.reEnteredPasswordFormSubscription.unsubscribe()
+        this.passwordModalButtonTrigger.nativeElement.click()//Zatvaram bootstrap modal
+        this.renderer.setStyle(this.progressBar.nativeElement, 'visibility', 'hidden')
+        
+        /*Pomocu ovoga postizem da ne moram rucno da updateujem formu nakon promene podataka, vec jednostavno reloadujem celu my-account komponentu. To se postize na ovaj nacin koji je verovatno malo hacky, ali radi, jer kolko sam video ne postoji neki regularan nacin da se ovo uradi. Ti ovde samo ides na adresu jedne prazne komponente koju si napravio, pa se vracas na pocetnu adresu i to prouzrokuje da se pocetna komponenta reloaduje. Ovu foru sam pokupio ovde https://stackoverflow.com/questions/47813927/how-to-refresh-a-component-in-angular (odgovor od Sreehari Ballampalli) i mislim da je ovo prilicno dobra fora zato sto koristi i ovaj skipLocationChange pomocu kojeg ti se ova prazna komponenta uopste ne upisuje u history browsera i ne remeti back funkciju (https://angular.io/api/router/NavigationExtras#skipLocationChange). Postoje jos neki nacini kolko vidim (IZGLEDA DA ZA ANGULAR > 5 POSTOJI NACIN KOJI NIJE HACK, VIDI https://medium.com/engineering-on-the-incline/reloading-current-route-on-click-angular-5-1a1bfc740ab2), ali ovo mi za sad lepo radi i cini mi se da je najbolji nacin, evo jos nekih linkova korisnih:
+        
+        - https://github.com/angular/angular/issues/13831
+        - https://stackoverflow.com/questions/38836674/how-do-i-re-render-a-component-manually
+        - https://medium.com/engineering-on-the-incline/reloading-current-route-on-click-angular-5-1a1bfc740ab2
+        - itd
+
+        */
+        this.router.navigateByUrl('/reload-component', {skipLocationChange: true}).then(() => this.router.navigate(["/my-account"])).then(() => alert('You have successfully updated your data!'));
+      }, (err: HttpErrorResponse) => {
+        this.renderer.setStyle(this.progressBar.nativeElement, 'visibility', 'hidden')
+        if(err.error.errors){
+          let errors = Object.values(err.error.errors) 
+          let errorString: string = ''
+          errors.forEach(function(message){
+            errorString += message + '\n'
+          });
+          alert(errorString);
+          
+        }else{
+          alert(err.error.error)
+        }
+      })
+     
+    }
   }
+
+  public resetReEnteredPasswordForm(){
+    this.reEnteredPasswordForm.setValue({reEnteredPassword: ''})
+    // Kako radis unsubscribe() https://stackoverflow.com/questions/43840955/angular-2-formgroup-valuechanges-unsubscribe
+    this.reEnteredPasswordFormSubscription.unsubscribe()
+  }
+
+  public showLoaderDisablePageElements(show: boolean){
+    if(show === true){
+      this.renderer.setStyle(this.progressBar.nativeElement, 'visibility', 'visible')
+      this.renderer.setStyle(this.disabledOverlay.nativeElement, 'visibility', 'visible')
+    }else{
+      this.renderer.setStyle(this.progressBar.nativeElement, 'visibility', 'hidden')
+      this.renderer.setStyle(this.disabledOverlay.nativeElement, 'visibility', 'hidden')
+    }
+  }
+
 
 }
