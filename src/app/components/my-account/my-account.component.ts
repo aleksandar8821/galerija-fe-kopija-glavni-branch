@@ -29,7 +29,9 @@ export class MyAccountComponent implements OnInit {
   public targetClickedOnBody: any
   public sendData: FormData
   public reEnteredPassword: string;
-  public reEnteredPasswordFormSubscription: Subscription;
+  /*
+  //KOD KOJI ONEMOGUCAVA DA SE UNESE SIFRA ZAPAMCENA OD STRANE BROWSERA
+  public reEnteredPasswordFormSubscription: Subscription;*/
 
 
   public updateAccountDataForm = new FormGroup({
@@ -419,7 +421,7 @@ export class MyAccountComponent implements OnInit {
 
           this.passwordInput.nativeElement.focus()
         }
-      }, 20)   
+      }, 20)
       
   		this.renderer.removeClass(this.btnChangePassword.nativeElement, 'btn-success')
   		this.renderer.addClass(this.btnChangePassword.nativeElement, 'btn-danger')
@@ -607,11 +609,12 @@ export class MyAccountComponent implements OnInit {
       this.passwordModalButtonTrigger.nativeElement.click()
 
       /**************************************************************/
-      /*Kod koji onemogucava da se unese sifra zapamcena od strane browsera (u trenutnoj verziji Chrome-a radi, u Mozilli radi samo kad ti ponudi da uneses zapamcenu sifru pa ti kliknes, ali nekad ti se samo unese u polje i tad ne radi. TAKO DA OVO NIJE CROSS BROWSER RESENJE, NE RADI SVUGDE POSAO, A NISAM NI SVE BROWSERE TESTIRAO), odnosno onemogucava da se u password input odjednom unese vise vrednosti, nego mora jedna po jedna.
+      /*Kod koji onemogucava da se unese sifra zapamcena od strane browsera (u trenutnoj verziji Chrome-a radi, u Mozilli radi samo kad ti ponudi da uneses zapamcenu sifru pa ti kliknes, ali nekad ti se samo unese u polje i tad ne radi. Jedan od mogucih razloga zasto je to tako je mozda taj sto razliciti browseri emituju razlicite eventove kad se desi autofill input polja, vidi https://stackoverflow.com/questions/11708092/detecting-browser-autofill. TAKO DA OVO NIJE CROSS BROWSER RESENJE, NE RADI SVUGDE POSAO, A NISAM NI SVE BROWSERE TESTIRAO), odnosno onemogucava da se u password input odjednom unese vise vrednosti, nego mora jedna po jedna.
 
       Filozofija je ta da ono sto uneses u password polje nikad ne moze biti za dva (i vise) znakova duze od prethodne vrednosti, nego moze samo za jedan, jer tako i user unosi sifru, znak po znak, odnosno prilikom svakog unosa ukupan zbir unetih znakova biva uvecan za 1 i ovde upravo kazem da se moze uvecati samo za 1 a ne za dva ili vise. Ako se unese za dva ili vise to znaci il da pasteujes sifru il da je browser automatski unosi a ovaj kod to zabranjuje. Mada jbg kao sto vidis npr Mozilla ipak uspeva nekako da unese sifru, ne znam bas kako al jbg
       */
 
+      /*<<<ODKOMENTARISATI OVDE DA TI PRORADI - KOD KOJI ONEMOGUCAVA DA SE UNESE SIFRA ZAPAMCENA OD STRANE BROWSERA
       // Uporedjujem dve vrednosti, trenutnu koja mi trenutno stoji u input polju i prethodnu
       let reEnteredPasswordPreviousValue: string = ''
       let reEnteredPasswordCurrentValue: string = ''
@@ -636,6 +639,7 @@ export class MyAccountComponent implements OnInit {
         console.log('previous value length after any change', reEnteredPasswordPreviousValue.length);
 
       })
+      */
       /**************************************************************/
 
     }else{
@@ -686,7 +690,9 @@ export class MyAccountComponent implements OnInit {
       this.reEnteredPasswordForm.setValue({reEnteredPassword: ''})
       this.authService.updateUserData(this.sendData).subscribe(() => {
         // Kako radis unsubscribe() https://stackoverflow.com/questions/43840955/angular-2-formgroup-valuechanges-unsubscribe
-        this.reEnteredPasswordFormSubscription.unsubscribe()
+        /*
+        //KOD KOJI ONEMOGUCAVA DA SE UNESE SIFRA ZAPAMCENA OD STRANE BROWSERA
+        this.reEnteredPasswordFormSubscription.unsubscribe()*/
         this.passwordModalButtonTrigger.nativeElement.click()//Zatvaram bootstrap modal
         this.renderer.setStyle(this.progressBar.nativeElement, 'visibility', 'hidden')
         
@@ -720,7 +726,9 @@ export class MyAccountComponent implements OnInit {
   public resetReEnteredPasswordForm(){
     this.reEnteredPasswordForm.setValue({reEnteredPassword: ''})
     // Kako radis unsubscribe() https://stackoverflow.com/questions/43840955/angular-2-formgroup-valuechanges-unsubscribe
-    this.reEnteredPasswordFormSubscription.unsubscribe()
+    /*
+    //KOD KOJI ONEMOGUCAVA DA SE UNESE SIFRA ZAPAMCENA OD STRANE BROWSERA
+    this.reEnteredPasswordFormSubscription.unsubscribe()*/
   }
 
   public showLoaderDisablePageElements(show: boolean){
