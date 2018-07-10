@@ -4,7 +4,8 @@
 <div #disabledOverlay class="myclass-disabled-overlay"></div>
 
 <div id="myid-my-account-wrapper">
-    
+
+<!--Ovo je angular reactive (iliti model driven) forma-->
 <form (ngSubmit)="updateAccountData()" [formGroup]="updateAccountDataForm">
     <div class="form-group">
         <label for="firstName">First name</label>
@@ -208,7 +209,7 @@
       <div class="modal-body">
         <p>When changing sensitive data like name, email or password, we need to be sure it is actually YOU who is changing this data, so you need to provide us your <strong>password</strong> with which you are currently logged in, and <strong>confirmation</strong> via the email that we will send you!</p>
         <hr>
-        
+        <!-- Ovo nije angular reactive forma! -->
         <form #reEnteredPasswordForm="ngForm" (ngSubmit)="updateAccountDataWithReEnteredPassword(reEnteredPassword)">
           <div class="form-group">
             <label for="reEnteredPassword" class="col-form-label">Password:</label>

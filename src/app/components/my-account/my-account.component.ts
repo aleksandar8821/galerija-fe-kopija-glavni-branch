@@ -6,9 +6,9 @@ import { User } from '../../shared/models/user';
 import { FormControl, FormGroup, Validators, AbstractControl, NgForm } from '@angular/forms';
 import { Subscription } from 'rxjs';
 
-// Na ovaj nacin mozes koristiti jQuery! Samo prethodno treba da ti je instaliran, sto sam ja uradio kad sam instalirao bootstrap. Isto ovako radi ovaj lik https://www.youtube.com/watch?v=mAwqk-eIPL8 , slicno ovaj sa jos nekim zanimljivim informacijama https://www.youtube.com/watch?v=vrdHEBkGAow . Ovo je malko drugacije al slicno https://medium.com/@swarnakishore/how-to-include-and-use-jquery-in-angular-cli-project-592e0fe63176 . Postoji i nacin gde uvodis tipove za jQuery pa onda valjda ne moras da radis ovaj declare ko sad sto radis, vidi https://stackoverflow.com/questions/42510334/how-to-include-jquery-properly-in-angular-cli-1-0-0-rc-0 , https://stackoverflow.com/questions/43934727/how-to-use-jquery-plugin-with-angular-4 - odgovor od Ervin Llojku, opet slicno https://stackoverflow.com/questions/39511788/how-to-import-jquery-to-angular2-typescript-projects , itd
+// Na ovaj nacin mozes koristiti jQuery! Samo prethodno treba da ti je instaliran, sto sam ja uradio kad sam instalirao bootstrap, ovde ga deklarises i to je SVE!. Isto ovako radi ovaj lik https://www.youtube.com/watch?v=mAwqk-eIPL8 , slicno ovaj sa jos nekim zanimljivim informacijama https://www.youtube.com/watch?v=vrdHEBkGAow . Ovo je malko drugacije al slicno https://medium.com/@swarnakishore/how-to-include-and-use-jquery-in-angular-cli-project-592e0fe63176 . Postoji i nacin gde uvodis tipove za jQuery pa onda valjda ne moras da radis ovaj declare ko sad sto radis, vidi https://stackoverflow.com/questions/42510334/how-to-include-jquery-properly-in-angular-cli-1-0-0-rc-0 , https://stackoverflow.com/questions/43934727/how-to-use-jquery-plugin-with-angular-4 - odgovor od Ervin Llojku, opet slicno https://stackoverflow.com/questions/39511788/how-to-import-jquery-to-angular2-typescript-projects , itd
 // declare var $:any;
-// Mozda bolje ovako, jer ovaj dolar ipak koristis za $event npr, pa da ne dodje do nekog konflikta, a tako radi i ovaj lik (https://www.youtube.com/watch?v=vrdHEBkGAow) koji je mozda i najpouzdaniji:
+// Mozda bolje ovako, jer ovaj dolar ipak koristis za $event npr, pa da ne dodje do nekog konflikta (ne znam da li bi doslo, al za svaki slucaj), a tako radi i ovaj lik (https://www.youtube.com/watch?v=vrdHEBkGAow) koji je mozda i najpouzdaniji:
 declare var jQuery:any;
 
 @Component({
@@ -33,13 +33,13 @@ export class MyAccountComponent implements OnInit {
   //KOD KOJI ONEMOGUCAVA DA SE UNESE SIFRA ZAPAMCENA OD STRANE BROWSERA
   public reEnteredPasswordFormSubscription: Subscription;*/
 
-
+  // Ovu formu sam krenuo da radim po ovom tutorijalu https://www.youtube.com/watch?v=kFjjr2CRVUI gde on grupise kontrole, pa otud meni ova zasebna grupa ovde changePassword: new FormGroup, inace msm da mi to ovde i nije bas potrebno, jer kolko se secam Strainja iz Panonita je rekao, da inpute ima smisla grupisati jedino ako je veca forma u pitanju. Msm da je jos jedini link sa kojeg sam radio ovaj uvodni deo u angular reactive iliti model driven forme ovaj https://angular.io/guide/reactive-forms
   public updateAccountDataForm = new FormGroup({
     firstName: new FormControl(),
     lastName: new FormControl(),
     email: new FormControl(),
     changePassword: new FormGroup({
-      // Moram ovde da postavim disabled atribut, ne moze unutar templatea kad se radi sa reactive formama u angularu, tako je neko pravilo jbg... PS PAZI!!! DA BI TI OVO POLJE FUNKCIONISALO MORAS GA KASNIJE ENABLEOVATI, ALI NE PREKO RENDERERA ILI PREKO DOM MANIPULACIJE NEKAKVE, NEGO PREKO METODA enable() i disable() koje pozivas nad poljima forme (iliti kontrolama - control, kako se ovde nazivaiju)
+      // Moram ovde da postavim disabled atribut, ne moze unutar templatea kad se radi sa reactive formama u angularu, tako je neko pravilo jbg... PS PAZI!!! DA BI TI OVO POLJE FUNKCIONISALO MORAS GA KASNIJE ENABLEOVATI, ALI NE PREKO RENDERERA ILI PREKO DOM MANIPULACIJE NEKAKVE, NEGO PREKO METODA enable() i disable() (vidi https://netbasal.com/disabling-form-controls-when-working-with-reactive-forms-in-angular-549dd7b42110) koje pozivas nad poljima forme (iliti kontrolama - control, kako se ovde nazivaiju)
       password: new FormControl({value:'', disabled: true}),
       confirmPassword: new FormControl({value:'', disabled: true})
     }),
@@ -150,7 +150,7 @@ export class MyAccountComponent implements OnInit {
   		this.unchangedUserData = new User(loggedUser.id, loggedUser.first_name, loggedUser.last_name, loggedUser.email, loggedUser.profile_image)
   		this.userDataReceived = true
 
-
+      // Nakon sto dobavim podatke o ulogovanom useru sa servera, njima popunjavam sledeca polja forme. Tutorijal za metode setValue i patchValue: https://toddmotto.com/angular-2-form-controls-patch-value-set-value
       this.updateAccountDataForm.patchValue({
         firstName: this.user.firstName,
         lastName: this.user.lastName,
@@ -161,6 +161,7 @@ export class MyAccountComponent implements OnInit {
       // Sa concat metodom spajas dva niza u javascriptu (https://davidwalsh.name/combining-js-arrays , https://stackoverflow.com/questions/1584370/how-to-merge-two-arrays-in-javascript-and-de-duplicate-items , https://medium.com/@Andela/combining-arrays-in-javascript-3b1b9cf874a1)
       /*this.unchangedUserFormData = Object.values(this.updateAccountDataForm.value).concat(Object.values(this.updateAccountDataForm.controls.changePassword.value))*/
 
+      // getRawValue() metoda vraca sve podatke iz forme, pa cak i iz disabled polja
       this.unchangedUserFormData = this.updateAccountDataForm.getRawValue()
 
 
@@ -200,6 +201,9 @@ export class MyAccountComponent implements OnInit {
 
         let changedUserFormData = this.updateAccountDataForm.getRawValue()
         // Ova petlja sluzi za proveru da vidis da li se ista promenilo od pocetnih vrednosti forme i to ne iz neceg u nista (npr iz postojeceg maila u prazan string), nego iz neceg u nesto drugo (mail u neki drugi mail i sl), i prilicno je REUSABLE (recimo)
+        /* Break nested for loops:
+        https://stackoverflow.com/questions/183161/best-way-to-break-from-nested-loops-in-javascript - pretpostavljam da ti je dovoljan ovaj prihvacen odgovor (ako ti odgovara taj nacin ovde imas jos nekih dodatnih informacija, ako ti uopste trebaju https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/label , https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/break), ali postoji jos par fora, npr sa return, a mozes i ako si u for petlji da podesis onaj var i na vrednost koja ce ga naterati da iskoci iz petlje i tako imas slicnih fora
+         */
         parentloop:
         for(const prop in changedUserFormData){
           // Moram na pocetku da proveravam ove nested objekte iz razloga zato sto ovi objekti iako imaju potpuno iste vrednosti opet ako ih uporedis javascript ce ti vratiti false (moras im proveravati propertije jedan po jedan ako hoces da ih uporedis). Tako da ne smem da pustim da mi se u sadasnjem else if delu (else if delovima kako god) koda proveravaju bilo kakkvi objekti (jer bi ti dva potpuno jednaka objekta (sa potpuno jednakim vrednostima) on protumacio kao nejednake i uslov bi prosao). Time sto kao prvi if navodim proveru za objekte, u else if delu koda se ne mogu naci objekti i time je to reseno
@@ -237,7 +241,7 @@ export class MyAccountComponent implements OnInit {
 
   	})
     
-    // Ovako fokusiras polje unutar bootstrap modala, imas na bootstrap dokumentaciji ovo
+    // Ovako fokusiras polje unutar bootstrap modala, imas na bootstrap dokumentaciji ovo. Gore u kodu ti je objasnjenje kako ubaciti jQuery u angular!
     jQuery('#exampleModal').on('shown.bs.modal', function () {
       jQuery('#reEnteredPassword').trigger('focus')
     })
@@ -387,6 +391,7 @@ export class MyAccountComponent implements OnInit {
           this.confirmPasswordInput.nativeElement.blur()
           /*this.renderer.setAttribute(this.passwordInput.nativeElement, 'disabled', 'disabled')
           this.renderer.setAttribute(this.confirmPasswordInput.nativeElement, 'disabled', 'disabled')*/
+          // https://netbasal.com/disabling-form-controls-when-working-with-reactive-forms-in-angular-549dd7b42110
           this.password.disable()
           this.confirmPassword.disable()
 
@@ -415,6 +420,7 @@ export class MyAccountComponent implements OnInit {
 
           this.confirmPassword.setValidators(Validators.required)
 
+          // https://netbasal.com/disabling-form-controls-when-working-with-reactive-forms-in-angular-549dd7b42110
           this.password.enable()
           this.confirmPassword.enable()
 
@@ -484,7 +490,7 @@ export class MyAccountComponent implements OnInit {
     
   }
 
-  // Kao sto vidis custom validator funkcije mogu komontno da stoje ovde u komponenti, tako npr radi i ovaj pajvan https://www.youtube.com/watch?v=YCEk1kGWb6A
+  // Kao sto vidis custom validator funkcije mogu komontno da stoje ovde u komponenti, tako npr radi i ovaj pajvan https://www.youtube.com/watch?v=YCEk1kGWb6A . Inace ovu custom validaciju imas na zvanicnoj dokumentaciji https://angular.io/guide/form-validation#custom-validators , jedino je mozda samo pisanje validatora malo nejasno, ali vidi ovaj prvi video sto si naveo, zatim bookmarkse i google i msm da ces brzo sve skontati. Cak ti je mozda i ova funkcija ovde koju si napisao najbolje objasnjenje. Ono sto ona radi je to da pravi restrikciju da vrednost input polja ne sme biti jednako pocetnoj vrednosti polja
   public validateSameValue(control: FormControl){
     /* ****** Na ovaj nacin se dobavlja ime kontrole (polja, odnosno onoga sto si stavio u formControlName) koja se validira, vidi odgovor od Chris https://stackoverflow.com/questions/40361799/how-to-get-name-of-input-field-from-angular2-formcontrol-object . Msm da je ovo najjednostavnije resenje, posto ti ime po defaultu nije dostupno iz nekog debilnog razloga ****** */
     const formGroup = control.parent.controls;
@@ -496,7 +502,8 @@ export class MyAccountComponent implements OnInit {
       return null
     }
   }
- 
+  
+  //Ova funkcija se okida kad submitujes formu sa podacima
   public updateAccountData(){
     let sendData = new FormData()
     let changedUserFormData = this.updateAccountDataForm.getRawValue()
@@ -550,6 +557,9 @@ export class MyAccountComponent implements OnInit {
     }
 
     // Ova for in petlja proverava da li postoji barem jedan element forme koji je ostao nepromenjen, pa ukoliko jeste setuje se allFieldsChanged na false, a u odnosu na to ce se slati put ili patch request na server. Put ako je sve promenjeno, a patch ako je izmenjeno samo nesto!
+    /* Break nested for loops:
+    https://stackoverflow.com/questions/183161/best-way-to-break-from-nested-loops-in-javascript - pretpostavljam da ti je dovoljan ovaj prihvacen odgovor (ako ti odgovara taj nacin ovde imas jos nekih dodatnih informacija, ako ti uopste trebaju https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/label , https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/break), ali postoji jos par fora, npr sa return, a mozes i ako si u for petlji da podesis onaj var i na vrednost koja ce ga naterati da iskoci iz petlje i tako imas slicnih fora
+     */
     parentloop:
     for(const prop in changedUserFormData){
      /* if(prop === 'profileImage'){
@@ -601,7 +611,7 @@ export class MyAccountComponent implements OnInit {
       sendData.append('_method', 'PATCH')
     }
 
-    // Ukoliko je needPasswordReEnter === true, sto znaci da se menja neki od osetljivih podataka a to su svi osim slike, radi se ponovni unos sifre iz sigurnosnih razloga, a u else delu koda hendlujes podatke koji nisu osetljivi a to je jedino slika
+    // Ukoliko je needPasswordReEnter === true, sto znaci da se menja neki od osetljivih podataka a to su svi osim slike, radi se ponovni unos sifre iz sigurnosnih razloga, a u else delu koda hendlujes podatke koji nisu osetljivi a to je jedino slika. Dakle jedino u slucaju kad uploadujes samo sliku tad nema potrebe da ponovo unosis sifru
     if(needPasswordReEnter === true){
       // Moram ga zalepiti za this.sendData, jer cu ga ponovo koristiti u drugoj funkciji
       this.sendData = sendData
@@ -676,6 +686,7 @@ export class MyAccountComponent implements OnInit {
 
   }
 
+  //Ova funkcija se okida kad submitujes formu za ponovno unosenje sifre
   public updateAccountDataWithReEnteredPassword(reEnteredPassword: string){
     if(reEnteredPassword){
       

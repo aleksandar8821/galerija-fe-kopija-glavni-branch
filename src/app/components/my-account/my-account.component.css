@@ -74,6 +74,8 @@
 #myid-image-cropper-container{
 	width: 50%;
 	display: inline-block;
+	/*Dodao kasnije i ovde vertical-align middle zbog problema u Mozilli*/
+	vertical-align: middle;
 }
 
 /*#myid-image-upload-button{
