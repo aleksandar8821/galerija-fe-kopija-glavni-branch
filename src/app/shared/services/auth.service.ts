@@ -40,8 +40,11 @@ export class AuthService {
         this.loggedUser = new User(data.logedUser.id, data.logedUser.first_name, data.logedUser.last_name, data.logedUser.email, data.logedUser.profile_image)
         this.loggedUserNameFirstLetter = data.logedUser.first_name.charAt(0).toUpperCase()
         window.localStorage.setItem('loggedUserNameFirstLetter', this.loggedUserNameFirstLetter)
-        this.loggedUserProfileImage = data.logedUser.profile_image
-        window.localStorage.setItem('loggedUserProfileImage', this.loggedUserProfileImage)
+        if(data.logedUser.profile_image){
+          this.loggedUserProfileImage = data.logedUser.profile_image
+          window.localStorage.setItem('loggedUserProfileImage', this.loggedUserProfileImage)
+        }
+        
         //email postavljam da bi mogao da poredim sa mailom usera koji je postavio komentar, pa da mu omogucim brisanje. Email je unikatan u bazi, stoga je dobar za identifikaciju (mada ovo mozda bas i nije dobro jer neko moze sanzati mail nekog korisnika ako ti ceprka po javascriptu, tako da je mozda bolje da ga poredis sa id-em iz baze, ali opet kolko je to safe, da imas id od korisnika prisutan u javascript kodu?):
         window.localStorage.setItem('loggedUserEmail', this.loggedUser.email)
         // ovaj data.token se kolko sam skontao zapravo nigde ne koristi u funkciji koja se subscribeovala na ovaj observable, ali da bi se sucess handler u toj funkciji okinuo, ovaj mora nesto da mu posalje u sa o.next, inace se nista ne desava... malo glupavo, al sta ces
@@ -151,8 +154,11 @@ export class AuthService {
         this.loggedUser = new User(data.logedUser.id, data.logedUser.first_name, data.logedUser.last_name, data.logedUser.email, data.logedUser.profile_image)
         this.loggedUserNameFirstLetter = data.logedUser.first_name.charAt(0).toUpperCase()
         window.localStorage.setItem('loggedUserNameFirstLetter', this.loggedUserNameFirstLetter)
-        this.loggedUserProfileImage = data.logedUser.profile_image
-        window.localStorage.setItem('loggedUserProfileImage', this.loggedUserProfileImage)
+        if(data.logedUser.profile_image){
+          this.loggedUserProfileImage = data.logedUser.profile_image
+          window.localStorage.setItem('loggedUserProfileImage', this.loggedUserProfileImage)
+        }
+        
         //email postavljam da bi mogao da poredim sa mailom usera koji je postavio komentar, pa da mu omogucim brisanje. Email je unikatan u bazi, stoga je dobar za identifikaciju (mada ovo mozda bas i nije dobro jer neko moze sanzati mail nekog korisnika ako ti ceprka po javascriptu, tako da je mozda bolje da ga poredis sa id-em iz baze, ali opet kolko je to safe, da imas id od korisnika prisutan u javascript kodu?):
         window.localStorage.setItem('loggedUserEmail', this.loggedUser.email)
         // ovaj data.loginToken se kolko sam skontao zapravo nigde ne koristi u funkciji koja se subscribeovala na ovaj observable, ali da bi se sucess handler u toj funkciji okinuo, ovaj mora nesto da mu posalje u sa o.next, inace se nista ne desava... malo glupavo, al sta ces
@@ -182,8 +188,11 @@ export class AuthService {
         console.log(loggedUser);
         this.loggedUserNameFirstLetter = loggedUser.first_name.charAt(0).toUpperCase()
         window.localStorage.setItem('loggedUserNameFirstLetter', this.loggedUserNameFirstLetter)
-        this.loggedUserProfileImage = loggedUser.profile_image
-        window.localStorage.setItem('loggedUserProfileImage', this.loggedUserProfileImage)
+        if(loggedUser.profile_image){
+          this.loggedUserProfileImage = loggedUser.profile_image
+          window.localStorage.setItem('loggedUserProfileImage', this.loggedUserProfileImage)
+        }
+        
         //email postavljam da bi mogao da poredim sa mailom usera koji je postavio komentar, pa da mu omogucim brisanje. Email je unikatan u bazi, stoga je dobar za identifikaciju (mada ovo mozda bas i nije dobro jer neko moze sanzati mail nekog korisnika ako ti ceprka po javascriptu, tako da je mozda bolje da ga poredis sa id-em iz baze, ali opet kolko je to safe, da imas id od korisnika prisutan u javascript kodu?):
         window.localStorage.setItem('loggedUserEmail', loggedUser.email)
         o.next(loggedUser)
@@ -195,5 +204,83 @@ export class AuthService {
       })
     })
   }
+
+  public updateUserDataWithMailConfirmation(userData){
+    // console.log(userData);
+    return new Observable((o: Observer<any>) => {
+      this.http.post('http://localhost:8000/api/update_user_data_mail_conf', userData, {headers: this.getRequestHeaders()}).subscribe((data: any) => {
+        console.log(data);
+       
+        this.urlGuard.allow = true;// redirekciju ipak radim u komponenti, ali prethodno moram ovaj allow podesiti na true da bi uspela redirekcija! Inace radi sve i kad ovde ostavim redirekciju, dakle odradi se ono sto je u okviru subscribe success handlera u komponenti, bez obzira sto prethodno odradim redirekciju na drugu komponentu, dakle izgleda ostane observable aktivan.
+        
+        o.next(data)
+        return o.complete()
+      }, (err) => {
+        console.log(err)
+        o.error(err)
+        return o.complete()
+      })
+    })
+  }
+
+  public verifyUserUpdate(user_id, token){
+    return new Observable((o: Observer<any>) => {
+      this.http.patch('http://localhost:8000/api/update_user_data_mail_conf/verify', {
+        'user_id': user_id,
+        'verify_token': token
+      }).subscribe((user: any) => {
+        console.log(user);
+        if(this.isAuthenticated){
+          this.loggedUserNameFirstLetter = user.first_name.charAt(0).toUpperCase()
+          window.localStorage.setItem('loggedUserNameFirstLetter', this.loggedUserNameFirstLetter)
+          if(user.profile_image){
+            this.loggedUserProfileImage = user.profile_image
+            window.localStorage.setItem('loggedUserProfileImage', this.loggedUserProfileImage)
+          }
+          
+          //email postavljam da bi mogao da poredim sa mailom usera koji je postavio komentar, pa da mu omogucim brisanje. Email je unikatan u bazi, stoga je dobar za identifikaciju (mada ovo mozda bas i nije dobro jer neko moze sanzati mail nekog korisnika ako ti ceprka po javascriptu, tako da je mozda bolje da ga poredis sa id-em iz baze, ali opet kolko je to safe, da imas id od korisnika prisutan u javascript kodu?):
+          window.localStorage.setItem('loggedUserEmail', user.email)
+        }
+        
+        o.next(user)
+        return o.complete()
+      }, (err) => {
+        console.log(err)
+        o.error(err)
+        return o.complete()
+      });
+    });
+  }
+
+  public blockRevokeChanges(user_id, userUpdateId, token){
+    return new Observable((o: Observer<any>) => {
+      this.http.patch('http://localhost:8000/api/update_user_data_mail_conf/block_revoke_changes', {
+        'user_id': user_id,
+        'user_update_id': userUpdateId,
+        'block_request_revoke_changes_token': token
+      }).subscribe((user: any) => {
+        console.log(user);
+        if(this.isAuthenticated){
+          this.loggedUserNameFirstLetter = user.first_name.charAt(0).toUpperCase()
+          window.localStorage.setItem('loggedUserNameFirstLetter', this.loggedUserNameFirstLetter)
+          if(user.profile_image){
+            this.loggedUserProfileImage = user.profile_image
+            window.localStorage.setItem('loggedUserProfileImage', this.loggedUserProfileImage)
+          }
+          
+          //email postavljam da bi mogao da poredim sa mailom usera koji je postavio komentar, pa da mu omogucim brisanje. Email je unikatan u bazi, stoga je dobar za identifikaciju (mada ovo mozda bas i nije dobro jer neko moze sanzati mail nekog korisnika ako ti ceprka po javascriptu, tako da je mozda bolje da ga poredis sa id-em iz baze, ali opet kolko je to safe, da imas id od korisnika prisutan u javascript kodu?):
+          window.localStorage.setItem('loggedUserEmail', user.email)
+        }
+        
+        o.next(user)
+        return o.complete()
+      }, (err) => {
+        console.log(err)
+        o.error(err)
+        return o.complete()
+      });
+    });
+  }
+
 
 }

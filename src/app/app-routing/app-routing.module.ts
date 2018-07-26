@@ -14,6 +14,7 @@ import { RegisterComponent } from '../components/register/register.component';
 import { RegisterVerificationComponent } from '../components/register-verification/register-verification.component';
 import { ViewImageComponent } from '../components/view-image/view-image.component';
 import { EmptyComponentComponent } from '../components/empty-component/empty-component.component';
+import { UserUpdateVerificationComponent } from '../components/user-update-verification/user-update-verification.component';
 
 
 import { AuthGuard } from '../shared/guards/auth.guard';
@@ -49,6 +50,19 @@ const appRoutes: Routes = [
     {
         path: 'reload-component',
         component: EmptyComponentComponent
+    },
+    {
+        path: 'my-account/verification-message',
+        canActivate: [UrlGuard],
+        component: UserUpdateVerificationComponent
+    },
+    {
+        path: 'my-account/verification/:id/:token',
+        component: UserUpdateVerificationComponent
+    },
+    {
+        path: 'my-account/block_revoke_changes/:id/:userUpdateId/:token',
+        component: UserUpdateVerificationComponent
     },
     {
         path: 'my-galleries',

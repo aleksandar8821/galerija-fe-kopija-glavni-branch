@@ -71,7 +71,12 @@ export class MyAccountComponent implements OnInit {
   @ViewChild("reEnteredPasswordForm") reEnteredPasswordForm: NgForm
 
   @ViewChild("progressBar") progressBar: ElementRef
+  public disableProgressBar: number = 0
   @ViewChild("disabledOverlay") disabledOverlay: ElementRef
+
+  @ViewChild("modalCloseButton") modalCloseButton: ElementRef
+  @ViewChild("modalSubmitButton") modalSubmitButton: ElementRef
+  @ViewChild("modalCancelButton") modalCancelButton: ElementRef
 
 	public loggedUserExsistingProfileImage = window.localStorage.getItem('loggedUserProfileImage')
 	public uploadImageError: string
@@ -503,7 +508,7 @@ export class MyAccountComponent implements OnInit {
     }
   }
   
-  //Ova funkcija se okida kad submitujes formu sa podacima
+  //Ova funkcija se okida kad submitujes formu sa podacima i salje sve podatke (i sensitive tipa email, sifra i nonsensitive tipa slika) u jednom cugu. Moze se koristiti u paru sa funkcijom updateAccountDataWithReEnteredPassword, ali ne moze sa funkcijom updateAccountDataWithReEnteredPasswordAndMailConfirmation(ove funkcije navodis kao submit handlere na bootstrap modal formi). Zato preporucujem da uvek koristi updateAccountData2 umesto ove, jer ona radi sa obe navedene funkcije. Ovu funkciju ipak ostavljam zbog koda koji ti moze biti od koristi.
   public updateAccountData(){
     let sendData = new FormData()
     let changedUserFormData = this.updateAccountDataForm.getRawValue()
@@ -666,7 +671,7 @@ export class MyAccountComponent implements OnInit {
         - itd
 
         */
-        this.router.navigateByUrl('/reload-component', {skipLocationChange: true}).then(() => this.router.navigate(["/my-account"])).then(() => alert('You have successfully updated your data!'));;
+        this.router.navigateByUrl('/reload-component', {skipLocationChange: true}).then(() => this.router.navigate(["/my-account"])).then(() => alert('You have successfully updated your data!'));
       }, (err: HttpErrorResponse) => {
         if(err.error.errors){
           this.showLoaderDisablePageElements(false)
@@ -686,9 +691,117 @@ export class MyAccountComponent implements OnInit {
 
   }
 
+  // Ova metoda salje odvojeno sensitive i nonsensitive podatke. Moze se koristiti sa obe funkcije koje navodis kao submit handlere na bootstrap modal formi (updateAccountDataWithReEnteredPassword i updateAccountDataWithReEnteredPasswordAndMailConfirmation). Preporucujem je pre nego updateAccountData funkciju
+  public updateAccountData2(){
+
+    let sensitiveSendData = new FormData()
+    // Ovde ne appendujem jos _method properti, jer zelim da ova updateAccountData2() metoda moze da se iskoristi u oba slucaja, i kad trazis mail confirmation (post metoda) i kad ga ne trazis (patch metoda)
+    let sensitiveDataChanged = false
+    let nonSensitiveSendData = new FormData()
+    nonSensitiveSendData.append('_method', 'PATCH')//Uvek ce biti patch jer saljem uvek saljem samo deo podataka usera, a put ide jedino kad odjednom menjas kompletnog usera tj kompletan record usera u bazi
+    let nonSensitiveDataChanged = false
+    let changedUserFormData = this.updateAccountDataForm.getRawValue()
+    console.log(changedUserFormData);
+
+    // Ova petlja sluzi za proveru da vidis da li se ista promenilo od pocetnih vrednosti forme i to ne iz neceg u nista (npr iz postojeceg maila u prazan string), nego iz neceg u nesto drugo (mail u neki drugi mail i sl), i prilicno je REUSABLE (recimo)
+    for(const prop in changedUserFormData){
+      // Moram na pocetku da proveravam ove nested objekte iz razloga zato sto ovi objekti iako imaju potpuno iste vrednosti opet ako ih uporedis javascript ce ti vratiti false (moras im proveravati propertije jedan po jedan ako hoces da ih uporedis). Tako da ne smem da pustim da mi se u sadasnjem else if delu (else if delovima kako god) koda proveravaju bilo kakkvi objekti (jer bi ti dva potpuno jednaka objekta (sa potpuno jednakim vrednostima) on protumacio kao nejednake i uslov bi prosao). Time sto kao prvi if navodim proveru za objekte, u else if delu koda se ne mogu naci objekti i time je to reseno
+      if(typeof changedUserFormData[prop] === 'object'){
+        for(const nestedProp in changedUserFormData[prop]){
+          // Ovaj uslov zapravo detektuje promenu u formi u odnosu na ono kakva je bila na samom pocetku, i to ne promenu iz neceg u nista (npr iz postojeceg maila u prazan string), nego iz neceg u nesto drugo (mail u neki drugi mail i sl)
+          if(changedUserFormData[prop][nestedProp] && (changedUserFormData[prop][nestedProp] !== this.unchangedUserFormData[prop][nestedProp])){
+            sensitiveDataChanged = true
+            if(nestedProp === 'confirmPassword'){
+              // Moram ga ovde promenuti iz confirmPassword u password_confirmation, jer Laravel za konfirmaciju sifre trazi da potvrdjena sifra ima key password_confirmation
+              sensitiveSendData.append('password_confirmation', changedUserFormData[prop][nestedProp])
+            }else{
+              sensitiveSendData.append(nestedProp, changedUserFormData[prop][nestedProp])
+            }
+            console.log(nestedProp, changedUserFormData[prop][nestedProp]);
+          }
+
+        }
+      }
+      // Ispitivanje za sliku mora ici u zaseban blok koda, jer je njoj pocetna vrednost null, a nad nullom se ne moze izvrsiti trim() ko sto radim u narednom else if
+      else if(prop === 'profileImage'){
+        if(changedUserFormData[prop] !== null){
+
+          nonSensitiveDataChanged = true
+          // Ne stavljam changedUserFormData[prop] u nonSensitiveSendData, nego this.croppedImage jer mi se tu nalazi base64 string koji je zapravo ta slika i to treba da se posalje na server
+          nonSensitiveSendData.append('profile_image', this.croppedImage)
+          console.log(prop, this.croppedImage);
+          
+        }
+      }
+      // Ovaj uslov zapravo detektuje promenu u formi u odnosu na ono kakva je bila na samom pocetku, i to ne promenu iz neceg u nista (npr iz postojeceg maila u prazan string), nego iz neceg u nesto drugo (mail u neki drugi mail i sl)
+      else if(changedUserFormData[prop].trim() && (changedUserFormData[prop].trim() !== this.unchangedUserFormData[prop].trim())) {
+        sensitiveDataChanged = true
+        if(prop === 'firstName'){
+          sensitiveSendData.append('first_name', changedUserFormData[prop].trim())
+        }else if(prop === 'lastName'){
+          sensitiveSendData.append('last_name', changedUserFormData[prop].trim())
+        }else{
+          sensitiveSendData.append(prop, changedUserFormData[prop].trim())
+        }
+        console.log(prop, changedUserFormData[prop].trim());
+      }else{
+        // console.log('Upade u else!');
+      }
+
+    }
+
+
+    if(nonSensitiveDataChanged){
+      
+      this.disableProgressBar++
+      this.renderer.setStyle(this.disabledOverlay.nativeElement, 'visibility', 'visible')
+
+      this.authService.updateUserData(nonSensitiveSendData).subscribe((loggedUser: any) => {
+        console.log('Uploadovani non sensitive podaci, tj slika :)!');
+        alert('You have successfully updated your profile image!')
+
+        this.clearImage()
+        this.loggedUserExsistingProfileImage = loggedUser.profile_image
+        this.disableProgressBar--
+        this.renderer.setStyle(this.disabledOverlay.nativeElement, 'visibility', 'hidden')
+      }, (err: HttpErrorResponse) => {
+        if(err.error.errors){
+          this.disableProgressBar--
+          this.renderer.setStyle(this.disabledOverlay.nativeElement, 'visibility', 'hidden')
+          let errors = Object.values(err.error.errors) 
+          let errorString: string = ''
+          errors.forEach(function(message){
+            errorString += message + '\n'
+          });
+          alert(errorString);
+          
+        }else{
+          alert(err.error.error)
+        }
+      })
+
+
+    }
+
+    if(sensitiveDataChanged){
+      // Moram ga zalepiti za this.sendData, jer cu ga ponovo koristiti u drugoj funkciji
+      this.sendData = sensitiveSendData
+      // Msm da je ovo najjednostavniji nacin da se otvori bootstrap modal u angularu (vidi https://stackoverflow.com/questions/35400811/how-to-use-code-to-open-a-modal-in-angular-2)
+      this.passwordModalButtonTrigger.nativeElement.click()
+    }
+
+
+
+  }
+
+
   //Ova funkcija se okida kad submitujes formu za ponovno unosenje sifre
   public updateAccountDataWithReEnteredPassword(reEnteredPassword: string){
     if(reEnteredPassword){
+
+      if(!this.sendData.has('_method')){
+        this.sendData.append('_method', 'PATCH')
+      }
       
       if(this.sendData.has('reentered_password')){
         /*The difference between FormData.set and append() is that if the specified key already exists, FormData.set will overwrite all existing values with the new one, whereas append() will append the new value onto the end of the existing set of values.(https://developer.mozilla.org/en-US/docs/Web/API/FormData/append)*/
@@ -697,7 +810,8 @@ export class MyAccountComponent implements OnInit {
         this.sendData.append('reentered_password', reEnteredPassword)
       }
       
-      this.renderer.setStyle(this.progressBar.nativeElement, 'visibility', 'visible')
+      this.disableProgressBar++
+      this.disableModalElements(true)
       this.reEnteredPasswordForm.setValue({reEnteredPassword: ''})
       this.authService.updateUserData(this.sendData).subscribe(() => {
         // Kako radis unsubscribe() https://stackoverflow.com/questions/43840955/angular-2-formgroup-valuechanges-unsubscribe
@@ -705,7 +819,8 @@ export class MyAccountComponent implements OnInit {
         //KOD KOJI ONEMOGUCAVA DA SE UNESE SIFRA ZAPAMCENA OD STRANE BROWSERA
         this.reEnteredPasswordFormSubscription.unsubscribe()*/
         this.passwordModalButtonTrigger.nativeElement.click()//Zatvaram bootstrap modal
-        this.renderer.setStyle(this.progressBar.nativeElement, 'visibility', 'hidden')
+        this.disableProgressBar--
+        this.disableModalElements(false)
         
         /*Pomocu ovoga postizem da ne moram rucno da updateujem formu nakon promene podataka, vec jednostavno reloadujem celu my-account komponentu. To se postize na ovaj nacin koji je verovatno malo hacky, ali radi, jer kolko sam video ne postoji neki regularan nacin da se ovo uradi. Ti ovde samo ides na adresu jedne prazne komponente koju si napravio, pa se vracas na pocetnu adresu i to prouzrokuje da se pocetna komponenta reloaduje. Ovu foru sam pokupio ovde https://stackoverflow.com/questions/47813927/how-to-refresh-a-component-in-angular (odgovor od Sreehari Ballampalli) i mislim da je ovo prilicno dobra fora zato sto koristi i ovaj skipLocationChange pomocu kojeg ti se ova prazna komponenta uopste ne upisuje u history browsera i ne remeti back funkciju (https://angular.io/api/router/NavigationExtras#skipLocationChange). Postoje jos neki nacini kolko vidim (IZGLEDA DA ZA ANGULAR > 5 POSTOJI NACIN KOJI NIJE HACK, VIDI https://medium.com/engineering-on-the-incline/reloading-current-route-on-click-angular-5-1a1bfc740ab2), ali ovo mi za sad lepo radi i cini mi se da je najbolji nacin, evo jos nekih linkova korisnih:
         
@@ -717,7 +832,51 @@ export class MyAccountComponent implements OnInit {
         */
         this.router.navigateByUrl('/reload-component', {skipLocationChange: true}).then(() => this.router.navigate(["/my-account"])).then(() => alert('You have successfully updated your data!'));
       }, (err: HttpErrorResponse) => {
-        this.renderer.setStyle(this.progressBar.nativeElement, 'visibility', 'hidden')
+        this.disableProgressBar--
+        this.disableModalElements(false)
+        if(err.error.errors){
+          let errors = Object.values(err.error.errors) 
+          let errorString: string = ''
+          errors.forEach(function(message){
+            errorString += message + '\n'
+          });
+          alert(errorString);
+          
+        }else{
+          alert(err.error.error)
+        }
+      })
+     
+    }
+  }
+
+  //Ova funkcija se okida kad submitujes formu za ponovno unosenje sifre
+  public updateAccountDataWithReEnteredPasswordAndMailConfirmation(reEnteredPassword: string){
+    if(reEnteredPassword){
+      
+      if(this.sendData.has('reentered_password')){
+        /*The difference between FormData.set and append() is that if the specified key already exists, FormData.set will overwrite all existing values with the new one, whereas append() will append the new value onto the end of the existing set of values.(https://developer.mozilla.org/en-US/docs/Web/API/FormData/append)*/
+        this.sendData.set('reentered_password', reEnteredPassword)
+      }else{
+        this.sendData.append('reentered_password', reEnteredPassword)
+      }
+      
+      this.disableProgressBar++
+      this.disableModalElements(true)
+      this.reEnteredPasswordForm.setValue({reEnteredPassword: ''})
+      this.authService.updateUserDataWithMailConfirmation(this.sendData).subscribe(() => {
+        // Kako radis unsubscribe() https://stackoverflow.com/questions/43840955/angular-2-formgroup-valuechanges-unsubscribe
+        /*
+        //KOD KOJI ONEMOGUCAVA DA SE UNESE SIFRA ZAPAMCENA OD STRANE BROWSERA
+        this.reEnteredPasswordFormSubscription.unsubscribe()*/
+        this.passwordModalButtonTrigger.nativeElement.click()//Zatvaram bootstrap modal
+        this.disableProgressBar--
+        this.disableModalElements(false)
+        
+        this.router.navigateByUrl('my-account/verification-message');//url guard podesavam u auth servisu, jer ne mogu ovde
+      }, (err: HttpErrorResponse) => {
+        this.disableProgressBar--
+        this.disableModalElements(false)
         if(err.error.errors){
           let errors = Object.values(err.error.errors) 
           let errorString: string = ''
@@ -749,6 +908,16 @@ export class MyAccountComponent implements OnInit {
     }else{
       this.renderer.setStyle(this.progressBar.nativeElement, 'visibility', 'hidden')
       this.renderer.setStyle(this.disabledOverlay.nativeElement, 'visibility', 'hidden')
+    }
+  }
+
+  public disableModalElements(disable: boolean){
+    if(disable === true){
+      this.renderer.setProperty(this.modalCloseButton.nativeElement, 'disabled', true)
+      this.renderer.setProperty(this.modalCancelButton.nativeElement, 'disabled', true)
+    }else{
+      this.renderer.setProperty(this.modalCloseButton.nativeElement, 'disabled', false)
+      this.renderer.setProperty(this.modalCancelButton.nativeElement, 'disabled', false)
     }
   }
 

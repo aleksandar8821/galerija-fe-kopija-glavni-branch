@@ -19,7 +19,7 @@
 .myclass-disabled-overlay{
 	visibility: hidden;
 	position: fixed;	/*ovde moras dodati fixed da bi ti pokrivao i deo ekrana koji se skroluje (vazi i za visinu i sirinu) https://stackoverflow.com/questions/10945268/disable-whole-page-with-an-overlay*/
-	z-index: 999998;
+	z-index: 100;/*Ovaj 100 ovde radi posao, jer treba da bude iza bootstrap modala kad se oba istovremeno aktiviraju*/
 	top: 0;
 	left: 0;
 	right: 0;
@@ -110,6 +110,13 @@
 @keyframes flash-message {
     0%   {opacity: 1;}
     100% {opacity: 0;}
+}
+
+.myclass-hidden-fields-for-preventing-bugs{
+	/*Moraju biti ovi stilovi, ne mozes ga sakriti sa display ili visibility, ali ovo radi posao! Nisam nigde skinuo, sam sam skontao*/
+	height: 0;
+	width: 0;
+	overflow: hidden;
 }
 
 

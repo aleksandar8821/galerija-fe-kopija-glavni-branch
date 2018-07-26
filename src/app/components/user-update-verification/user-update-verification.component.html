@@ -1,0 +1,8 @@
+<!-- Redirekcija na stranicu odradjena uz pomoc ovoga https://stackoverflow.com/questions/40145779/angular-2-block-get-request-on-a-url Dakle, moguce je doci na ovu stranicu jedino iz koda, tj u mom slucaju redirekcijom na ovu stranicu posle registracije, ne moze se doci preko address bara u browseru. -->
+
+
+<div #serverMessage id="myid-server-message">
+	<p *ngIf="routePath === 'my-account/verification-message'">
+	  Your request has been successfully sent to the server, but you still need to confirm it via email that we have sent you. If you requested an email address change, confirmation email has been sent to that address. 
+	</p>
+</div>
