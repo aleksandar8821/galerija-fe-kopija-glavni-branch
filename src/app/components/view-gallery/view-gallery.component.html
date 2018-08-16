@@ -72,12 +72,47 @@
 				</div>
 			</div>
 		  <div class="media-body">
-		    <h5 class="mt-0">{{comment.user.first_name}} {{comment.user.last_name}} <small class="text-muted">{{comment.created_at | date: "longDate"}}</small></h5>
+		    <h5 class="mt-0">{{comment.user.first_name}} {{comment.user.last_name}} <small class="text-muted">{{comment.created_at | date: "longDate"}}</small><small class="text-muted" *ngIf="comment.created_at !== comment.updated_at"> ( <em>Last updated at: {{ comment.updated_at | date: "longDate" }}</em> )</small></h5>
 		    {{comment.comment_body}}
 		  </div>
+		  <a #editGalleryCommentModalButtonTrigger data-toggle="modal" data-target="#exampleModalCenter" *ngIf="comment.user.email === loggedUserEmail" class="myclass-edit-link" (click)="editGalleryComment(comment)"><i class="fas fa-edit myclass-image-edit "></i></a>
 		  <a *ngIf="comment.user.email === loggedUserEmail" (click)="deleteGalleryComment(comment)" class="myclass-delete-link"><i class="fas fa-times-circle myclass-image-delete "></i></a>
 		</div>
 	
 	</div>
+
+
+	<!-- Modal -->
+	<div #editGalleryCommentModal class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true" data-backdrop="static" data-keyboard="false"><!-- Da zabranis modalu da se zatvara na klik van njega, treba da mu zadas  data-backdrop="static", a da mu zabranis da se zatvara na escape dugme data-keyboard="false"-->
+	  <div class="modal-dialog modal-dialog-centered" role="document">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <h5 class="modal-title" id="exampleModalLongTitle">Comment edit</h5>
+	        <button #modalCloseButton type="button" class="close" data-dismiss="modal" aria-label="Close">
+	          <span aria-hidden="true">&times;</span>
+	        </button>
+	      </div>
+	      <div class="modal-body">
+	        <form #editGalleryCommentForm = "ngForm" (ngSubmit)="updateGalleryComment(galleryCommentForEditing);">
+	          <div class="form-group">
+	            <label for="exampleFormControlTextarea1">Edit your comment:</label>
+	            <textarea #editedCommentBody="ngModel" [(ngModel)]="galleryCommentForEditing.commentBody" name="editedCommentBody" class="form-control" id="editedCommentBody" rows="3" required></textarea>
+	          </div>
+	          <div *ngIf="editedCommentBody.invalid && editedCommentBody.touched" class="alert alert-danger">
+
+	            <div *ngIf="editedCommentBody.errors.required">
+	              Comment body is required.
+	            </div>
+	            
+	          </div>
+	          <button #btnSubmitCommentChanges [disabled]="!editGalleryCommentForm.valid || galleryCommentForEditing.commentBody === originalGalleryCommentBeforeEditing.commentBody" type="submit" class="btn btn-primary">Submit changes</button>
+	          <button #modalCancelButton type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+	        </form>
+	      </div>
+
+	    </div>
+	  </div>
+	</div>
+
 
 </div>

@@ -133,6 +133,7 @@ export class GalleryService {
   			}, {
   				headers: this.authService.getRequestHeaders()
   			}).subscribe((storedComment: GalleryComment) => {
+  				console.log(storedComment);
   				o.next(storedComment)
   				return o.complete()
   			}, (error: HttpErrorResponse) => {
@@ -156,6 +157,27 @@ export class GalleryService {
   				return o.complete();
   			})
 			});
+		}
+
+
+		public updateGalleryComment(editedGalleryComment: GalleryComment){
+
+			return new Observable((o: Observer<any>) => {
+			  this.http.patch('http://127.0.0.1:8000/api/gallery_comment/update', {
+  				'comment_body': editedGalleryComment.commentBody,
+  				'id': editedGalleryComment.id
+  			}, {
+  				headers: this.authService.getRequestHeaders()
+  			}).subscribe((updatedComment: GalleryComment) => {
+  				console.log(updatedComment);
+  				o.next(updatedComment)
+  				return o.complete()
+  			}, (error: HttpErrorResponse) => {
+  				o.error(error)
+  				return o.complete()
+  			})
+			});
+
 		}
 
 

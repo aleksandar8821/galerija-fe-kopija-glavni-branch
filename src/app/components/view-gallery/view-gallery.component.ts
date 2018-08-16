@@ -9,6 +9,10 @@ import { FormGroup, NgForm } from '@angular/forms'
 import { ViewImageComponent } from '../../components/view-image/view-image.component';
 import { ViewImageService } from '../../shared/services/view-image.service';
 
+// Na ovaj nacin mozes koristiti jQuery! Samo prethodno treba da ti je instaliran, sto sam ja uradio kad sam instalirao bootstrap, ovde ga deklarises i to je SVE!. Isto ovako radi ovaj lik https://www.youtube.com/watch?v=mAwqk-eIPL8 , slicno ovaj sa jos nekim zanimljivim informacijama https://www.youtube.com/watch?v=vrdHEBkGAow . Ovo je malko drugacije al slicno https://medium.com/@swarnakishore/how-to-include-and-use-jquery-in-angular-cli-project-592e0fe63176 . Postoji i nacin gde uvodis tipove za jQuery pa onda valjda ne moras da radis ovaj declare ko sad sto radis, vidi https://stackoverflow.com/questions/42510334/how-to-include-jquery-properly-in-angular-cli-1-0-0-rc-0 , https://stackoverflow.com/questions/43934727/how-to-use-jquery-plugin-with-angular-4 - odgovor od Ervin Llojku, opet slicno https://stackoverflow.com/questions/39511788/how-to-import-jquery-to-angular2-typescript-projects , itd
+// declare var $:any;
+// Mozda bolje ovako, jer ovaj dolar ipak koristis za $event npr, pa da ne dodje do nekog konflikta (ne znam da li bi doslo, al za svaki slucaj), a tako radi i ovaj lik (https://www.youtube.com/watch?v=vrdHEBkGAow) koji je mozda i najpouzdaniji:
+declare var jQuery:any;
 
 @Component({
   selector: 'app-view-gallery',
@@ -42,6 +46,8 @@ export class ViewGalleryComponent implements OnInit {
   public gallery: Gallery
   public commentsArrayReversed: Array<GalleryComment>
   public galleryComment: GalleryComment = new GalleryComment()
+  public galleryCommentForEditing: GalleryComment = new GalleryComment()
+  public originalGalleryCommentBeforeEditing: GalleryComment = new GalleryComment()
   public isUserAuthenticated: boolean
   public loggedUserEmail: string
   public disableAnimations: boolean = true
@@ -52,10 +58,17 @@ export class ViewGalleryComponent implements OnInit {
   // @ViewChild("addGalleryCommentForm") addGalleryCommentForm: FormGroup // radilo je i sa FormGroup samo sto izgleda nije pravilno jer je FormGroup za model driven ili ti reactive forme, a ova tvoja je template driven. Vidi ovde https://stackoverflow.com/questions/48681287/reset-form-from-parent-component. Inace ideju za FormGroup pokupio ovde: https://blog.angular-university.io/introduction-to-angular-2-forms-template-driven-vs-model-driven/ i https://codecraft.tv/courses/angular/forms/submitting-and-resetting/
   @ViewChild("addGalleryCommentForm") addGalleryCommentForm: NgForm //https://stackoverflow.com/questions/48681287/reset-form-from-parent-component
   @ViewChild("commentsContainer") commentsContainer: ElementRef
+  @ViewChild("editGalleryCommentModalButtonTrigger") editGalleryCommentModalButtonTrigger: ElementRef
+  @ViewChild("editGalleryCommentModal") editGalleryCommentModal: ElementRef
   @ViewChild("viewImageViewContainerRef", {read: ViewContainerRef}) viewImageViewContainerRef: ViewContainerRef;
   @ViewChild("galleryStart") galleryStart: ElementRef
 
-  constructor(private galleryService: GalleryService, private route: ActivatedRoute, private renderer: Renderer2, private router: Router, private viewImageService: ViewImageService) {
+  @ViewChild("modalCloseButton") modalCloseButton: ElementRef
+  @ViewChild("btnSubmitCommentChanges") btnSubmitCommentChanges: ElementRef
+  @ViewChild("modalCancelButton") modalCancelButton: ElementRef
+
+
+  constructor(private galleryService: GalleryService, private route: ActivatedRoute, private renderer: Renderer2, private router: Router, private viewImageService: ViewImageService, private elRef: ElementRef) {
     
     // ******************************************************************** //
     // Pomocu ovoga uspevam da mi se komponenta ne refreshuje (ne inicijalizuje ponovo, nego da se reuse-uje) kad je dve razlicite rute otvaraju i zasad radi!!! Ovo resenje je inace kombinacija sa ova dva linka https://github.com/angular/angular/issues/12446 (vidi odgovor od DanielKucal, a slicnu stvar imas od istog korisnika ovde https://stackoverflow.com/questions/44875644/custom-routereusestrategy-for-angulars-child-module/44876414#44876414) i https://stackoverflow.com/questions/45497208/how-to-change-to-route-with-same-component-without-page-reload . Sa prvog linka koristim ovaj deo iza returna i to sto unutar app-routing modula stavljam  data: { reuse: true } na rute koje zelim da se reuse-uju (reuse znaci da se ne inicijalizuju ponovo kad ih aktiviram nego da koriste vec prethodno izrenderovane stranice), a sa drugog linka sam skinuo ideju da ovo stavim u konstruktor komponente koju zelim da reuseujem. Metoda koju koristim se moze naci ovde https://angular.io/api/router/RouteReuseStrategy. 
@@ -109,6 +122,14 @@ export class ViewGalleryComponent implements OnInit {
       if(!this.gallery){
       		let galleryID = params.get('galleryID')
           this.galleryService.getSpecificGallery(galleryID).subscribe((gallery: Gallery) => {
+            
+            console.log(gallery);
+
+            /*console.log(gallery);
+            let galleryJSON = JSON.stringify(gallery)
+            // Ovo sam koristio za pravljenje baze u Firebase, samo kopirao i napravio file od toga i onda importovao u Firebase
+            console.log(galleryJSON);*/
+
             this.gallery = gallery
             // Naravno potreban je i uslov if(this.viewImageService.componentRef) jer ako on nije zadovoljen, to znaci da se radi o slucaju da ti ni neces da gledas pojedinacnu sliku nego samo galeriju.
             if(this.viewImageService.componentRef){
@@ -125,7 +146,13 @@ export class ViewGalleryComponent implements OnInit {
           })
       }
   		
-  	})
+  	});
+    
+    // Ovako fokusiras polje unutar bootstrap modala, imas na bootstrap dokumentaciji ovo. Gore u kodu ti je objasnjenje kako ubaciti jQuery u angular! NAPOMENA: Dakle, ovde sam iz nekog razloga morao da radim event delegation (dakle jQuery(document) iliti jQuery(this.elRef.nativeElement) pa tek onda u 'on' da navedem id modala) kao sto se preporucuje ovde https://stackoverflow.com/questions/44907504/jquery-not-working-when-i-load-dynamic-component-in-angular (GLEDAJ SAMO RESENJE JER MISLIM DA PITANJE KOJE JE POSTAVLJENO NEMA VEZE BAS SA TVOJIM PROBLEMOM). Doduse isti ovakav modal radi bez ovog event delegationa u my account komponenti, ne znam zasto je ovo ovako moralo ovde da se uradi. JOS JEDNA NAPOMENA: PROMENIO SAM IZ jQuery(document) U jQuery(this.elRef.nativeElement) JER JE OVO NACIN (ne znam dal je pravilniji ili ne!)KOJI SE PREPORUCUJE NA LINKU KOJI JE GORE U KODU VEC POMENUT https://www.youtube.com/watch?v=vrdHEBkGAow
+    jQuery(this.elRef.nativeElement).on('shown.bs.modal', '#exampleModalCenter', function () {
+      console.log('radim');
+      jQuery('#editedCommentBody').trigger('focus');
+    });
 
   }
  
@@ -204,6 +231,36 @@ export class ViewGalleryComponent implements OnInit {
     
   }
 
+
+  public editGalleryComment(comment: any){
+    console.log(comment);
+    this.galleryCommentForEditing.id = comment.id
+    this.galleryCommentForEditing.commentBody = comment.comment_body
+    console.log(this.galleryCommentForEditing);
+    this.originalGalleryCommentBeforeEditing.commentBody = comment.comment_body
+  }
+
+
+  public updateGalleryComment(editedGalleryComment: GalleryComment){
+    console.log(editedGalleryComment);
+    
+    this.showLoaderDisablePageElements(true)
+    this.disableModalElements(true)
+
+    this.galleryService.updateGalleryComment(editedGalleryComment).subscribe((updatedComment) => {
+      this.editGalleryCommentModalButtonTrigger.nativeElement.click()
+      this.showLoaderDisablePageElements(false)
+      this.disableModalElements(false)
+
+      let updatedCommentInArray: any = this.commentsArrayReversed.find(comment => comment.id === updatedComment.id)
+      // EKSTRA!!! Kao sto vidis mozes ovde da dodas properti koji ne postoji na tipu GalleryComment, tako sto ga samo prethodno pretvoris u tip any!!!
+      updatedCommentInArray.comment_body = updatedComment.comment_body
+      updatedCommentInArray.updated_at = updatedComment.updated_at
+
+    })
+
+  }
+
  
   public showLoaderDisablePageElements(show: boolean){
     if(show === true){
@@ -218,6 +275,18 @@ export class ViewGalleryComponent implements OnInit {
       this.disableProgressBar--
       console.log(this.disableProgressBar);
       // this.renderer.setProperty(this.btnAddComment.nativeElement, 'disabled', false)
+    }
+  }
+
+  public disableModalElements(disable: boolean){
+    if(disable === true){
+      this.renderer.setProperty(this.modalCloseButton.nativeElement, 'disabled', true)
+      this.renderer.setProperty(this.btnSubmitCommentChanges.nativeElement, 'disabled', true)
+      this.renderer.setProperty(this.modalCancelButton.nativeElement, 'disabled', true)
+    }else{
+      this.renderer.setProperty(this.modalCloseButton.nativeElement, 'disabled', false)
+      this.renderer.setProperty(this.btnSubmitCommentChanges.nativeElement, 'disabled', false)
+      this.renderer.setProperty(this.modalCancelButton.nativeElement, 'disabled', false)
     }
   }
 

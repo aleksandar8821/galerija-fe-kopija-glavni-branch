@@ -18,7 +18,7 @@
 
 				<!-- <h1 *ngIf="_gallery" id="myid-image-info"><strong>Gallery:</strong> <a href="#" (click)="closeImage($event)" style="font-weight: normal">{{_gallery.name}}</a> <strong>Author:</strong> <a routerLink = "/authors/{{_gallery.user_id}}" style="font-weight: normal">{{_gallery.user.first_name}} {{_gallery.user.last_name}}</a></h1> -->
 
-				<!-- Ove (swipeleft) i (swiperight) mogu koristiti jer sam instalirao hammerjs (vidi http://hammerjs.github.io/ i https://www.npmjs.com/package/hammerjs, a ideju sam pokupio ovde https://www.youtube.com/watch?v=5Z2C0wy4bmg), a instaliras ga na sledeci nacin: kucas npm install hammerjs --save , zatim odes u main.ts file i odradis samo import 'hammerjs' da bi ti ovi eventovi bili globalno dostupni i to je to. Taj nacin instalacije sam inace pokupio na pomenutom youtube linku -->
+				<!-- Ove (swipeleft) i (swiperight) mogu koristiti jer sam instalirao hammerjs (hammer.js kako god) (vidi http://hammerjs.github.io/ i https://www.npmjs.com/package/hammerjs, a ideju sam pokupio ovde https://www.youtube.com/watch?v=5Z2C0wy4bmg), a instaliras ga na sledeci nacin: kucas npm install hammerjs --save , zatim odes u main.ts file i odradis samo import 'hammerjs' da bi ti ovi eventovi bili globalno dostupni i to je to. Taj nacin instalacije sam inace pokupio na pomenutom youtube linku -->
 				<div #showingImageContainer class="myclass-showing-image-container" (touchstart)="touchScreenDetector($event)" (mouseenter)="arrowsAnimate($event)" (mouseleave)="arrowsAnimate($event)" (swipeleft)="nextImage()" (swiperight)="previousImage()">
 					<img class="myclass-showing-image" id="myid-showing-image" *ngIf="showingImage" src="{{showingImage.url}}" (load)="resizeImageIfVertical($event)">
 
@@ -69,7 +69,7 @@
 						</div>
 					</div>
 				  <div class="media-body">
-				    <h5 class="mt-0">{{comment.user.first_name}} {{comment.user.last_name}} <small class="text-muted">{{comment.created_at | date: "longDate"}}</small></h5>
+				    <h5 class="mt-0">{{comment.user.first_name}} {{comment.user.last_name}} <small class="text-muted">{{comment.created_at | date: "longDate"}}</small> <small class="text-muted" *ngIf="comment.created_at !== comment.updated_at">Last updated at: {{ comment.updated_at | date: "longDate" }}</small></h5>
 				    {{comment.comment_body}}
 				  </div>
 				  <a *ngIf="comment.user.email === loggedUserEmail" (click)="deleteImageComment(comment)" class="myclass-delete-link"><i class="fas fa-times-circle myclass-image-delete "></i></a>

@@ -1,6 +1,6 @@
 .progress{
 	/*visibility: hidden;*/
-	z-index: 999;
+	z-index: 999999;
 	position: fixed;
 	top: 0;
 	left: 0;
@@ -144,6 +144,23 @@
 	color: #EA0000;
 	cursor: pointer;
 }
+
+.myclass-edit-link{
+	display: inline-block;
+}
+
+.myclass-image-edit{
+	line-height: 1;
+	font-size: 32px;
+	color: #e6c300;
+	display: inline-block;
+}
+
+.myclass-image-edit:hover{
+	color: gold;
+	cursor: pointer;
+}
+
 
 @media (max-width: 991.98px){
 	#myid-view-gallery-name{
