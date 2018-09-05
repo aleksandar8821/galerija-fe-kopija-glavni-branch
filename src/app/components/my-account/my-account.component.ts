@@ -873,7 +873,16 @@ export class MyAccountComponent implements OnInit {
         this.disableProgressBar--
         this.disableModalElements(false)
         
-        this.router.navigateByUrl('my-account/verification-message');//url guard podesavam u auth servisu, jer ne mogu ovde
+        if(this.sendData.has('email')){
+          this.router.navigate(['my-account/verification-message'], { queryParams: { email: 'changed'} });
+          /*moze se bez problema raditi i ovako (jedino sto u navigateByUrl zadajes kompletan url odjednom, tj u jednom stringu):
+          this.router.navigateByUrl('my-account/verification-message?email=changed');*/
+
+          //url guard podesavam u auth servisu, jer ne mogu ovde
+        }else{
+          this.router.navigateByUrl('my-account/verification-message');//url guard podesavam u auth servisu, jer ne mogu ovde
+        }
+
       }, (err: HttpErrorResponse) => {
         this.disableProgressBar--
         this.disableModalElements(false)

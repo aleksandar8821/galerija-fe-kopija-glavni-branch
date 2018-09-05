@@ -37,7 +37,20 @@ declare var jQuery:any;
         animate('400ms', style({opacity: 0})),
         animate('400ms', style({height: 0}))
       ])  
-    ])
+    ]),
+
+    /*trigger('fadeInWhenEdited', [
+      state('edited', style({
+        opacity: 1
+      })),
+
+      transition('* => edited', [
+          style({opacity: 0}),
+          animate('500ms 200ms')
+        ]
+      )
+
+    ])*/
 
   ]
 })
@@ -256,6 +269,24 @@ export class ViewGalleryComponent implements OnInit {
       // EKSTRA!!! Kao sto vidis mozes ovde da dodas properti koji ne postoji na tipu GalleryComment, tako sto ga samo prethodno pretvoris u tip any!!!
       updatedCommentInArray.comment_body = updatedComment.comment_body
       updatedCommentInArray.updated_at = updatedComment.updated_at
+
+    }, (err: HttpErrorResponse) => {
+
+      this.showLoaderDisablePageElements(false)
+      this.disableModalElements(false)
+      
+      //sa for in iteracijom, nisam uspeo da dobavim ove greske, ova funkcija Object.values() je pravo cudo!
+      if(err.error.errors){
+        let errors = Object.values(err.error.errors) 
+        let errorString: string = ''
+        errors.forEach(function(message){
+          errorString += message + '\n'
+        });
+        alert(errorString);
+        
+      }else{
+        alert(err.error.error)
+      }
 
     })
 

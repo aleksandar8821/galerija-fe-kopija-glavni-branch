@@ -14,7 +14,8 @@ export class UserUpdateVerificationComponent implements OnInit {
 	public routePath: string
 	public user_id: string
 	public userUpdateId: string
-	public token: string
+  public token: string
+	public emailQueryParam: string
 
 	@ViewChild("serverMessage") serverMessage: ElementRef
 
@@ -26,6 +27,9 @@ export class UserUpdateVerificationComponent implements OnInit {
     this.user_id = this.route.snapshot.params.id
     this.userUpdateId = this.route.snapshot.params.userUpdateId
     this.token = this.route.snapshot.params.token
+    this.emailQueryParam = this.route.snapshot.queryParams.email
+
+    // console.log(this.route.snapshot.queryParams);
 
     if(this.routePath === 'my-account/verification/:id/:token'){
     	this.authService.verifyUserUpdate(this.user_id, this.token).subscribe((user: any) => {
@@ -48,6 +52,19 @@ export class UserUpdateVerificationComponent implements OnInit {
     		this.renderer.appendChild(this.serverMessage.nativeElement, message);
     	})
     }
+
+
+    if(this.routePath === 'my-account/block_request_and_account_logout_user/:id/:token'){
+      this.authService.blockRequestAndAccountLogoutUser(this.user_id, this.token).subscribe((user: any) => {
+        // Na ovaj nacin stavljas text unutar nekog DOM elementa (https://alligator.io/angular/using-renderer2/#createelement--appendchild--createtext)
+        const message = this.renderer.createText('You have successfully permanently blocked the request for account data changes, you are logged out everywhere where you were logged in till now and your account is blocked for next 48 hours! We have sent you an email with a safe link, from which you can access your account. If you have any doubts that your account has been compromised, we HIGHLY recommend that you change your password in mentioned 48 hours for security reasons!');
+        this.renderer.appendChild(this.serverMessage.nativeElement, message);
+      }, (err: HttpErrorResponse) => {
+        const message = this.renderer.createText(err.error.error)
+        this.renderer.appendChild(this.serverMessage.nativeElement, message);
+      })
+    }
+
 
   }
 

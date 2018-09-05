@@ -67,6 +67,19 @@ export class AuthService {
       this.loggedUserProfileImage = '';
       this.router.navigateByUrl('/galleries');
   }
+
+  public forceLogout(navigateToHomePage: boolean){
+      window.localStorage.removeItem('loginToken');
+      window.localStorage.removeItem('loggedUserNameFirstLetter');
+      window.localStorage.removeItem('loggedUserProfileImage');
+      window.localStorage.removeItem('loggedUserEmail');
+      this.isAuthenticated = false;
+      this.loggedUserNameFirstLetter = '';
+      this.loggedUserProfileImage = '';
+
+      if(navigateToHomePage)
+        this.router.navigateByUrl('/galleries');
+  }
   
   // Stara registracija, bez mail confirmation-a
 
@@ -228,21 +241,26 @@ export class AuthService {
       this.http.patch('http://localhost:8000/api/update_user_data_mail_conf/verify', {
         'user_id': user_id,
         'verify_token': token
-      }).subscribe((user: any) => {
-        console.log(user);
+      }).subscribe((response: any) => {
+        console.log('response', response);
         if(this.isAuthenticated){
-          this.loggedUserNameFirstLetter = user.first_name.charAt(0).toUpperCase()
-          window.localStorage.setItem('loggedUserNameFirstLetter', this.loggedUserNameFirstLetter)
-          if(user.profile_image){
-            this.loggedUserProfileImage = user.profile_image
-            window.localStorage.setItem('loggedUserProfileImage', this.loggedUserProfileImage)
+          if(response.message === 'force logout'){
+            this.forceLogout(false)
+          }else{
+            this.loggedUserNameFirstLetter = response.first_name.charAt(0).toUpperCase()
+            window.localStorage.setItem('loggedUserNameFirstLetter', this.loggedUserNameFirstLetter)
+            if(response.profile_image){
+              this.loggedUserProfileImage = response.profile_image
+              window.localStorage.setItem('loggedUserProfileImage', this.loggedUserProfileImage)
+            }
+            
+            //email postavljam da bi mogao da poredim sa mailom usera koji je postavio komentar, pa da mu omogucim brisanje. Email je unikatan u bazi, stoga je dobar za identifikaciju (mada ovo mozda bas i nije dobro jer neko moze sanzati mail nekog korisnika ako ti ceprka po javascriptu, tako da je mozda bolje da ga poredis sa id-em iz baze, ali opet kolko je to safe, da imas id od korisnika prisutan u javascript kodu?):
+            window.localStorage.setItem('loggedUserEmail', response.email)
           }
           
-          //email postavljam da bi mogao da poredim sa mailom usera koji je postavio komentar, pa da mu omogucim brisanje. Email je unikatan u bazi, stoga je dobar za identifikaciju (mada ovo mozda bas i nije dobro jer neko moze sanzati mail nekog korisnika ako ti ceprka po javascriptu, tako da je mozda bolje da ga poredis sa id-em iz baze, ali opet kolko je to safe, da imas id od korisnika prisutan u javascript kodu?):
-          window.localStorage.setItem('loggedUserEmail', user.email)
         }
         
-        o.next(user)
+        o.next(response)
         return o.complete()
       }, (err) => {
         console.log(err)
@@ -258,21 +276,39 @@ export class AuthService {
         'user_id': user_id,
         'user_update_id': userUpdateId,
         'block_request_revoke_changes_token': token
-      }).subscribe((user: any) => {
-        console.log(user);
+      }).subscribe((response: any) => {
+        console.log(response);
         if(this.isAuthenticated){
-          this.loggedUserNameFirstLetter = user.first_name.charAt(0).toUpperCase()
-          window.localStorage.setItem('loggedUserNameFirstLetter', this.loggedUserNameFirstLetter)
-          if(user.profile_image){
-            this.loggedUserProfileImage = user.profile_image
-            window.localStorage.setItem('loggedUserProfileImage', this.loggedUserProfileImage)
+          if(response.message === 'force logout'){
+            this.forceLogout(false)
           }
-          
-          //email postavljam da bi mogao da poredim sa mailom usera koji je postavio komentar, pa da mu omogucim brisanje. Email je unikatan u bazi, stoga je dobar za identifikaciju (mada ovo mozda bas i nije dobro jer neko moze sanzati mail nekog korisnika ako ti ceprka po javascriptu, tako da je mozda bolje da ga poredis sa id-em iz baze, ali opet kolko je to safe, da imas id od korisnika prisutan u javascript kodu?):
-          window.localStorage.setItem('loggedUserEmail', user.email)
         }
         
-        o.next(user)
+        o.next(response)
+        return o.complete()
+      }, (err) => {
+        console.log(err)
+        o.error(err)
+        return o.complete()
+      });
+    });
+  }
+
+
+  public blockRequestAndAccountLogoutUser(user_id, token){
+    return new Observable((o: Observer<any>) => {
+      this.http.patch('http://localhost:8000/api/update_user_data_mail_conf/block_request_and_account_logout_user', {
+        'user_id': user_id,
+        'block_request_revoke_changes_token': token
+      }).subscribe((response: any) => {
+        console.log(response);
+        if(this.isAuthenticated){
+          if(response.message === 'force logout'){
+            this.forceLogout(false)
+          }
+        }
+        
+        o.next(response)
         return o.complete()
       }, (err) => {
         console.log(err)

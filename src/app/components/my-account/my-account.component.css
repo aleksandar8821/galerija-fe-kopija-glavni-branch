@@ -119,6 +119,12 @@
 	overflow: hidden;
 }
 
+.myclass-logout-message{
+	font-size: 14px;
+	font-style: italic;
+	margin-bottom: 5px;
+	margin-top: 5px;
+}
 
 @media (max-width: 991.98px) {
 	#myid-image-cropper-container{

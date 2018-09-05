@@ -3,6 +3,7 @@
 </div>
 <div #disabledOverlay class="myclass-disabled-overlay"></div>
 
+
 <div id="myid-my-account-wrapper">
 
 <!--Ovo je angular reactive (iliti model driven) forma-->
@@ -47,6 +48,12 @@
             </div>
         </div>
     </div>
+    
+    <div class="row">
+        <p class="myclass-logout-message col-8 col-sm-6 col-md-5">
+            * Note that email change will log you out everywhere where you were logged in till now.
+        </p>
+    </div>
 
     <div class="form-group">
         <label for="email">Email</label>
@@ -77,6 +84,12 @@
     <div class="myclass-hidden-fields-for-preventing-bugs">
         <!-- Ovo ovde stoji zato sto sranje od browsera kada unesem zapamcenu sifru u password polje mi promeni gore email ili last name u email kojem ta sifra pripada. Opiceno, al ovo to resava, i da moras ovakve stilove primeniti, ne funkcionise ako ga sakrijes preko visibility ili display -->
         <input type="text" name="hiddenField1" id="hiddenField1">
+    </div>
+
+    <div class="row">
+        <p class="myclass-logout-message col-8 col-sm-6 col-md-5">
+            * Note that password change will log you out everywhere where you were logged in till now.
+        </p>
     </div>
 
     <div #passwordChangeContainer class="myclass-password-change-container" formGroupName="changePassword">

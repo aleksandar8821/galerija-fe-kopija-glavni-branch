@@ -73,7 +73,7 @@
 			</div>
 		  <div class="media-body">
 		    <h5 class="mt-0">{{comment.user.first_name}} {{comment.user.last_name}} <small class="text-muted">{{comment.created_at | date: "longDate"}}</small><small class="text-muted" *ngIf="comment.created_at !== comment.updated_at"> ( <em>Last updated at: {{ comment.updated_at | date: "longDate" }}</em> )</small></h5>
-		    {{comment.comment_body}}
+		    {{comment.comment_body}}<!--Ovde bi bio u mogucnosti da dodas animacije za komentare ponaosob, da ti je svaki komentar bio posebna komponenta-->
 		  </div>
 		  <a #editGalleryCommentModalButtonTrigger data-toggle="modal" data-target="#exampleModalCenter" *ngIf="comment.user.email === loggedUserEmail" class="myclass-edit-link" (click)="editGalleryComment(comment)"><i class="fas fa-edit myclass-image-edit "></i></a>
 		  <a *ngIf="comment.user.email === loggedUserEmail" (click)="deleteGalleryComment(comment)" class="myclass-delete-link"><i class="fas fa-times-circle myclass-image-delete "></i></a>
@@ -98,6 +98,7 @@
 	            <label for="exampleFormControlTextarea1">Edit your comment:</label>
 	            <textarea #editedCommentBody="ngModel" [(ngModel)]="galleryCommentForEditing.commentBody" name="editedCommentBody" class="form-control" id="editedCommentBody" rows="3" required></textarea>
 	          </div>
+	          
 	          <div *ngIf="editedCommentBody.invalid && editedCommentBody.touched" class="alert alert-danger">
 
 	            <div *ngIf="editedCommentBody.errors.required">
@@ -105,6 +106,15 @@
 	            </div>
 	            
 	          </div>
+	          
+	          <!-- <div *ngIf="editedCommentBody.dirty && editedCommentBody.touched && galleryCommentForEditing.commentBody === originalGalleryCommentBeforeEditing.commentBody" class="alert alert-danger">
+
+	            <div>
+	              You cannot enter the same value.
+	            </div>
+	            
+	          </div> -->
+
 	          <button #btnSubmitCommentChanges [disabled]="!editGalleryCommentForm.valid || galleryCommentForEditing.commentBody === originalGalleryCommentBeforeEditing.commentBody" type="submit" class="btn btn-primary">Submit changes</button>
 	          <button #modalCancelButton type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
 	        </form>

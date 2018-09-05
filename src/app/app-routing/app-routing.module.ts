@@ -65,6 +65,10 @@ const appRoutes: Routes = [
         component: UserUpdateVerificationComponent
     },
     {
+        path: 'my-account/block_request_and_account_logout_user/:id/:token',
+        component: UserUpdateVerificationComponent
+    },
+    {
         path: 'my-galleries',
         canActivate: [AuthGuard],
         component: MyGalleriesComponent
