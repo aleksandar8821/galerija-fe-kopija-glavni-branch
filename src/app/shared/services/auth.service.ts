@@ -26,6 +26,45 @@ export class AuthService {
   }
 
   public getRequestHeaders(){
+    
+    // Dok sam preko ovog ifa ispitivao da li imam uopste login token u local storage, tacnije dok mi se izvrsavao kod u zakomentarisanom else delu (forceLogout), javljala mi se sledeca greska iz layout komponente za authService.isAuthenticated "ExpressionChangedAfterItHasBeenCheckedError: Expression has changed after it was checked." Nisam uspeo da je debagujem, sve dok nisam stavio da mi backend proverava postojanje login tokena. Moguce je da ovo radi sada bez greske jer je ova post metoda asinhrona (video sam na netu  da se nekim asinhronim metodama tipa setTimeout ova greska resava)?
+    // if(window.localStorage.getItem('loginToken')){
+
+      // OVAJ DODATNI ZAHTEV OVDE PRAVIM DA BI URADIO FORCE LOGOUT NA FRONTENDU UKOLIKO JE ON URADJEN NA BACKENDU (ili ukoliko mi u local storage-u fale ili ne valjaju token i email). POGLEDAJ DETALJNIJA OBJASNJENJA NA FUNKCIJI should_force_logout_be_performed U LOGIN CONTROLERU NA BACKENDU.
+      this.http.post('http://localhost:8000/api/should_force_logout_be_performed', {
+        'accessToken': window.localStorage.getItem('loginToken'),
+        'email': window.localStorage.getItem('loggedUserEmail') 
+      }).subscribe((response: any) => {
+        console.log(response);
+        if(this.isAuthenticated){
+          if(response.message === 'force logout'){
+            this.forceLogout(true)
+          }
+        }
+      }, (err) => {
+
+        console.log(err);
+
+        /*Msm da nema potrebe da useru prikazujem ove greske if(err.error.errors){
+          let errors = Object.values(err.error.errors) 
+          let errorString: string = ''
+          errors.forEach(function(message){
+            errorString += message + '\n'
+          });
+          alert(errorString);
+          
+        }else{
+          alert(err.error.error)
+        }*/
+
+      })
+
+    // }else{
+    //   console.log('Token not present in local storage');
+    //   this.forceLogout(true)
+    // }
+    
+
     return new HttpHeaders().set('Authorization', 'Bearer ' + window.localStorage.getItem('loginToken'))
   }
 
@@ -189,6 +228,7 @@ export class AuthService {
         o.next(loggedUser)
         return o.complete()
       }, (err) => {
+        console.log(err);
         return o.error(err)
       })
     })
