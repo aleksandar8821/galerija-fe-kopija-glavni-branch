@@ -6,8 +6,11 @@ import { AllGalleriesComponent } from '../components/all-galleries/all-galleries
 import { ViewGalleryComponent } from '../components/view-gallery/view-gallery.component';
 import { CreateNewGalleryComponent } from '../components/create-new-gallery/create-new-gallery.component';
 import { LoginComponent } from '../components/login/login.component';
+import { SafeLoginComponent } from '../components/safe-login/safe-login.component';
 import { ForgotPasswordComponent } from '../components/forgot-password/forgot-password.component';
+import { SafeForgotPasswordComponent } from '../components/safe-forgot-password/safe-forgot-password.component';
 import { PasswordResetComponent } from '../components/password-reset/password-reset.component'
+import { SafePasswordResetComponent } from '../components/safe-password-reset/safe-password-reset.component'
 import { MyAccountComponent } from '../components/my-account/my-account.component'
 import { MyGalleriesComponent } from '../components/my-galleries/my-galleries.component';
 import { RegisterComponent } from '../components/register/register.component';
@@ -84,14 +87,29 @@ const appRoutes: Routes = [
         component: LoginComponent
     },
     {
+        path: 'safe-login/:token',
+        canActivate: [GuestGuard],
+        component: SafeLoginComponent
+    },
+    {
         path: 'forgot-password',
         canActivate: [GuestGuard],
         component: ForgotPasswordComponent
     },
     {
+        path: 'safe-forgot-password/:token',
+        canActivate: [GuestGuard],
+        component: SafeForgotPasswordComponent
+    },
+    {
         path: 'password-reset/:email/:token',
         canActivate: [GuestGuard],
         component: PasswordResetComponent
+    },
+    {
+        path: 'safe-password-reset/:email/:passwordResetToken/:allowAccessToken',
+        canActivate: [GuestGuard],
+        component: SafePasswordResetComponent
     },
     {
         path: 'register',

@@ -37,6 +37,9 @@ import { ImageCropperModule } from 'ngx-image-cropper';
 import { MyAccountComponent } from './components/my-account/my-account.component';
 import { EmptyComponentComponent } from './components/empty-component/empty-component.component';
 import { UserUpdateVerificationComponent } from './components/user-update-verification/user-update-verification.component';
+import { SafeLoginComponent } from './components/safe-login/safe-login.component';
+import { SafeForgotPasswordComponent } from './components/safe-forgot-password/safe-forgot-password.component';
+import { SafePasswordResetComponent } from './components/safe-password-reset/safe-password-reset.component';
 
 
 @NgModule({
@@ -60,6 +63,9 @@ import { UserUpdateVerificationComponent } from './components/user-update-verifi
     MyAccountComponent,
     EmptyComponentComponent,
     UserUpdateVerificationComponent,
+    SafeLoginComponent,
+    SafeForgotPasswordComponent,
+    SafePasswordResetComponent,
   ],
   imports: [
     BrowserModule,
